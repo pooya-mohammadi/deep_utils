@@ -8,6 +8,7 @@ setuptools.setup(
     version="1.0.0",
     author="Pooya Mohammadi Kazaj",
     author_email="pooyamohammadikazaj@gmial.com",
+    download_url="https://github.com/Practical-AI/deep_utils/archive/refs/tags/1.0.0.tar.gz",
     description="Deep Utils",
     long_description=long_description,
     long_description_content_type="text/markdown",
