@@ -2,5 +2,5 @@
 
 # Installation
 `pip install git+https://github.com/Practical-AI/deep_utils.git`
-# PyPy
+# PyPi
 `pip install deep_utils`
