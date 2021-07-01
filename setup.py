@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="deep_utils",
-    version="1.0.0",
+    version="0.1.0",
     author="Pooya Mohammadi Kazaj",
     author_email="pooyamohammadikazaj@gmial.com",
     download_url="https://github.com/Practical-AI/deep_utils/archive/refs/tags/1.0.0.tar.gz",
