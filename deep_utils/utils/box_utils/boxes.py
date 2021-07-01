@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from enum import Enum, auto
+from enum import Enum
 
 
 class Box:
