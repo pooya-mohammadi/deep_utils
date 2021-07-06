@@ -96,9 +96,12 @@ class Box:
 
     @staticmethod
     def put_box(img, box, copy=False,
-                color=(0, 255, 0), thickness=1,
-                lineType=None, shift=None,
-                in_format="XYXY", in_source='CV'):
+                color=(0, 255, 0),
+                thickness=1,
+                lineType=None,
+                shift=None,
+                in_format="XYXY",
+                in_source='CV'):
         box = Box.box2box(box, in_format=in_format, to_format=Box.BoxType.XYXY,
                           in_source=in_source, to_source=Box.SourceType.CV)
 

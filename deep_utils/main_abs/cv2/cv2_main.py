@@ -1,30 +1,40 @@
 import cv2
-from deep_utils.main_abs.main import MainClass
 from deep_utils.utils.resize_utils.main_resize import resize
 from .cv2_config import CV2Config
+from deep_utils.utils.lib_utils.lib_decorators import get_from_config
 
 
-class CV2Main(MainClass):
-    def __init__(self, name):
-        super().__init__(name=name)
-        self.config: CV2Config
+class CV2Main:
+    def __init__(self, config: CV2Config):
+        self.model = None
+        self.config = config
 
-    def forward(self, image):
+    @get_from_config
+    def forward(self,
+                image,
+                resize_size=None,
+                img_scale_factor=None,
+                img_mean=None,
+                resize_mode=None,
+                swap_rgb=None
+                ):
         image_len = len(image.shape)
-        resize_img = resize(self.config.resize_mode, image, self.config.resize_size)
+        resize_img = resize(resize_mode, image, resize_size)
         if image_len == 3:
             blobs = cv2.dnn.blobFromImage(
                 resize_img,
-                scalefactor=self.config.img_scale_factor,
-                size=self.config.resize_size,
-                mean=self.config.img_mean,
+                scalefactor=img_scale_factor,
+                size=resize_size,
+                mean=img_mean,
+                swapRB=swap_rgb
             )
         elif image_len == 4:
             blobs = cv2.dnn.blobFromImages(
                 resize_img,
-                scalefactor=self.config.img_scale_factor,
-                size=self.config.resize_size,
-                mean=self.config.img_mean,
+                scalefactor=img_scale_factor,
+                size=resize_size,
+                mean=img_mean,
+                swapRB=swap_rgb
             )
         else:
             raise Exception("The shape of the input image is not valid.")

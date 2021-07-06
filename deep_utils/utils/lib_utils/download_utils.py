@@ -6,6 +6,7 @@ import sys
 import tarfile
 import time
 import zipfile
+from functools import wraps
 from urllib.request import urlretrieve
 import numpy as np
 import six
@@ -390,6 +391,7 @@ def _hash_file(fpath, algorithm='sha256', chunk_size=65535):
 
 
 def download_decorator(func):
+    @wraps(func)
     def wrapper(self, *args, **kwargs):
         config = self.config
         download_variables = self.download_variables
@@ -402,11 +404,3 @@ def download_decorator(func):
         return func(self, *args, **kwargs)
 
     return wrapper
-
-
-# if __name__ == '__main__':
-#     Client('https://github.com').get()
-
-    # f_name = 'weights/vision/face_detection/sdd/caffe/deploy.prototxt.txt'
-    # url_path = 'https://github.com/Practical-AI/deep_utils/releases/download/1.0.0/deploy.prototxt.txt'
-    # get_file(f_name, url_path)

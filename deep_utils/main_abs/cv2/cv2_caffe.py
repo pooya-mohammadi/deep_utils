@@ -5,11 +5,9 @@ from .cv2_config import CV2Config
 
 
 class CV2Caffe(CV2Main):
-    def __init__(self, name, file_path, **kwargs):
-        super().__init__(name=name)
+    def __init__(self, config: CV2Config):
+        super().__init__(config=config)
         self.download_variables = ('prototxt', 'caffemodel')
-        self.config: CV2Config
-        self.load_config(file_path, **kwargs)
         self.load_model()
 
     @download_decorator
@@ -18,3 +16,4 @@ class CV2Caffe(CV2Main):
             self.config.prototxt,
             self.config.caffemodel
         )
+

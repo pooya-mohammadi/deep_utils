@@ -7,11 +7,13 @@ from deep_utils.utils.os_utils import split_all
 
 
 class MainClass(ABC):
-    def __init__(self, name):
+    def __init__(self, name, file_path, **kwargs):
         self.config = None
         self.model = None
         self.name = name
         self.download_variables: Union[tuple, None] = None
+        self.load_config(file_path, **kwargs)
+        # self.load_model()
 
     def __repr__(self):
         message = f"{self.name} config attributes:"
