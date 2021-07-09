@@ -1,7 +1,7 @@
 [![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils)
 # Deep Utils 
 
-This is repository contains the most frequently used deep learning modules and functions.
+This repository contains the most frequently used deep learning modules and functions.
 
 
 ## Table of contents
