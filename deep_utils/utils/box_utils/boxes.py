@@ -117,6 +117,28 @@ class Box:
                             shift=shift)
         return img
 
+    @staticmethod
+    def put_boxes(img, boxes, copy=False,
+                  color=(0, 255, 0),
+                  thickness=1,
+                  lineType=None,
+                  shift=None,
+                  in_format="XYXY",
+                  in_source='CV'):
+        for box in boxes:
+            img = Box.put_box(
+                img,
+                box,
+                copy,
+                color,
+                thickness,
+                lineType,
+                shift,
+                in_format,
+                in_source,
+            )
+        return img
+
 
 if __name__ == '__main__':
     print(Box.BoxType.XYXY is Box.BoxType)
