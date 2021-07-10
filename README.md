@@ -18,9 +18,13 @@ This repository contains the most frequently used deep learning modules and func
     # With pip:
     pip install deep_utils
     
-    # or clone this repo
+    # or from the repo
+    pip install git+https://github.com/Practical-AI/deep_utils.git
+   
+    # or clone the repo
     git clone https://github.com/Practical-AI/deep_utils.git deep_utils
-    ```
+    pip install -U deep_utils 
+   ```
     
 1. In python, import deep_utils and instantiate models:
     
