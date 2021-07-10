@@ -1,4 +1,3 @@
-import time
 import numpy as np
 from deep_utils.main_abs.cv2.cv2_caffe import CV2Caffe
 from deep_utils.vision.face_detection.main import FaceDetector

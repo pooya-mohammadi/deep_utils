@@ -1,5 +1,4 @@
 import numpy as np
-import cv2
 
 
 def resize(mode, img, dsize, **kwargs):
@@ -16,6 +15,7 @@ def resize(mode, img, dsize, **kwargs):
 
 
 def cv2_resize(img, dsize, dst=None, fx=None, fy=None, interpolation=None):
+    import cv2
     if len(img.shape) == 3:
         return cv2.resize(img, dsize, dst, fx, fy, interpolation)
     elif len(img.shape) == 4:
