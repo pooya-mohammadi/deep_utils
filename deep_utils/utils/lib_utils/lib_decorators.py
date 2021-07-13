@@ -57,3 +57,20 @@ def get_elapsed_time(func):
         return func(self, *args, **kwargs)
 
     return wrapper
+
+
+def rgb2bgr(in_):
+    def inner_decorator(func):
+        @wraps(func)
+        def wrapper(self, in_img, *args, **kwargs):
+            is_rgb = kwargs.get('is_rgb', False)
+            if not is_rgb and in_ == 'rgb':
+                in_img = in_img[..., ::-1]
+            elif is_rgb and in_ == 'bgr':
+                in_img = in_img[..., ::-1]
+
+            return func(self, in_img, *args, **kwargs)
+
+        return wrapper
+
+    return inner_decorator
