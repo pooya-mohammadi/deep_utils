@@ -11,8 +11,8 @@ class Box:
     class SourceType(Enum):
         CV = 'CV'
         Numpy = 'NUMPY'
-        Torch = CV
-        TF = Numpy
+        Torch = 'Torch'
+        TF = "TF"
 
     class OutType(Enum):
         Numpy = np.array
@@ -67,10 +67,16 @@ class Box:
                 f'Conversion form {in_format} to {to_format} is not Supported.'
                 f' Supported types: {Box.__get_enum_names(Box.BoxType)}')
 
-        if (in_source == Box.SourceType.Torch and to_source == Box.SourceType.Numpy) or (
-                to_source == Box.SourceType.Torch and in_source == Box.SourceType.Numpy):
+        if (in_source in [Box.SourceType.Torch.value, Box.SourceType.CV.value] and to_source in [
+            Box.SourceType.TF.value, Box.SourceType.Numpy.value]) \
+                or (in_source in [Box.SourceType.TF.value, Box.SourceType.Numpy.value] and to_source in [
+            Box.SourceType.Torch.value, Box.SourceType.CV.value]):
             box = [box[1], box[0], box[3], box[2]]
-        elif (in_source is None and to_source is None) or in_source == to_source:
+        elif (in_source is None and to_source is None) or in_source == to_source \
+                or (in_source in [Box.SourceType.Torch.value, Box.SourceType.CV.value] and to_source in [
+            Box.SourceType.CV.value, Box.SourceType.Torch.value]) \
+                or (in_source in [Box.SourceType.TF.value, Box.SourceType.Numpy.value] and to_source in [
+            Box.SourceType.TF.value, Box.SourceType.Numpy.value]):
             pass
         else:
             raise Exception(
