@@ -13,7 +13,7 @@ class MainClass(ABC):
         self.name = name
         self.download_variables: Union[tuple, None] = None
         self.load_config(file_path, **kwargs)
-        # self.load_model()
+        self.load_model()
 
     def __repr__(self):
         message = f"{self.name} config attributes:"

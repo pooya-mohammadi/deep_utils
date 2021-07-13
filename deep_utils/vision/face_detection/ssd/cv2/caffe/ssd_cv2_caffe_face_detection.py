@@ -9,7 +9,9 @@ class SSDCV2CaffeFaceDetector(FaceDetector):
 
     def __init__(self, **kwargs):
         super().__init__(name=self.__class__.__name__, file_path=__file__, **kwargs)
-        self.base = CV2Caffe(self.config)
+
+    def load_model(self):
+        self.model = CV2Caffe(self.config)
 
     @get_elapsed_time
     @expand_input(3)
@@ -25,12 +27,12 @@ class SSDCV2CaffeFaceDetector(FaceDetector):
                      confidence=None,
                      get_time=False):
 
-        faces = self.base.forward(img,
-                                  resize_size=resize_size,
-                                  img_scale_factor=img_scale_factor,
-                                  img_mean=img_mean,
-                                  resize_mode=resize_mode,
-                                  swap_rgb=swap_rgb)
+        faces = self.model.forward(img,
+                                   resize_size=resize_size,
+                                   img_scale_factor=img_scale_factor,
+                                   img_mean=img_mean,
+                                   resize_mode=resize_mode,
+                                   swap_rgb=swap_rgb)
         n_image, h, w, _ = get_img_shape(img)
         boxes = [[] for _ in range(n_image)]
         confidences = [[] for _ in range(n_image)]
