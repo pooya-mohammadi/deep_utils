@@ -34,6 +34,8 @@ def expand_input(dim):
                 results = func(self, in_, *args, **kwargs)
                 if type(results) is tuple:
                     results = tuple([res[0] if res is not None else res for res in results])
+                elif type(results) is dict:
+                    results = {key: val[0] for key, val in results.items()}
                 else:
                     results = results[0]
                 return results
@@ -53,7 +55,12 @@ def get_elapsed_time(func):
             tic = time.time()
             results = func(self, *args, **kwargs)
             toc = time.time()
-            return tuple(list(results) + [round(toc - tic, 4)])
+            elapsed_time = round(toc - tic, 4)
+            if type(results) is dict:
+                results['elapsed_time'] = elapsed_time
+            else:
+                results = tuple(list(results) + [elapsed_time])
+            return results
         return func(self, *args, **kwargs)
 
     return wrapper
