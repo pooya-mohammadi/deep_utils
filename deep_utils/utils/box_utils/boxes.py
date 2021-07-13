@@ -10,7 +10,7 @@ class Box:
 
     class BoxSource(Enum):
         CV = 'CV'
-        Numpy = 'NUMPY'
+        Numpy = 'Numpy'
         Torch = 'Torch'
         TF = "TF"
 
@@ -110,7 +110,7 @@ class Box:
                 lineType=None,
                 shift=None,
                 in_format="XYXY",
-                in_source='CV'):
+                in_source='Numpy'):
         box = Box.box2box(box, in_format=in_format, to_format=Box.BoxFormat.XYXY,
                           in_source=in_source, to_source=Box.BoxSource.CV)
 
@@ -133,7 +133,7 @@ class Box:
                   lineType=None,
                   shift=None,
                   in_format="XYXY",
-                  in_source='CV'):
+                  in_source='Numpy'):
         for box in boxes:
             img = Box.put_box(
                 img,
@@ -143,8 +143,8 @@ class Box:
                 thickness,
                 lineType,
                 shift,
-                in_format,
-                in_source,
+                in_format=in_format,
+                in_source=in_source,
             )
         return img
 
