@@ -34,8 +34,10 @@ class MainClass(ABC):
         self.config = config
 
         for arg, val in kwargs.items():
-            if arg in self.config:
+            try:
                 if type(arg) is dict:
                     getattr(self.config, arg).update(val)
                 else:
                     setattr(self.config, arg, val)
+            except:
+                pass
