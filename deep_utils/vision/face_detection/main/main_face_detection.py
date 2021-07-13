@@ -12,5 +12,5 @@ class FaceDetector(MainClass):
         self.landmarks: Union[list, None, np.ndarray] = None
 
     @abstractmethod
-    def detect_faces(self, img, confidence=None, return_landmark=False, get_time=False):
+    def detect_faces(self, img, is_rgb, confidence=None, get_time=False):
         pass
