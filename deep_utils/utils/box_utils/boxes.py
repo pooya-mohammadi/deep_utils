@@ -4,11 +4,11 @@ from enum import Enum
 
 
 class Box:
-    class BoxType(Enum):
+    class BoxFormat(Enum):
         XYWC = "XYWC"
         XYXY = "XYXY"
 
-    class SourceType(Enum):
+    class BoxSource(Enum):
         CV = 'CV'
         Numpy = 'NUMPY'
         Torch = 'Torch'
@@ -28,7 +28,8 @@ class Box:
                 relative=None,
                 img_w=None,
                 img_h=None,
-                out_type=None):
+                out_type=None,
+                return_int=None):
         """
 
         :param box:
@@ -42,21 +43,21 @@ class Box:
         :param out_type: output type of the box. Supported types: list, tuple, numpy
         :return:
         """
-        if type(in_format) is Box.BoxType:
+        if type(in_format) is Box.BoxFormat:
             in_format = in_format.value
-        if type(to_format) is Box.BoxType:
+        if type(to_format) is Box.BoxFormat:
             to_format = to_format.value
 
-        if type(in_source) is Box.SourceType:
+        if type(in_source) is Box.BoxSource:
             in_source = in_source.value
-        if type(to_source) is Box.SourceType:
+        if type(to_source) is Box.BoxSource:
             to_source = to_source.value
 
-        if in_format == Box.BoxType.XYWC.value and to_format == Box.BoxType.XYXY.value:
+        if in_format == Box.BoxFormat.XYWC.value and to_format == Box.BoxFormat.XYXY.value:
             x1, y1, w, h = box
             x2, y2 = x1 + w, y1 + h
             box = [x1, y1, x2, y2]
-        elif in_format == Box.BoxType.XYXY.value and to_format == Box.BoxType.XYWC.value:
+        elif in_format == Box.BoxFormat.XYXY.value and to_format == Box.BoxFormat.XYWC.value:
             x1, y1, x2, y2 = box
             w, h = x2 - x1, y2 - y1
             box = [x1, y1, w, h]
@@ -65,24 +66,26 @@ class Box:
         else:
             raise Exception(
                 f'Conversion form {in_format} to {to_format} is not Supported.'
-                f' Supported types: {Box.__get_enum_names(Box.BoxType)}')
+                f' Supported types: {Box.__get_enum_names(Box.BoxFormat)}')
 
-        if (in_source in [Box.SourceType.Torch.value, Box.SourceType.CV.value] and to_source in [
-            Box.SourceType.TF.value, Box.SourceType.Numpy.value]) \
-                or (in_source in [Box.SourceType.TF.value, Box.SourceType.Numpy.value] and to_source in [
-            Box.SourceType.Torch.value, Box.SourceType.CV.value]):
+        if (in_source in [Box.BoxSource.Torch.value, Box.BoxSource.CV.value] and to_source in [
+            Box.BoxSource.TF.value, Box.BoxSource.Numpy.value]) \
+                or (in_source in [Box.BoxSource.TF.value, Box.BoxSource.Numpy.value] and to_source in [
+            Box.BoxSource.Torch.value, Box.BoxSource.CV.value]):
             box = [box[1], box[0], box[3], box[2]]
         elif (in_source is None and to_source is None) or in_source == to_source \
-                or (in_source in [Box.SourceType.Torch.value, Box.SourceType.CV.value] and to_source in [
-            Box.SourceType.CV.value, Box.SourceType.Torch.value]) \
-                or (in_source in [Box.SourceType.TF.value, Box.SourceType.Numpy.value] and to_source in [
-            Box.SourceType.TF.value, Box.SourceType.Numpy.value]):
+                or (in_source in [Box.BoxSource.Torch.value, Box.BoxSource.CV.value] and to_source in [
+            Box.BoxSource.CV.value, Box.BoxSource.Torch.value]) \
+                or (in_source in [Box.BoxSource.TF.value, Box.BoxSource.Numpy.value] and to_source in [
+            Box.BoxSource.TF.value, Box.BoxSource.Numpy.value]):
             pass
         else:
             raise Exception(
                 f'Conversion form {in_source} to {to_source} is not Supported.'
-                f' Supported types: {Box.__get_enum_names(Box.SourceType)}')
+                f' Supported types: {Box.__get_enum_names(Box.BoxSource)}')
         box = Box.get_type(box, out_type)
+        if return_int:
+            box = [int(b) for b in box]
         return box
 
     @staticmethod
@@ -108,8 +111,8 @@ class Box:
                 shift=None,
                 in_format="XYXY",
                 in_source='CV'):
-        box = Box.box2box(box, in_format=in_format, to_format=Box.BoxType.XYXY,
-                          in_source=in_source, to_source=Box.SourceType.CV)
+        box = Box.box2box(box, in_format=in_format, to_format=Box.BoxFormat.XYXY,
+                          in_source=in_source, to_source=Box.BoxSource.CV)
 
         if type(img) is not np.ndarray:
             img = np.array(img).astype(np.uint8)
@@ -145,6 +148,15 @@ class Box:
             )
         return img
 
+    @staticmethod
+    def get_box_img(img, bbox, box_format, box_source):
+        if len(img.shape) != 3:
+            raise Exception('The image size should be 3')
+        bbox = Box.box2box(bbox, in_format=box_format, to_format=Box.BoxFormat.XYXY, in_source=box_source,
+                           to_source=Box.BoxSource.Numpy, return_int=True)
+        img_part = img[bbox[0]:bbox[2], bbox[1]:bbox[3]]
+        return img_part
+
 
 if __name__ == '__main__':
-    print(Box.BoxType.XYXY is Box.BoxType)
+    print(Box.BoxFormat.XYXY is Box.BoxFormat)
