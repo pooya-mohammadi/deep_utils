@@ -2,7 +2,7 @@ import inspect
 import os
 from abc import ABC
 from typing import Union
-from deep_utils.utils.lib_utils.import_utils import import_module
+from deep_utils.utils.lib_utils.main_utils import import_module
 from deep_utils.utils.os_utils import split_all
 
 
