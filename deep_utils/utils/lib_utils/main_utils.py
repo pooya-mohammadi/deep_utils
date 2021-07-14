@@ -1,3 +1,4 @@
+from collections.abc import Callable
 import importlib
 import warnings
 
@@ -11,12 +12,20 @@ def import_module(module_name, things_to_import):
 
 
 def list_utils(module_dict):
-    def list_face_detection_models():
+    def list_models():
         detection_models = ""
         for name, _ in module_dict.items():
             detection_models += f'{name}\n'
         print(detection_models)
 
-    return list_face_detection_models
+    return list_models
 
-def loader()
+
+def loader(module_dict, list_models) -> Callable:
+    def module_loader(name, **kwargs):
+        if name not in module_dict:
+            raise Exception(f'{name} model is not supported. Supported models are {list_models()}')
+        model = module_dict[name](**kwargs)
+        return model
+
+    return module_loader
