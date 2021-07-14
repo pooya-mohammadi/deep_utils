@@ -5,7 +5,7 @@ from deep_utils.main_abs.main import MainClass
 
 
 class ObjectDetector(MainClass):
-    def __init__(self, name, file_path, **kwargs):
+    def __init__(self, name, file_path, *args, **kwargs):
         super().__init__(name, file_path=file_path, **kwargs)
         self.confidences: Union[list, None, np.ndarray] = None
         self.boxes: Union[list, None, np.ndarray] = None

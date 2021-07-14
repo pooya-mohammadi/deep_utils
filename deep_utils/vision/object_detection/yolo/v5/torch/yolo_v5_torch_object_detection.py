@@ -7,9 +7,9 @@ from deep_utils.utils.box_utils.boxes import Box
 from .config import Config
 
 
-class YOLOV5TorchObjectDetection(ObjectDetector):
+class YOLOV5TorchObjectDetector(ObjectDetector):
     def __init__(self, **kwargs):
-        super(YOLOV5TorchObjectDetection, self).__init__(name=self.__class__.__name__, file_path=__file__, **kwargs)
+        super(YOLOV5TorchObjectDetector, self).__init__(name=self.__class__.__name__, file_path=__file__, **kwargs)
         self.config: Config
 
     @rgb2bgr('rgb')
