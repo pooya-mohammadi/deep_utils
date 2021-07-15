@@ -149,12 +149,24 @@ class Box:
         return img
 
     @staticmethod
-    def get_box_img(img, bbox, box_format, box_source):
-        if len(img.shape) != 3:
-            raise Exception('The image size should be 3')
+    def _get_box_img(img, bbox, box_format=BoxFormat.XYXY, box_source=BoxSource.Numpy):
         bbox = Box.box2box(bbox, in_format=box_format, to_format=Box.BoxFormat.XYXY, in_source=box_source,
                            to_source=Box.BoxSource.Numpy, return_int=True)
         img_part = img[bbox[0]:bbox[2], bbox[1]:bbox[3]]
+        return img_part
+
+    @staticmethod
+    def get_box_img(img, bbox, box_format=BoxFormat.XYXY, box_source=BoxSource.Numpy):
+        if len(img.shape) != 3:
+            raise Exception('The image size should be 3')
+
+        img_part = []
+        if bbox is not None and len(bbox) == 0:
+            pass
+        elif type(bbox[0]) in [tuple, list, np.ndarray]:
+            img_part = [Box._get_box_img(img, b, box_format, box_source) for b in bbox]
+        else:
+            img_part = Box._get_box_img(img, bbox, box_format, box_source)
         return img_part
 
 
