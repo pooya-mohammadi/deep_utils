@@ -2,16 +2,39 @@ import numpy as np
 from enum import Enum
 
 
+class Point:
+    class PointSource(Enum):
+        CV = 'CV'
+        Numpy = 'Numpy'
+
+    @staticmethod
+    def point2point(point, in_source, to_source):
+        if type(in_source) is Point.PointSource:
+            in_source = in_source.value
+        if type(to_source) is Point.PointSource:
+            to_source = to_source.value
+
+        if (in_source == Point.PointSource.Numpy.value and to_source == Point.PointSource.CV.value) or (
+                in_source == Point.PointSource.CV.value and to_source == Point.PointSource.Numpy.value):
+            point = (point[1], point[0])
+        elif in_source == to_source:
+            pass
+        else:
+            raise Exception(
+                f'Conversion form {in_source} to {to_source} is not Supported.'
+                f' Supported types: {Box.__get_enum_names(Point.PointSource)}')
+
+
 class Box:
     class BoxFormat(Enum):
         XYWC = "XYWC"
         XYXY = "XYXY"
 
     class BoxSource(Enum):
-        CV = 'CV'
-        Numpy = 'Numpy'
         Torch = 'Torch'
         TF = "TF"
+        CV = 'CV'
+        Numpy = 'Numpy'
 
     class OutType(Enum):
         Numpy = np.array
@@ -186,7 +209,7 @@ class Box:
                  thickness=1,
                  lineType=None,
                  bottomLeftOrigin=None):
-        if text is None and len(text) == 0 and org is  None and len(org) ==0:
+        if text is None and len(text) == 0 and org is None and len(org) == 0:
             pass
         elif type(text[0]) in [tuple, list, np.ndarray]:
             for t, o in zip(text, org):
