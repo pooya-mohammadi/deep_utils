@@ -63,9 +63,10 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
         import torch
         sys.path.append(os.path.split(__file__)[0])
         from .models.experimental import attempt_load
-
-        self.model = attempt_load(self.config.model_weight, map_location=self.config.device)
-        self.model.to(self.config.device)
-        self.model.eval()
-        img = torch.zeros((1, 3, *self.config.img_size), device=self.config.device)
-        self.model(img)
+        if self.config.model_weight:
+            self.model = attempt_load(self.config.model_weight, map_location=self.config.device)
+            self.model.to(self.config.device)
+            self.model.eval()
+            img = torch.zeros((1, 3, *self.config.img_size), device=self.config.device)
+            self.model(img)
+            print(f'{self.name}: weights are loaded')
