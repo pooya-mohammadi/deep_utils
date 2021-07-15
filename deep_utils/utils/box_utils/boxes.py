@@ -23,7 +23,7 @@ class Point:
             raise Exception(
                 f'Conversion form {in_source} to {to_source} is not Supported.'
                 f' Supported types: {Box.__get_enum_names(Point.PointSource)}')
-
+        return point
 
 class Box:
     class BoxFormat(Enum):
