@@ -134,7 +134,7 @@ class Box:
                 shift=None,
                 in_format=BoxFormat.XYXY,
                 in_source=BoxSource.Numpy):
-        if box is not None and len(box) == 0:
+        if box is None and len(box) == 0:
             pass
         elif type(box[0]) in [tuple, list, np.ndarray]:
             for b in box:
@@ -157,13 +157,43 @@ class Box:
             raise Exception('The image size should be 3')
 
         img_part = []
-        if bbox is not None and len(bbox) == 0:
+        if bbox is None and len(bbox) == 0:
             pass
         elif type(bbox[0]) in [tuple, list, np.ndarray]:
             img_part = [Box._get_box_img(img, b, box_format, box_source) for b in bbox]
         else:
             img_part = Box._get_box_img(img, bbox, box_format, box_source)
         return img_part
+
+    @staticmethod
+    def _put_text(img, text, org, fontFace=None, fontScale=1, color=(0, 255, 0),
+                  thickness=1,
+                  lineType=None,
+                  bottomLeftOrigin=None):
+        import cv2
+        font_face = cv2.FONT_HERSHEY_PLAIN if fontFace is None else fontFace
+        img = cv2.putText(img, text, org, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin)
+
+        return img
+
+    @staticmethod
+    def put_text(img,
+                 text,
+                 org,
+                 fontFace=None,
+                 fontScale=1,
+                 color=(0, 255, 0),
+                 thickness=1,
+                 lineType=None,
+                 bottomLeftOrigin=None):
+        if text is None and len(text) == 0 and org is  None and len(org) ==0:
+            pass
+        elif type(text[0]) in [tuple, list, np.ndarray]:
+            for t, o in zip(text, org):
+                img = Box._put_text(img, t, o, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin)
+        else:
+            img = Box._put_text(img, text, org, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin)
+        return img
 
 
 if __name__ == '__main__':
