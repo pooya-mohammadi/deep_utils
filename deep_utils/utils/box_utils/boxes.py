@@ -103,13 +103,13 @@ class Box:
         return [n.name for n in in_]
 
     @staticmethod
-    def put_box(img, box, copy=False,
-                color=(0, 255, 0),
-                thickness=1,
-                lineType=None,
-                shift=None,
-                in_format="XYXY",
-                in_source='Numpy'):
+    def _put_box(img, box, copy=False,
+                 color=(0, 255, 0),
+                 thickness=1,
+                 lineType=None,
+                 shift=None,
+                 in_format="XYXY",
+                 in_source='Numpy'):
         import cv2
         box = Box.box2box(box, in_format=in_format, to_format=Box.BoxFormat.XYXY,
                           in_source=in_source, to_source=Box.BoxSource.CV)
@@ -127,25 +127,21 @@ class Box:
         return img
 
     @staticmethod
-    def put_boxes(img, boxes, copy=False,
-                  color=(0, 255, 0),
-                  thickness=1,
-                  lineType=None,
-                  shift=None,
-                  in_format="XYXY",
-                  in_source='Numpy'):
-        for box in boxes:
-            img = Box.put_box(
-                img,
-                box,
-                copy,
-                color,
-                thickness,
-                lineType,
-                shift,
-                in_format=in_format,
-                in_source=in_source,
-            )
+    def put_box(img, box, copy=False,
+                color=(0, 255, 0),
+                thickness=1,
+                lineType=None,
+                shift=None,
+                in_format=BoxFormat.XYXY,
+                in_source=BoxSource.Numpy):
+        if box is not None and len(box) == 0:
+            pass
+        elif type(box[0]) in [tuple, list, np.ndarray]:
+            for b in box:
+                img = Box._put_box(img, b, copy, color, thickness, lineType, shift, in_format, in_source)
+        else:
+            img = Box._put_box(img, box, copy, color, thickness, lineType, shift, in_format, in_source)
+
         return img
 
     @staticmethod

@@ -39,7 +39,7 @@ This repository contains the most frequently used deep learning modules and func
     
     
 1. Detect an image:
-    
+
     ```python
     import cv2
     from deep_utils import show_destroy_cv2, Box
@@ -51,7 +51,7 @@ This repository contains the most frequently used deep learning modules and func
     boxes, confidences = face_detector.detect_faces(img)
     
     # Draw detected boxes on the image 
-    img = Box.put_boxes(img, boxes)
+    img = Box.put_box(img, boxes)
     
     # show the results
     show_destroy_cv2(img) 
