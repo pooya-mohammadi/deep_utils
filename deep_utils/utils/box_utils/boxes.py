@@ -1,4 +1,3 @@
-import cv2
 import numpy as np
 from enum import Enum
 
@@ -111,6 +110,7 @@ class Box:
                 shift=None,
                 in_format="XYXY",
                 in_source='Numpy'):
+        import cv2
         box = Box.box2box(box, in_format=in_format, to_format=Box.BoxFormat.XYXY,
                           in_source=in_source, to_source=Box.BoxSource.CV)
 
