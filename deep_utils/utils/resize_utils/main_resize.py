@@ -1,14 +1,11 @@
 import numpy as np
+from deep_utils.utils.box_utils.boxes import Point
 
 
-def resize(mode, img, dsize, **kwargs):
-    if mode == 'normal':
-        new_img = cv2_resize(img,
-                             dsize=dsize,
-                             dst=kwargs.get('dst', None),
-                             fx=kwargs.get('fx', None),
-                             fy=kwargs.get('fy', None),
-                             interpolation=kwargs.get('interpolation', None))
+def resize(img, dsize, in_source='Numpy', mode='cv2', interpolation=None):
+    if mode == 'cv2':
+        dsize = Point.point2point(dsize, in_source=in_source, to_source=Point.PointSource.Numpy)
+        new_img = cv2_resize(img, dsize=dsize, interpolation=interpolation)
     else:
         raise Exception(f'{mode} is not supported, supported types: normal, ')
     return new_img

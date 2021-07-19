@@ -1,4 +1,3 @@
-import cv2
 from deep_utils.utils.resize_utils.main_resize import resize
 from .cv2_config import CV2Config
 from deep_utils.utils.lib_utils.lib_decorators import get_from_config
@@ -15,11 +14,11 @@ class CV2Main:
                 resize_size=None,
                 img_scale_factor=None,
                 img_mean=None,
-                resize_mode=None,
-                swap_rgb=None
+                swap_rgb=None,
                 ):
+        import cv2
         image_len = len(image.shape)
-        resize_img = resize(resize_mode, image, resize_size)
+        resize_img = resize(image, resize_size)
         if image_len == 3:
             blobs = cv2.dnn.blobFromImage(
                 resize_img,
