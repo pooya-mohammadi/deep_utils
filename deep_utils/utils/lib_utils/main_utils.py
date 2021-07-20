@@ -16,7 +16,7 @@ def list_utils(module_dict):
         detection_models = ""
         for name, _ in module_dict.items():
             detection_models += f'{name}\n'
-        print(detection_models)
+        return detection_models
 
     return list_models
 
@@ -24,7 +24,7 @@ def list_utils(module_dict):
 def loader(module_dict, list_models) -> Callable:
     def module_loader(name, **kwargs):
         if name not in module_dict:
-            raise Exception(f'{name} model is not supported. Supported models are {list_models()}')
+            raise Exception(f'{name} model is not supported. Supported models are:\n{list_models()}')
         model = module_dict[name](**kwargs)
         return model
 
