@@ -27,12 +27,12 @@ class SSDCV2CaffeFaceDetector(FaceDetector):
                      resize_mode=None,
                      confidence=None,
                      get_time=False):
-
         faces = self.model.forward(img,
                                    resize_size=resize_size,
                                    img_scale_factor=img_scale_factor,
                                    img_mean=img_mean,
-                                   resize_mode=resize_mode)
+                                   resize_mode=resize_mode
+                                   )
         n_image, h, w, _ = get_img_shape(img)
         self.boxes = [[] for _ in range(n_image)]
         self.confidences = [[] for _ in range(n_image)]

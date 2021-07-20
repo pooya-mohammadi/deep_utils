@@ -15,10 +15,11 @@ class CV2Main:
                 img_scale_factor=None,
                 img_mean=None,
                 swap_rgb=None,
+                resize_mode=None
                 ):
         import cv2
         image_len = len(image.shape)
-        resize_img = resize(image, resize_size)
+        resize_img = resize(image, resize_size, mode=resize_mode)
         if image_len == 3:
             blobs = cv2.dnn.blobFromImage(
                 resize_img,
