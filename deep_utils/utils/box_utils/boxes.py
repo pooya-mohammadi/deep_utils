@@ -195,7 +195,7 @@ class Box:
                   bottomLeftOrigin=None):
         import cv2
         font_face = cv2.FONT_HERSHEY_PLAIN if fontFace is None else fontFace
-        img = cv2.putText(img, text, org, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin)
+        img = cv2.putText(img, text, org, font_face, fontScale, color, thickness, lineType, bottomLeftOrigin)
 
         return img
 
