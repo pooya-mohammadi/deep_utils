@@ -25,6 +25,7 @@ class Point:
                 f' Supported types: {Box.__get_enum_names(Point.PointSource)}')
         return point
 
+
 class Box:
     class BoxFormat(Enum):
         XYWC = "XYWC"
@@ -46,12 +47,35 @@ class Box:
                 in_format=None,
                 to_format=None,
                 in_source=None,
-                to_source=None,
+                to_source=BoxSource.Numpy,
                 relative=None,
                 img_w=None,
                 img_h=None,
                 out_type=None,
                 return_int=None):
+        if box is None or len(box) == 0:
+            pass
+        elif type(box[0]) in [tuple, list, np.ndarray]:
+            box = [Box._box2box(b, in_format=in_format, to_format=to_format, in_source=in_source, to_source=to_source,
+                                relative=relative, img_w=img_w, img_h=img_h, out_type=out_type, return_int=return_int)
+                   for b in box]
+
+        else:
+            box = Box._box2box(box, in_format=in_format, to_format=to_format, in_source=in_source, to_source=to_source,
+                               relative=relative, img_w=img_w, img_h=img_h, out_type=out_type, return_int=return_int)
+        return box
+
+    @staticmethod
+    def _box2box(box,
+                 in_format=None,
+                 to_format=None,
+                 in_source=None,
+                 to_source=None,
+                 relative=None,
+                 img_w=None,
+                 img_h=None,
+                 out_type=None,
+                 return_int=None):
         """
 
         :param box:
@@ -157,7 +181,7 @@ class Box:
                 shift=None,
                 in_format=BoxFormat.XYXY,
                 in_source=BoxSource.Numpy):
-        if box is None and len(box) == 0:
+        if box is None or len(box) == 0:
             pass
         elif type(box[0]) in [tuple, list, np.ndarray]:
             for b in box:
@@ -180,7 +204,7 @@ class Box:
             raise Exception('The image size should be 3')
 
         img_part = []
-        if bbox is None and len(bbox) == 0:
+        if bbox is None or len(bbox) == 0:
             pass
         elif type(bbox[0]) in [tuple, list, np.ndarray]:
             img_part = [Box._get_box_img(img, b, box_format, box_source) for b in bbox]
@@ -190,9 +214,7 @@ class Box:
 
     @staticmethod
     def _put_text(img, text, org, fontFace=None, fontScale=1, color=(0, 255, 0),
-                  thickness=1,
-                  lineType=None,
-                  bottomLeftOrigin=None):
+                  thickness=1, lineType=None, bottomLeftOrigin=None):
         import cv2
         font_face = cv2.FONT_HERSHEY_PLAIN if fontFace is None else fontFace
         img = cv2.putText(img, text, org, font_face, fontScale, color, thickness, lineType, bottomLeftOrigin)
@@ -209,7 +231,7 @@ class Box:
                  thickness=1,
                  lineType=None,
                  bottomLeftOrigin=None):
-        if text is None and len(text) == 0 and org is None and len(org) == 0:
+        if text is None or len(text) == 0 or org is None or len(org) == 0:
             pass
         elif type(text[0]) in [tuple, list, np.ndarray]:
             for t, o in zip(text, org):
