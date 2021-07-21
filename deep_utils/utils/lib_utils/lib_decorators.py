@@ -10,7 +10,10 @@ def get_from_config(func):
     def wrapper(self, *args, **kwargs):
         config = self.config
         arguments = inspect.getfullargspec(func)
-        kwargs_ = {i: j for i, j in zip(arguments.args[::-1], arguments.defaults[::-1])}
+        if arguments.defaults is not None:
+            kwargs_ = {i: j for i, j in zip(arguments.args[::-1], arguments.defaults[::-1])}
+        else:
+            kwargs_ = dict()
         if kwargs is not None:
             kwargs_.update(kwargs)
         kwargs = kwargs_
@@ -35,7 +38,8 @@ def expand_input(dim):
                 if type(results) is tuple:
                     results = tuple([res[0] if res is not None else res for res in results])
                 elif type(results) is dict:
-                    results = {key: val[0] for key, val in results.items()}
+                    results = {key: val[0] if val is not None and len(val) != 0 else val for key, val in
+                               results.items()}
                 else:
                     results = results[0]
                 return results
@@ -77,8 +81,10 @@ def rgb2bgr(in_):
                 in_img = in_img[..., ::-1]
             elif is_rgb and in_ == 'gray':
                 in_img = np.dot(in_img[..., :3], [0.299, 0.587, 0.144])
+                in_img = in_img.astype(np.uint8)
             elif not is_rgb and in_ == 'gray':
                 in_img = np.dot(in_img[..., :3][..., ::-1], [0.299, 0.587, 0.144])
+                in_img = in_img.astype(np.uint8)
             return func(self, in_img, *args, **kwargs)
 
         return wrapper
