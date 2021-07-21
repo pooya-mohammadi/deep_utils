@@ -75,7 +75,10 @@ def rgb2bgr(in_):
                 in_img = in_img[..., ::-1]
             elif is_rgb and in_ == 'bgr':
                 in_img = in_img[..., ::-1]
-
+            elif is_rgb and in_ == 'gray':
+                in_img = np.dot(in_img[..., :3], [0.299, 0.587, 0.144])
+            elif not is_rgb and in_ == 'gray':
+                in_img = np.dot(in_img[..., :3][..., ::-1], [0.299, 0.587, 0.144])
             return func(self, in_img, *args, **kwargs)
 
         return wrapper
