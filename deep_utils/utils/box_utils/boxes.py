@@ -9,6 +9,16 @@ class Point:
 
     @staticmethod
     def point2point(point, in_source, to_source):
+        if point is None or len(point) == 0:
+            pass
+        elif type(point[0]) in [tuple, list, np.ndarray]:
+            point = [Point.point2point(p, in_source=in_source, to_source=to_source) for p in point]
+        else:
+            point = Point.point2point(point, in_source=in_source, to_source=to_source)
+        return point
+
+    @staticmethod
+    def _point2point(point, in_source, to_source):
         if type(in_source) is Point.PointSource:
             in_source = in_source.value
         if type(to_source) is Point.PointSource:
@@ -22,7 +32,7 @@ class Point:
         else:
             raise Exception(
                 f'Conversion form {in_source} to {to_source} is not Supported.'
-                f' Supported types: {Box.__get_enum_names(Point.PointSource)}')
+                f' Supported types: {Box._get_enum_names(Point.PointSource)}')
         return point
 
 
@@ -112,7 +122,7 @@ class Box:
         else:
             raise Exception(
                 f'Conversion form {in_format} to {to_format} is not Supported.'
-                f' Supported types: {Box.__get_enum_names(Box.BoxFormat)}')
+                f' Supported types: {Box._get_enum_names(Box.BoxFormat)}')
 
         if (in_source in [Box.BoxSource.Torch.value, Box.BoxSource.CV.value] and to_source in [
             Box.BoxSource.TF.value, Box.BoxSource.Numpy.value]) \
@@ -128,7 +138,7 @@ class Box:
         else:
             raise Exception(
                 f'Conversion form {in_source} to {to_source} is not Supported.'
-                f' Supported types: {Box.__get_enum_names(Box.BoxSource)}')
+                f' Supported types: {Box._get_enum_names(Box.BoxSource)}')
         box = Box.get_type(box, out_type)
         if return_int:
             box = [int(b) for b in box]
@@ -142,11 +152,11 @@ class Box:
                 in_ = out_type(in_)
             except:
                 raise Exception(
-                    f'{out_type} is not Supported. Supported types: {Box.__get_enum_names(Box.OutType)}')
+                    f'{out_type} is not Supported. Supported types: {Box._get_enum_names(Box.OutType)}')
         return in_
 
     @staticmethod
-    def __get_enum_names(in_):
+    def _get_enum_names(in_):
         return [n.name for n in in_]
 
     @staticmethod
