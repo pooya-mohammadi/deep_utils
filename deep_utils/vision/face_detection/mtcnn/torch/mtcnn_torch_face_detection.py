@@ -97,8 +97,11 @@ class MTCNNTorchFaceDetector(FaceDetector):
             # STAGE 2
 
             img_boxes = get_image_boxes(bounding_boxes, img[img_n], size=24)
-            image_boxes.append(img_boxes)
-            join_bounding_boxes.append(bounding_boxes)
+            if img_boxes.size != 0:
+                image_boxes.append(img_boxes)
+                join_bounding_boxes.append(bounding_boxes)
+        if len(image_boxes) == 0:
+            return dict(boxes=[], confidences=[], landmarks=[])
         bounding_boxes_ = np.vstack(join_bounding_boxes)
         split = [0]
         for img_box in image_boxes:
@@ -126,8 +129,11 @@ class MTCNNTorchFaceDetector(FaceDetector):
             # STAGE 3
 
             img_boxes = get_image_boxes(bounding_boxes, img[img_n], size=48)
-            image_boxes.append(img_boxes)
-            join_bounding_boxes.append(bounding_boxes)
+            if img_boxes.size != 0:
+                image_boxes.append(img_boxes)
+                join_bounding_boxes.append(bounding_boxes)
+        if len(image_boxes) == 0:
+            return dict(boxes=[], confidences=[], landmarks=[])
         split = [0]
         for img_box in image_boxes:
             split.append(img_box.shape[0] + split[-1])
@@ -135,6 +141,7 @@ class MTCNNTorchFaceDetector(FaceDetector):
         bounding_boxes_ = np.vstack(join_bounding_boxes)
         img_boxes = torch.FloatTensor(img_boxes).to(self.config.device)
         output = self.model["onet"](img_boxes)
+        boxes_, confidences_, landmarks_ = [], [], []
         for img_n in range(img.shape[0]):
             bounding_boxes = bounding_boxes_[split[img_n]: split[img_n + 1]]
             landmarks = output[0].cpu().data.numpy()[split[img_n]: split[img_n + 1]]
@@ -157,8 +164,8 @@ class MTCNNTorchFaceDetector(FaceDetector):
 
             boxes, confidences = bounding_boxes[keep][:, :4], bounding_boxes[keep][:, 4]
             boxes = Box.box2box(boxes, in_source=Box.BoxSource.Torch, to_source=Box.BoxSource.Numpy)
-            self.boxes.append(boxes)
-            self.confidences.append(confidences)
-            self.landmarks.append(landmarks[keep])
+            boxes_.append(boxes)
+            confidences_.append(confidences)
+            landmarks_.append(landmarks[keep])
 
-        return dict(boxes=self.boxes, confidences=self.confidences, landmarks=self.landmarks)
+        return dict(boxes=boxes_, confidences=confidences_, landmarks=landmarks_)

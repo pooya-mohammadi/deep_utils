@@ -44,7 +44,7 @@ class HaarcascadeCV2FaceDetector(FaceDetector):
                      get_eye=True,
                      get_time=False,
                      ):
-        eye_poses, nose_poses = [], []
+        boxes, landmarks_, confidences, eye_poses, nose_poses = [], [], [], [], []
         for image in img:
             faces = self.model['face'].detectMultiScale(image,
                                                         scaleFactor=scaleFactor,
@@ -52,7 +52,7 @@ class HaarcascadeCV2FaceDetector(FaceDetector):
                                                         minSize=minSize,
                                                         maxSize=maxSize,
                                                         flags=flags)
-            self.boxes.append(Box.box2box(faces, in_source='CV', to_source='Numpy', in_format='XYWH', to_format='XYXY'))
+            boxes.append(Box.box2box(faces, in_source='CV', to_source='Numpy', in_format='XYWH', to_format='XYXY'))
             if get_nose:
                 nose_pos = self.model['nose'].detectMultiScale(image,
                                                                scaleFactor=scaleFactor,
@@ -74,9 +74,9 @@ class HaarcascadeCV2FaceDetector(FaceDetector):
             if get_landmarks:
                 _, landmarks = self.model['landmarks'].fit(image, faces)
                 landmarks = [Point.point2point(landmark, in_source='CV', to_source='Numpy') for landmark in landmarks]
-                self.landmarks.append(landmarks)
-        return dict(boxes=self.boxes,
-                    confidences=self.confidences,
-                    landmarks=self.landmarks,
+                landmarks_.append(landmarks)
+        return dict(boxes=boxes,
+                    confidences=confidences,
+                    landmarks=landmarks_,
                     eye_poses=eye_poses,
                     nose_poses=nose_poses)

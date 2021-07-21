@@ -34,8 +34,8 @@ class SSDCV2CaffeFaceDetector(FaceDetector):
                                    resize_mode=resize_mode
                                    )
         n_image, h, w, _ = get_img_shape(img)
-        self.boxes = [[] for _ in range(n_image)]
-        self.confidences = [[] for _ in range(n_image)]
+        boxes = [[] for _ in range(n_image)]
+        confidences = [[] for _ in range(n_image)]
         for i in range(faces.shape[2]):
             img_number = int(faces[0, 0, i, 0])
             face_confidence = faces[0, 0, i, 2]
@@ -43,9 +43,9 @@ class SSDCV2CaffeFaceDetector(FaceDetector):
                 continue
             box = faces[0, 0, i, 3:7] * np.array([w, h, w, h])
             box = Box.box2box(box, in_source='CV', to_source='Numpy', return_int=True)
-            self.boxes[img_number].append(box)
-            self.confidences[img_number].append(face_confidence)
-        return dict(boxes=self.boxes, confidences=self.confidences)
+            boxes[img_number].append(box)
+            confidences[img_number].append(face_confidence)
+        return dict(boxes=boxes, confidences=confidences)
 
 
 if __name__ == '__main__':
