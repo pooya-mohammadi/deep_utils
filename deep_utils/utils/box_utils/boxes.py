@@ -12,9 +12,9 @@ class Point:
         if point is None or len(point) == 0:
             pass
         elif type(point[0]) in [tuple, list, np.ndarray]:
-            point = [Point.point2point(p, in_source=in_source, to_source=to_source) for p in point]
+            point = [Point._point2point(p, in_source=in_source, to_source=to_source) for p in point]
         else:
-            point = Point.point2point(point, in_source=in_source, to_source=to_source)
+            point = Point._point2point(point, in_source=in_source, to_source=to_source)
         return point
 
     @staticmethod
@@ -38,7 +38,7 @@ class Point:
 
 class Box:
     class BoxFormat(Enum):
-        XYWC = "XYWC"
+        XYWH = "XYWH"
         XYXY = "XYXY"
 
     class BoxSource(Enum):
@@ -109,11 +109,11 @@ class Box:
         if type(to_source) is Box.BoxSource:
             to_source = to_source.value
 
-        if in_format == Box.BoxFormat.XYWC.value and to_format == Box.BoxFormat.XYXY.value:
+        if in_format == Box.BoxFormat.XYWH.value and to_format == Box.BoxFormat.XYXY.value:
             x1, y1, w, h = box
             x2, y2 = x1 + w, y1 + h
             box = [x1, y1, x2, y2]
-        elif in_format == Box.BoxFormat.XYXY.value and to_format == Box.BoxFormat.XYWC.value:
+        elif in_format == Box.BoxFormat.XYXY.value and to_format == Box.BoxFormat.XYWH.value:
             x1, y1, x2, y2 = box
             w, h = x2 - x1, y2 - y1
             box = [x1, y1, w, h]
