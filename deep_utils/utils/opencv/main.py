@@ -1,3 +1,4 @@
+import numpy as np
 from deep_utils.utils.box_utils.boxes import Point
 
 
@@ -10,6 +11,38 @@ class VideoWriterCV:
 
     def write(self, frame):
         self.vw.write(frame)
+
+
+def rotate(img, rotation_degree, center_point=None, scale=1.0, dsize=None, bound=False):
+    import cv2
+    h, w = img.shape[:2]
+    (w, h) = dsize = (w, h) if dsize is None else dsize
+    center_point = (w // 2, h // 2) if center_point is None else center_point
+    # negative angle >> clockwise rotation | positive angle >> counter clockwise rotation
+    m = cv2.getRotationMatrix2D(center_point, -rotation_degree, scale)
+    if bound:
+        h, w = img.shape[:2]
+        cos = abs(m[0, 0])
+        sin = abs(m[0, 1])
+        w_ = int((cos * w) + (sin * h))
+        h_ = int((cos * h) + (sin * w))
+        m[0, 2] += w_ // 2 - center_point[0]
+        m[1, 2] += h_ // 2 - center_point[1]
+        dsize = (w_, h_)
+    rotated = cv2.warpAffine(img, m, dsize)
+
+    return rotated
+
+
+def translate(img, tx, ty, dsize=None):
+    import cv2
+    h, w = img.shape[:2][::-1]
+    dsize = (w, h) if dsize is None else dsize
+    translation_matrix = np.array([
+        [1, 0, tx],
+        [0, 1, ty]], dtype=np.float32)
+    translated_image = cv2.warpAffine(src=img, M=translation_matrix, dsize=dsize)
+    return translated_image
 
 
 def show_destroy_cv2(img, win_name=''):
