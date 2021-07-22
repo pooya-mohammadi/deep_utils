@@ -162,15 +162,16 @@ class MTCNNTorchFaceDetector(FaceDetector):
 
             bounding_boxes = calibrate_box(bounding_boxes, offsets)
             keep = nms(bounding_boxes, nms_thresholds[2], mode='min')
-
+            landmarks = landmarks[keep]
             boxes, confidences = bounding_boxes[keep][:, :4], bounding_boxes[keep][:, 4]
+            keep = confidences >= confidence
+            boxes, confidences, landmarks = boxes[keep], confidences[keep], landmarks[keep]
             boxes = Box.box2box(boxes, in_source=Box.BoxSource.Torch, to_source=Box.BoxSource.Numpy)
             boxes_.append(boxes)
             confidences_.append(confidences)
-            l = landmarks[keep]
-            if len(l) != 0:
-                l = [[Point.point2point((l[j][i], l[j][5 + i]), in_source='Torch', to_source='Numpy') for i in
-                      range(5)] for j in range(l.shape[0])]
-            landmarks_.append(l)
-
+            if len(landmarks) != 0:
+                landmarks = [[Point.point2point((landmarks[j][i], landmarks[j][5 + i]),
+                                                in_source='Torch', to_source='Numpy') for i in
+                              range(5)] for j in range(landmarks.shape[0])]
+            landmarks_.append(landmarks)
         return dict(boxes=boxes_, confidences=confidences_, landmarks=landmarks_)
