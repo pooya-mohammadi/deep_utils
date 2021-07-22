@@ -4,6 +4,8 @@ from enum import Enum
 
 class Point:
     class PointSource(Enum):
+        Torch = 'Torch'
+        TF = "TF"
         CV = 'CV'
         Numpy = 'Numpy'
 
@@ -24,16 +26,42 @@ class Point:
         if type(to_source) is Point.PointSource:
             to_source = to_source.value
 
-        if (in_source == Point.PointSource.Numpy.value and to_source == Point.PointSource.CV.value) or (
-                in_source == Point.PointSource.CV.value and to_source == Point.PointSource.Numpy.value):
+        if (in_source in [Point.PointSource.Torch.value, Point.PointSource.CV.value] and to_source in [
+            Point.PointSource.TF.value, Point.PointSource.Numpy.value]) \
+                or (in_source in [Point.PointSource.TF.value, Point.PointSource.Numpy.value] and to_source in [
+            Point.PointSource.Torch.value, Point.PointSource.CV.value]):
             point = (point[1], point[0])
-        elif in_source == to_source:
+        elif (in_source is None and to_source is None) or in_source == to_source \
+                or (in_source in [Point.PointSource.Torch.value, Point.PointSource.CV.value] and to_source in [
+            Point.PointSource.CV.value, Point.PointSource.Torch.value]) \
+                or (in_source in [Point.PointSource.TF.value, Point.PointSource.Numpy.value] and to_source in [
+            Point.PointSource.TF.value, Point.PointSource.Numpy.value]):
             pass
         else:
             raise Exception(
                 f'Conversion form {in_source} to {to_source} is not Supported.'
                 f' Supported types: {Box._get_enum_names(Point.PointSource)}')
+
         return point
+
+    @staticmethod
+    def _put_point(img, point, radius, color=(0, 255, 0), thickness=None, lineType=None, shift=None, in_source="Numpy"):
+        import cv2
+        if type(point) is not int:
+            point = (int(point[0]), int(point[1]))
+        point = Point.point2point(point, in_source=in_source, to_source="CV")
+        return cv2.circle(img, point, radius, color, thickness, lineType, shift)
+
+    @staticmethod
+    def put_point(img, point, radius, color=(0, 255, 0), thickness=None, lineType=None, shift=None, in_source="Numpy"):
+        if point is None or len(point) == 0:
+            pass
+        elif type(point[0]) in [tuple, list, np.ndarray]:
+            for p in point:
+                img = Point._put_point(img, p, radius, color, thickness, lineType, shift, in_source)
+        else:
+            img = Point._put_point(img, point, radius, color, thickness, lineType, shift, in_source)
+        return img
 
 
 class Box:
