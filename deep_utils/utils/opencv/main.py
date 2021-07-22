@@ -13,13 +13,14 @@ class VideoWriterCV:
         self.vw.write(frame)
 
 
-def rotate(img, rotation_degree, center_point=None, scale=1.0, dsize=None, bound=False):
+def rotate(img, rotation_degree, center_point=None, scale=1.0, dsize=None, bound=False, clockwise=True):
     import cv2
     h, w = img.shape[:2]
     (w, h) = dsize = (w, h) if dsize is None else dsize
     center_point = (w // 2, h // 2) if center_point is None else center_point
     # negative angle >> clockwise rotation | positive angle >> counter clockwise rotation
-    m = cv2.getRotationMatrix2D(center_point, -rotation_degree, scale)
+    rotation_degree = -rotation_degree if clockwise else rotation_degree
+    m = cv2.getRotationMatrix2D(center_point, rotation_degree, scale)
     if bound:
         h, w = img.shape[:2]
         cos = abs(m[0, 0])
