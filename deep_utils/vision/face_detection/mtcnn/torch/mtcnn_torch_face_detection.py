@@ -1,9 +1,10 @@
 import torch
 import numpy as np
+
 from deep_utils.vision.face_detection.main.main_face_detection import FaceDetector
 from deep_utils.utils.lib_utils.lib_decorators import get_from_config, expand_input, get_elapsed_time, rgb2bgr
 from deep_utils.utils.lib_utils.download_utils import download_decorator
-from deep_utils.utils.box_utils.boxes import Box
+from deep_utils.utils.box_utils.boxes import Box, Point
 from .config import Config
 from .src.get_nets import PNet, RNet, ONet
 from .src.box_utils import nms, calibrate_box, get_image_boxes, convert_to_square
@@ -166,6 +167,10 @@ class MTCNNTorchFaceDetector(FaceDetector):
             boxes = Box.box2box(boxes, in_source=Box.BoxSource.Torch, to_source=Box.BoxSource.Numpy)
             boxes_.append(boxes)
             confidences_.append(confidences)
-            landmarks_.append(landmarks[keep])
+            l = landmarks[keep]
+            if len(l) != 0:
+                l = [[Point.point2point((l[j][i], l[j][5 + i]), in_source='Torch', to_source='Numpy') for i in
+                      range(5)] for j in range(l.shape[0])]
+            landmarks_.append(l)
 
         return dict(boxes=boxes_, confidences=confidences_, landmarks=landmarks_)
