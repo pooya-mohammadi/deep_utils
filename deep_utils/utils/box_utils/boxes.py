@@ -1,3 +1,5 @@
+from typing import Union
+
 import numpy as np
 from enum import Enum
 
@@ -277,6 +279,31 @@ class Box:
         else:
             img = Box._put_text(img, text, org, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin)
         return img
+
+    @staticmethod
+    def get_biggest(box,
+                    in_format=BoxFormat.XYXY,
+                    in_source=BoxSource.Numpy,
+                    get_index=False,
+                    inputs: Union[None, dict] = None,
+                    reverse=False):
+        box = Box.box2box(box,
+                          in_format=in_format,
+                          in_source=in_source,
+                          to_source=Box.BoxSource.Numpy,
+                          to_format=Box.BoxFormat.XYWH
+                          )
+        if reverse:
+            chosen_box = min(box, key=lambda b: b[2] * b[3])
+        else:
+            chosen_box = max(box, key=lambda b: b[2] * b[3])
+        index = box.index(chosen_box)
+        if inputs is not None:
+            inputs = {k: v[index] for k, v in inputs.items()}
+            return inputs
+        if get_index:
+            return chosen_box, index
+        return chosen_box
 
 
 if __name__ == '__main__':
