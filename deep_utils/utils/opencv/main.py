@@ -27,8 +27,8 @@ def rotate(img, rotation_degree, center_point=None, scale=1.0, dsize=None, bound
         sin = abs(m[0, 1])
         w_ = int((cos * w) + (sin * h))
         h_ = int((cos * h) + (sin * w))
-        m[0, 2] += w_ // 2 - center_point[0]
-        m[1, 2] += h_ // 2 - center_point[1]
+        m[0, 2] += w_ // 2 - w // 2
+        m[1, 2] += h_ // 2 - h // 2
         dsize = (w_, h_)
     rotated = cv2.warpAffine(img, m, dsize)
 
