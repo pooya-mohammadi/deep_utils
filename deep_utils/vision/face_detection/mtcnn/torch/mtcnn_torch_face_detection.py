@@ -171,7 +171,12 @@ class MTCNNTorchFaceDetector(FaceDetector):
             confidences_.append(confidences)
             if len(landmarks) != 0:
                 landmarks = [[Point.point2point((landmarks[j][i], landmarks[j][5 + i]),
-                                                in_source='Torch', to_source='Numpy') for i in
-                              range(5)] for j in range(landmarks.shape[0])]
-            landmarks_.append(landmarks)
+                                                in_source='Torch', to_source='Numpy') for i in range(5)] for j in
+                             range(landmarks.shape[0])]
+            face_points = ["nose", "mouth_right", "right_eye", "left_eye", "mouth_left"]
+            for i in range(0, len(landmarks)):
+                face_dict = {}
+                for points, face in zip(landmarks[i], face_points):
+                    face_dict[face] = points
+                landmarks_.append(face_dict)
         return dict(boxes=boxes_, confidences=confidences_, landmarks=landmarks_)
