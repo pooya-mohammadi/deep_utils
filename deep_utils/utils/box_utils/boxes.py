@@ -305,6 +305,19 @@ class Box:
             return chosen_box, index
         return chosen_box
 
+    @staticmethod
+    def get_area(box,
+                 in_format=BoxFormat.XYXY,
+                 in_source=BoxSource.Numpy):
+        box = Box.box2box(box,
+                          in_format=in_format,
+                          in_source=in_source,
+                          to_source=Box.BoxSource.Numpy,
+                          to_format=Box.BoxFormat.XYWH
+                          )
+        area = box[2] * box[3]
+        return area
+
 
 if __name__ == '__main__':
     print(Box.BoxFormat.XYXY is Box.BoxFormat)
