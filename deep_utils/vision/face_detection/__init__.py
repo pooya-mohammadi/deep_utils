@@ -8,6 +8,7 @@ Face_Detection_Models = {
     "SSDCV2CaffeFaceDetector": SSDCV2CaffeFaceDetector,
     "MTCNNTorchFaceDetector": MTCNNTorchFaceDetector,
     "HaarcascadeCV2FaceDetector": HaarcascadeCV2FaceDetector,
+    "MTCNNTFFaceDetector": MTCNNTFFaceDetector
 }
 
 list_face_detection_models = list_utils(Face_Detection_Models)
