@@ -287,6 +287,8 @@ class Box:
                     get_index=False,
                     inputs: Union[None, dict] = None,
                     reverse=False):
+        if len(box) == 0 or box is None:
+            return
         box = Box.box2box(box,
                           in_format=in_format,
                           in_source=in_source,
