@@ -86,7 +86,7 @@ class Box:
     def box2box(box,
                 in_format=None,
                 to_format=None,
-                in_source=None,
+                in_source=BoxSource.Numpy,
                 to_source=BoxSource.Numpy,
                 relative=None,
                 img_w=None,
@@ -303,6 +303,7 @@ class Box:
         if inputs is not None:
             inputs = {k: v[index] for k, v in inputs.items()}
             return inputs
+        chosen_box = Box.box2box(chosen_box, in_format=Box.BoxFormat.XYWH, to_format=Box.BoxFormat.XYXY)
         if get_index:
             return chosen_box, index
         return chosen_box
