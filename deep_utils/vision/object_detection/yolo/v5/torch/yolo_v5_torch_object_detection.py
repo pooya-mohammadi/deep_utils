@@ -23,13 +23,14 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
                        iou_thresh=None,
                        classes=None,
                        agnostic=None,
-                       get_time=False
+                       get_time=False,
+                       img_size=None,
                        ):
         import torch
         from .utils.datasets import letterbox
         from .utils.general import non_max_suppression, scale_coords
         im0 = img
-        img = np.array([letterbox(im, new_shape=self.config.img_size)[0] for im in im0])
+        img = np.array([letterbox(im, new_shape=img_size)[0] for im in im0])
         img = img.transpose((0, 3, 1, 2))
         img = np.ascontiguousarray(img)
         img = torch.from_numpy(img).to(self.config.device)
