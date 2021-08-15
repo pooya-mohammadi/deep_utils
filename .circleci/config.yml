@@ -4,21 +4,19 @@ orbs:
   python: circleci/python@1.2
 
 workflows:
-  pypi:
+  deploy:
     jobs:
-      - build
-#      - build:
-#          filters:
-#            tags:
-#              only: /.*/
-
+      - build:
+          filters:
+            tags:
+              only: /.*/
 
 jobs:
   build:
     docker:
       - image: cimg/python:3.8
-
     steps:
+      - checkout
       - run:
           name: verify git tag vs. version
           command: |
@@ -41,4 +39,4 @@ jobs:
           command: |
             pip install twine
             . venv/bin/activate
-            twine upload dist/*
+            twine upload --skip-existing dist/*
