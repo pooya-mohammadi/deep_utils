@@ -1,0 +1,44 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@1.2
+
+workflows:
+  pypi:
+    jobs:
+      - build
+#      - build:
+#          filters:
+#            tags:
+#              only: /.*/
+
+
+jobs:
+  build:
+    docker:
+      - image: cimg/python:3.8
+
+    steps:
+      - run:
+          name: verify git tag vs. version
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            python setup.py verify
+      - run:
+          name: init .pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = pooya_mohammadi" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+      - run:
+          name: create packages
+          command: |
+            python setup.py sdist
+            python setup.py bdist_wheel
+      - run:
+          name: upload to pypi
+          command: |
+            pip install twine
+            . venv/bin/activate
+            twine upload dist/*

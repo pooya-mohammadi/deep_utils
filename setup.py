@@ -1,14 +1,34 @@
+import sys
+import os
 import setuptools
+from setuptools.command.install import install
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+VERSION = "0.2.0"
+
+
+class VerifyVersionCommand(install):
+    """Custom command to verify that the git tag matches our version"""
+    description = 'verify that the git tag matches our version'
+
+    def run(self):
+        tag = os.getenv('CIRCLE_TAG')
+
+        if tag != VERSION:
+            info = "Git tag: {0} does not match the version of this app: {1}".format(
+                tag, VERSION
+            )
+            sys.exit(info)
+
+
 setuptools.setup(
     name="deep_utils",
-    version="0.1.0",
+    version=VERSION,
     author="Pooya Mohammadi Kazaj",
     author_email="pooyamohammadikazaj@gmial.com",
-    download_url="https://github.com/Practical-AI/deep_utils/archive/refs/tags/1.0.0.tar.gz",
+    download_url=f"https://github.com/Practical-AI/deep_utils/archive/refs/tags/{VERSION}.tar.gz",
     description="Deep Utils",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -21,5 +41,8 @@ setuptools.setup(
     python_requires='>=3.6',
     install_requires=[
         'numpy'
-    ]
+    ],
+    cmdclass={
+        'verify': VerifyVersionCommand,
+    }
 )
