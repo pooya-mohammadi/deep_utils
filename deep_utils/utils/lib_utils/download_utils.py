@@ -61,6 +61,8 @@ def get_file(fname,
                 os.remove(fpath)
             except (Exception, KeyboardInterrupt):
                 raise Exception(f"Error in extracting {fpath}")
+    if fpath.endswith('.zip'):
+        fpath = fpath[:-4]
     return fpath
 
 
@@ -78,8 +80,3 @@ def download_decorator(func):
         return func(self, *args, **kwargs)
 
     return wrapper
-
-
-if __name__ == '__main__':
-    url = 'https://github.com/Practical-AI/deep_utils/releases/download/0.2.0/RBF.zip'
-    get_file("RBF.zip", url, )
