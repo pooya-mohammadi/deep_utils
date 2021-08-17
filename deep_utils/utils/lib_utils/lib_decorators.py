@@ -36,9 +36,9 @@ def expand_input(dim):
                 in_ = np.expand_dims(in_, axis=0)
                 results = func(self, in_, *args, **kwargs)
                 if type(results) is tuple:
-                    results = tuple([res[0] if res is not None else res for res in results])
+                    results = tuple([res[0] if res is not None and len(res) == 1 else res for res in results])
                 elif type(results) is dict:
-                    results = {key: val[0] if val is not None and len(val) != 0 else val for key, val in
+                    results = {key: val[0] if val is not None and len(val) == 1 else val for key, val in
                                results.items()}
                 else:
                     results = results[0]
