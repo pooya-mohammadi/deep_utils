@@ -73,7 +73,8 @@ class HaarcascadeCV2FaceDetector(FaceDetector):
                 eye_poses.append(eye_pos)
             if len(faces) != 0 and get_landmarks:
                 _, landmarks = self.model['landmarks'].fit(image, faces)
-                landmarks = [Point.point2point(landmark, in_source='CV', to_source='Numpy') for landmark in landmarks]
+                landmarks = [Point.point2point(face_landmarks[0].tolist(),
+                                               in_source='CV', to_source='Numpy') for face_landmarks in landmarks]
                 landmarks_.append(landmarks)
         return dict(boxes=boxes,
                     confidences=confidences,
