@@ -1,6 +1,5 @@
-from keras.layers import Conv2D, Input, MaxPool2D, Flatten, Dense, Permute
-from keras.layers.advanced_activations import PReLU
-from keras.models import Model
+from tensorflow.keras.layers import Conv2D, Input, MaxPool2D, Flatten, Dense, Permute, PReLU
+from tensorflow.keras.models import Model
 
 
 def ONet(weight_path='onet.h5'):
