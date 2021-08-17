@@ -4,3 +4,4 @@ from .box_utils import *
 from .resize_utils import *
 from .opencv import *
 from .dir_utils import *
+from .matplotlib_utils import *
