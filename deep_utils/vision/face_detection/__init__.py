@@ -10,8 +10,9 @@ Face_Detection_Models = {
     "MTCNNTorchFaceDetector": MTCNNTorchFaceDetector,
     "HaarcascadeCV2FaceDetector": HaarcascadeCV2FaceDetector,
     "MTCNNTFFaceDetector": MTCNNTFFaceDetector,
-    "UltralightTorchFaceDetector": UltralightTorchFaceDetector
-}
+    "UltralightTorchFaceDetector": UltralightTorchFaceDetector,
+    "UltralightTFFaceDetector": UltralightTFFaceDetector
+    }
 
 list_face_detection_models = list_utils(Face_Detection_Models)
 
