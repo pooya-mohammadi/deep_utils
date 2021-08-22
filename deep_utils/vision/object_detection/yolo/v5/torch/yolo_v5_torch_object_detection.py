@@ -12,6 +12,18 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
         super(YOLOV5TorchObjectDetector, self).__init__(name=self.__class__.__name__, file_path=__file__, **kwargs)
         self.config: Config
 
+    def load_model(self):
+        import torch
+        sys.path.append(os.path.split(__file__)[0])
+        from .models.experimental import attempt_load
+        if self.config.model_weight:
+            self.model = attempt_load(self.config.model_weight, map_location=self.config.device)
+            self.model.to(self.config.device)
+            self.model.eval()
+            img = torch.zeros((1, 3, *self.config.img_size), device=self.config.device)
+            self.model(img)
+            print(f'{self.name}: weights are loaded')
+
     @rgb2bgr('rgb')
     @get_elapsed_time
     @expand_input(3)
@@ -25,6 +37,7 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
                        agnostic=None,
                        get_time=False,
                        img_size=None,
+                       **kwargs
                        ):
         import torch
         from .utils.datasets import letterbox
@@ -60,14 +73,31 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
             class_names=self.class_names
         )
 
-    def load_model(self):
-        import torch
-        sys.path.append(os.path.split(__file__)[0])
-        from .models.experimental import attempt_load
-        if self.config.model_weight:
-            self.model = attempt_load(self.config.model_weight, map_location=self.config.device)
-            self.model.to(self.config.device)
-            self.model.eval()
-            img = torch.zeros((1, 3, *self.config.img_size), device=self.config.device)
-            self.model(img)
-            print(f'{self.name}: weights are loaded')
+    @get_from_config
+    def detect_dir(self, dir_, confidence=None,
+                   iou_thresh=None, classes=None,
+                   agnostic=None, img_size=None,
+                   extensions=('.png', '.jpg', '.jpeg'),
+                   save_result=False, res_dir=None, **kwargs):
+        import cv2
+        results = dict()
+        for item in os.listdir(dir_):
+            _, extension = os.path.splitext(item)
+            if extension in extensions:
+                img_path = os.path.join(dir_, item)
+                img = cv2.imread(img_path)
+                result = self.detect_objects(img, is_rgb=False, confidence=confidence,
+                                             iou_thresh=iou_thresh, classes=classes,
+                                             agnostic=agnostic, img_size=img_size,
+                                             get_time=True)
+                results[img_path] = result
+                print(f'{img_path}: objects= {len(result["boxes"])}, time= {result["elapsed_time"]}')
+                if save_result and res_dir:
+                    os.makedirs(res_dir, exist_ok=True)
+                    res_path = os.path.join(res_dir, item)
+                    img = Box.put_box(img, result['boxes'])
+                    img = Box.put_text(img, text=[f"{name}_{conf}" for name, conf in
+                                                  zip(result['class_names'], result['confidences'])],
+                                       org=[(b[0], b[1]) for b in result['boxes']])
+                    cv2.imwrite(res_path, img)
+        return results
