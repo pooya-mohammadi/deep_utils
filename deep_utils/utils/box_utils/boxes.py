@@ -254,8 +254,9 @@ class Box:
 
     @staticmethod
     def _put_text(img, text, org, fontFace=None, fontScale=1, color=(0, 255, 0),
-                  thickness=1, lineType=None, bottomLeftOrigin=None):
+                  thickness=1, lineType=None, bottomLeftOrigin=None, org_source='Numpy'):
         import cv2
+        org = Point.point2point(org, in_source=org_source, to_source=Point.PointSource.CV)
         font_face = cv2.FONT_HERSHEY_PLAIN if fontFace is None else fontFace
         img = cv2.putText(img, text, org, font_face, fontScale, color, thickness, lineType, bottomLeftOrigin)
 
@@ -270,14 +271,17 @@ class Box:
                  color=(0, 255, 0),
                  thickness=1,
                  lineType=None,
-                 bottomLeftOrigin=None):
+                 bottomLeftOrigin=None,
+                 org_source='Numpy'):
         if text is None or len(text) == 0 or org is None or len(org) == 0:
             pass
-        elif type(text[0]) in [tuple, list, np.ndarray]:
+        elif type(text) in [tuple, list, np.ndarray]:
             for t, o in zip(text, org):
-                img = Box._put_text(img, t, o, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin)
+                img = Box._put_text(img, t, o, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin,
+                                    org_source=org_source)
         else:
-            img = Box._put_text(img, text, org, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin)
+            img = Box._put_text(img, text, org, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin,
+                                org_source=org_source)
         return img
 
     @staticmethod
