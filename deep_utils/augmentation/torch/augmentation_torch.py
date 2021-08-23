@@ -117,17 +117,3 @@ class AugmentTorch:
         return transforms.Compose(transformations)
 
 
-if __name__ == '__main__':
-    augment = AugmentTorch.get_augments(
-        AugmentTorch.random_horizontal_flip(),
-        (AugmentTorch.random_rotation((-30, 30)), 0.5),
-        AugmentTorch.five_crop(40),
-        AugmentTorch.random_horizontal_flip(),
-        AugmentTorch.pad(2),
-        AugmentTorch.random_crop(40),
-        AugmentTorch.color_jitter(),
-        AugmentTorch.random_erasing(),
-        AugmentTorch.random_perspective(p=0.3),
-
-    )
-    print(augment)
