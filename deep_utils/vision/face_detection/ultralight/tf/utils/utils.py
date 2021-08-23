@@ -57,7 +57,6 @@ def decode_regression(reg, image_size, feature_map_w_h_list, min_boxes,
         priors.append(prior)
 
     priors = np.concatenate(priors, axis=0)
-    print(f'priors nums:{priors.shape[0]}')
 
     priors = tf.constant(priors, dtype=tf.float32, shape=priors.shape, name='priors')
 
