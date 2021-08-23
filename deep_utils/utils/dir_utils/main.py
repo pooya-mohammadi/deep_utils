@@ -28,5 +28,5 @@ def dir_train_test_split(in_dir, out_dir, test_size=0.1, result_names=('train', 
                              remove_out_dir=remove_out_dir)
     transfer_directory_items(in_dir,
                              os.path.join(out_dir, result_names[1]),
-                             train_name, mode=mode,
+                             val_name, mode=mode,
                              remove_out_dir=remove_out_dir)
