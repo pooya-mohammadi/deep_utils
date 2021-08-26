@@ -160,7 +160,7 @@ class Box:
             box = [xc, yc, w, h]
         elif in_format == Box.BoxFormat.XCYC.value and to_format == Box.BoxFormat.XYXY.value:
             xc, yc, w, h = box
-            x1, y1, x2, y2 = xc - w / 2, yc - h / 2, xc + w / 2, yc - h / 2
+            x1, y1, x2, y2 = xc - w / 2, yc - h / 2, xc + w / 2, yc + h / 2
             box = [x1, y1, x2, y2]
         elif (in_format is None and to_format is None) or in_format == to_format:
             pass
