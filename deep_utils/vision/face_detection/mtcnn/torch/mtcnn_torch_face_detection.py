@@ -43,6 +43,7 @@ class MTCNNTorchFaceDetector(FaceDetector):
                      min_detection_size=None,
                      factor=None,
                      confidence=None,
+                     round_prec=4,
                      get_time=False):
 
         # BUILD AN IMAGE PYRAMID
@@ -169,7 +170,7 @@ class MTCNNTorchFaceDetector(FaceDetector):
             boxes, confidences, landmarks = boxes[keep], confidences[keep], landmarks[keep]
             boxes = Box.box2box(boxes, in_source=Box.BoxSource.Torch, to_source=Box.BoxSource.Numpy)
             boxes_.append(boxes)
-            confidences_.append(confidences)
+            confidences_.append(confidences.round(round_prec))
             if len(landmarks) != 0:
                 landmarks = [[Point.point2point((landmarks[j][i], landmarks[j][5 + i]),
                                                 in_source='Torch', to_source='Numpy') for i in range(5)] for j in
