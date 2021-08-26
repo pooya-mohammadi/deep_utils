@@ -12,17 +12,21 @@ class Point:
         Numpy = 'Numpy'
 
     @staticmethod
-    def point2point(point, in_source, to_source):
+    def point2point(point, in_source, to_source, in_relative=None, to_relative=None, shape=None, shape_source=None):
         if point is None or len(point) == 0:
             pass
         elif type(point[0]) in [tuple, list, np.ndarray]:
-            point = [Point._point2point(p, in_source=in_source, to_source=to_source) for p in point]
+            point = [Point._point2point(p, in_source=in_source, to_source=to_source,
+                                        in_relative=in_relative, to_relative=to_relative,
+                                        shape=shape, shape_source=shape_source) for p in point]
         else:
-            point = Point._point2point(point, in_source=in_source, to_source=to_source)
+            point = Point._point2point(point, in_source=in_source, to_source=to_source,
+                                       in_relative=in_relative, to_relative=to_relative,
+                                       shape=shape, shape_source=shape_source)
         return point
 
     @staticmethod
-    def _point2point(point, in_source, to_source):
+    def _point2point(point, in_source, to_source, in_relative=None, to_relative=None, shape=None, shape_source=None):
         if type(in_source) is Point.PointSource:
             in_source = in_source.value
         if type(to_source) is Point.PointSource:
@@ -43,7 +47,14 @@ class Point:
             raise Exception(
                 f'Conversion form {in_source} to {to_source} is not Supported.'
                 f' Supported types: {Box._get_enum_names(Point.PointSource)}')
-
+        if to_source is not None and shape_source is not None and shape is not None:
+            img_w, img_h = Point.point2point(shape, in_source=shape_source, to_source=to_source)
+            if not in_relative and to_relative:
+                p1, p2 = point
+                point = [p1 / img_w, p2 / img_h]
+            elif in_relative and not to_relative:
+                p1, p2 = point
+                point = [p1 * img_w, p2 * img_h]
         return point
 
     @staticmethod
