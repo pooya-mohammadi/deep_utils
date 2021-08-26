@@ -184,7 +184,7 @@ class Box:
             raise Exception(
                 f'Conversion form {in_source} to {to_source} is not Supported.'
                 f' Supported types: {Box._get_enum_names(Box.BoxSource)}')
-        if to_source is not None and img_shape_source is not None and img_shape is None:
+        if to_source is not None and img_shape_source is not None and img_shape is not None:
             img_w, img_h = Point.point2point(img_shape, in_source=img_shape_source, to_source=to_source)
             if not in_relative and to_relative:
                 b1, b2, b3, b4 = box
@@ -218,11 +218,19 @@ class Box:
                  thickness=1,
                  lineType=None,
                  shift=None,
+                 in_relative=False,
                  in_format="XYXY",
                  in_source='Numpy'):
         import cv2
-        box = Box.box2box(box, in_format=in_format, to_format=Box.BoxFormat.XYXY,
-                          in_source=in_source, to_source=Box.BoxSource.CV)
+        box = Box.box2box(box,
+                          in_format=in_format,
+                          to_format=Box.BoxFormat.XYXY,
+                          in_source=in_source,
+                          to_source=Box.BoxSource.CV,
+                          in_relative=in_relative,
+                          to_relative=False,
+                          img_shape=img.shape[:2],
+                          img_shape_source='Numpy')
 
         if type(img) is not np.ndarray:
             img = np.array(img).astype(np.uint8)
@@ -242,15 +250,18 @@ class Box:
                 thickness=1,
                 lineType=None,
                 shift=None,
+                in_relative=False,
                 in_format=BoxFormat.XYXY,
                 in_source=BoxSource.Numpy):
         if box is None or len(box) == 0:
             pass
         elif type(box[0]) in [tuple, list, np.ndarray]:
             for b in box:
-                img = Box._put_box(img, b, copy, color, thickness, lineType, shift, in_format, in_source)
+                img = Box._put_box(img, box=b, copy=copy, color=color, thickness=thickness, lineType=lineType,
+                                   shift=shift, in_format=in_format, in_source=in_source, in_relative=in_relative)
         else:
-            img = Box._put_box(img, box, copy, color, thickness, lineType, shift, in_format, in_source)
+            img = Box._put_box(img, box=box, copy=copy, color=color, thickness=thickness, lineType=lineType,
+                               shift=shift, in_format=in_format, in_source=in_source, in_relative=in_relative)
 
         return img
 
