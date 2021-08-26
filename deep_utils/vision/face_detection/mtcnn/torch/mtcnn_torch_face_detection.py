@@ -144,7 +144,7 @@ class MTCNNTorchFaceDetector(FaceDetector):
         img_boxes = torch.FloatTensor(img_boxes).to(self.config.device)
         output = self.model["onet"](img_boxes)
         boxes_, confidences_, landmarks_ = [], [], []
-        face_points = ["nose", "mouth_right", "right_eye", "left_eye", "mouth_left"]
+        face_points = ["left_eye", "right_eye", "nose", "mouth_left", "mouth_right"]
         for img_n in range(img.shape[0]):
             bounding_boxes = bounding_boxes_[split[img_n]: split[img_n + 1]]
             landmarks = output[0].cpu().data.numpy()[split[img_n]: split[img_n + 1]]
