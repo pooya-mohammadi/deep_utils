@@ -90,12 +90,28 @@ class AugmentTorch:
         return transforms.RandomPerspective(distortion_scale=distortion_scale, p=p, interpolation=interpolation,
                                             fill=fill)
 
+    @staticmethod
+    def resize(size, interpolation="BILINEAR"):
+        from torchvision import transforms
+        if interpolation == "BILINEAR":
+            from torchvision.transforms import InterpolationMode
+            interpolation = InterpolationMode.BILINEAR
+        return transforms.Resize(size=size, interpolation=interpolation)
 
+    @staticmethod
+    def normalize(mean, std, inplace=False):
+        from torchvision import transforms
+        return transforms.Normalize(mean=mean, std=std, inplace=inplace)
 
+    @staticmethod
+    def to_tensor():
+        from torchvision import transforms
+        return transforms.ToTensor()
 
     @staticmethod
     def get_augments(*args):
         from torchvision import transforms
+        import torch
         transformations = []
         use_lambda = False
         for arg in args:
@@ -111,9 +127,14 @@ class AugmentTorch:
                 transform = transforms.RandomApply([transform], p=prob)
             if type(transform) in [transforms.TenCrop, transforms.FiveCrop]:
                 use_lambda = True
+            if type(transform) in [transforms.Normalize]:
+                if use_lambda:
+                    to_append = transforms.Lambda(
+                        lambda tensors: torch.stack([AugmentTorch.to_tensor()(t) for t in tensors]))
+                else:
+                    to_append = AugmentTorch.to_tensor()
+                transformations.append(to_append)
             if use_lambda:
                 transform = transforms.Lambda(lambda tensors: torch.stack([transform(t) for t in tensors]))
             transformations.append(transform)
         return transforms.Compose(transformations)
-
-
