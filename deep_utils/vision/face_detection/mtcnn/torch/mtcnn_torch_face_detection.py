@@ -84,6 +84,8 @@ class MTCNNTorchFaceDetector(FaceDetector):
         for img_n in range(img.shape[0]):
             bounding_boxes = [box[img_n] for box in bounding_boxes_ if box is not None]
             # bounding_boxes = [i for i in bounding_boxes if i is not None]
+            if len(bounding_boxes) == 0:
+                continue
             bounding_boxes = np.vstack(bounding_boxes)
 
             keep = nms(bounding_boxes[:, 0:5], nms_thresholds[0])
