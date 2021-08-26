@@ -70,6 +70,7 @@ class Box:
     class BoxFormat(Enum):
         XYWH = "XYWH"
         XYXY = "XYXY"
+        XCYC = "XCYC"
 
     class BoxSource(Enum):
         Torch = 'Torch'
@@ -88,21 +89,25 @@ class Box:
                 to_format=None,
                 in_source=BoxSource.Numpy,
                 to_source=BoxSource.Numpy,
-                relative=None,
-                img_w=None,
-                img_h=None,
+                in_relative=None,
+                to_relative=None,
+                img_shape=None,
+                img_shape_source=None,
                 out_type=None,
                 return_int=None):
         if box is None or len(box) == 0:
             pass
         elif type(box[0]) in [tuple, list, np.ndarray]:
             box = [Box._box2box(b, in_format=in_format, to_format=to_format, in_source=in_source, to_source=to_source,
-                                relative=relative, img_w=img_w, img_h=img_h, out_type=out_type, return_int=return_int)
+                                in_relative=in_relative, to_relative=to_relative, img_shape=img_shape,
+                                img_shape_source=img_shape_source, out_type=out_type, return_int=return_int)
                    for b in box]
 
         else:
             box = Box._box2box(box, in_format=in_format, to_format=to_format, in_source=in_source, to_source=to_source,
-                               relative=relative, img_w=img_w, img_h=img_h, out_type=out_type, return_int=return_int)
+                               in_relative=in_relative, to_relative=to_relative, img_shape=img_shape,
+                               img_shape_source=img_shape_source,
+                               out_type=out_type, return_int=return_int)
         return box
 
     @staticmethod
@@ -111,9 +116,10 @@ class Box:
                  to_format=None,
                  in_source=None,
                  to_source=None,
-                 relative=None,
-                 img_w=None,
-                 img_h=None,
+                 in_relative=None,
+                 to_relative=None,
+                 img_shape=None,
+                 img_shape_source=None,
                  out_type=None,
                  return_int=None):
         """
@@ -147,6 +153,15 @@ class Box:
             x1, y1, x2, y2 = box
             w, h = x2 - x1, y2 - y1
             box = [x1, y1, w, h]
+        elif in_format == Box.BoxFormat.XYXY.value and to_format == Box.BoxFormat.XCYC.value:
+            x1, y1, x2, y2 = box
+            w, h = x2 - x1, y2 - y1
+            xc, yc = (x1 + x2) / 2, (y1 + y2) / 2
+            box = [xc, yc, w, h]
+        elif in_format == Box.BoxFormat.XCYC.value and to_format == Box.BoxFormat.XYXY.value:
+            xc, yc, w, h = box
+            x1, y1, x2, y2 = xc - w / 2, yc - h / 2, xc + w / 2, yc - h / 2
+            box = [x1, y1, x2, y2]
         elif (in_format is None and to_format is None) or in_format == to_format:
             pass
         else:
@@ -169,6 +184,15 @@ class Box:
             raise Exception(
                 f'Conversion form {in_source} to {to_source} is not Supported.'
                 f' Supported types: {Box._get_enum_names(Box.BoxSource)}')
+        if to_source is not None and img_shape_source is not None and img_shape is None:
+            img_w, img_h = Point.point2point(img_shape, in_source=img_shape_source, to_source=to_source)
+            if not in_relative and to_relative:
+                b1, b2, b3, b4 = box
+                box = [b1 / img_w, b2 / img_h, b3 / img_w, b4 / img_h]
+            elif in_relative and not to_relative:
+                b1, b2, b3, b4 = box
+                box = [b1 * img_w, b2 * img_h, b3 * img_w, b4 * img_h]
+
         box = Box.get_type(box, out_type)
         if return_int:
             box = [int(b) for b in box]
@@ -177,7 +201,6 @@ class Box:
     @staticmethod
     def get_type(in_, out_type):
         if out_type is not None:
-
             try:
                 in_ = out_type(in_)
             except:
