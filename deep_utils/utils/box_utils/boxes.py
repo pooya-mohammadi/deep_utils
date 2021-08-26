@@ -279,6 +279,7 @@ class Box:
     def _put_text(img, text, org, fontFace=None, fontScale=1, color=(0, 255, 0),
                   thickness=1, lineType=None, bottomLeftOrigin=None, org_source='Numpy'):
         import cv2
+        org = (int(org), int(org))
         org = Point.point2point(org, in_source=org_source, to_source=Point.PointSource.CV)
         font_face = cv2.FONT_HERSHEY_PLAIN if fontFace is None else fontFace
         img = cv2.putText(img, text, org, font_face, fontScale, color, thickness, lineType, bottomLeftOrigin)
