@@ -1,7 +1,6 @@
 import inspect
 import time
 from functools import wraps
-
 import numpy as np
 
 
@@ -90,3 +89,15 @@ def rgb2bgr(in_):
         return wrapper
 
     return inner_decorator
+
+
+def cast_kwargs_dict(func):
+    @wraps(func)
+    def wrapper(self, *args, **kwargs):
+        arguments = inspect.getfullargspec(func)
+        for kwarg in arguments.args:
+            if kwarg.endswith('_kwargs'):
+                _kwargs = kwargs.get(kwarg, None)
+                kwargs[kwarg] = dict() if _kwargs is None else _kwargs
+        return func(self, *args, **kwargs)
+    return wrapper
