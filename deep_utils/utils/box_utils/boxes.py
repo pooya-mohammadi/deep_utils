@@ -102,22 +102,22 @@ class Box:
                 to_source=BoxSource.Numpy,
                 in_relative=None,
                 to_relative=None,
-                img_shape=None,
-                img_shape_source=None,
+                shape=None,
+                shape_source=None,
                 out_type=None,
                 return_int=None):
         if box is None or len(box) == 0:
             pass
         elif type(box[0]) in [tuple, list, np.ndarray]:
             box = [Box._box2box(b, in_format=in_format, to_format=to_format, in_source=in_source, to_source=to_source,
-                                in_relative=in_relative, to_relative=to_relative, img_shape=img_shape,
-                                img_shape_source=img_shape_source, out_type=out_type, return_int=return_int)
+                                in_relative=in_relative, to_relative=to_relative, shape=shape,
+                                shape_source=shape_source, out_type=out_type, return_int=return_int)
                    for b in box]
 
         else:
             box = Box._box2box(box, in_format=in_format, to_format=to_format, in_source=in_source, to_source=to_source,
-                               in_relative=in_relative, to_relative=to_relative, img_shape=img_shape,
-                               img_shape_source=img_shape_source,
+                               in_relative=in_relative, to_relative=to_relative, shape=shape,
+                               shape_source=shape_source,
                                out_type=out_type, return_int=return_int)
         return box
 
@@ -129,8 +129,8 @@ class Box:
                  to_source=None,
                  in_relative=None,
                  to_relative=None,
-                 img_shape=None,
-                 img_shape_source=None,
+                 shape=None,
+                 shape_source=None,
                  out_type=None,
                  return_int=None):
         """
@@ -195,8 +195,8 @@ class Box:
             raise Exception(
                 f'Conversion form {in_source} to {to_source} is not Supported.'
                 f' Supported types: {Box._get_enum_names(Box.BoxSource)}')
-        if to_source is not None and img_shape_source is not None and img_shape is not None:
-            img_w, img_h = Point.point2point(img_shape, in_source=img_shape_source, to_source=to_source)
+        if to_source is not None and shape_source is not None and shape is not None:
+            img_w, img_h = Point.point2point(shape, in_source=shape_source, to_source=to_source)
             if not in_relative and to_relative:
                 b1, b2, b3, b4 = box
                 box = [b1 / img_w, b2 / img_h, b3 / img_w, b4 / img_h]
@@ -240,8 +240,8 @@ class Box:
                           to_source=Box.BoxSource.CV,
                           in_relative=in_relative,
                           to_relative=False,
-                          img_shape=img.shape[:2],
-                          img_shape_source='Numpy')
+                          shape=img.shape[:2],
+                          shape_source='Numpy')
 
         if type(img) is not np.ndarray:
             img = np.array(img).astype(np.uint8)
