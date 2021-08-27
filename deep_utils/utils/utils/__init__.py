@@ -1,1 +1,1 @@
-from .main import shift_lst
+from .main import shift_lst, dictnamedtuple
