@@ -79,22 +79,48 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
         import cv2
         img = cv2.imread(img_path)
         boxes, texts, orgs = [], [], []
-        for line in open(str_path, mode='r').readlines():
-            label, xc, yc, w, h = line.strip().split()
-            xc, yc, w, h = float(xc), float(yc), float(w), float(h)
-            boxes.append([xc, yc, w, h])
-            texts.append(f"label: {label}")
-            org = Point.point2point((xc - w / 2, yc - h / 2),
-                                    in_source='CV',
-                                    to_source='Numpy',
-                                    in_relative=True,
-                                    to_relative=False,
-                                    shape_source='Numpy',
-                                    shape=img.shape[:2])
-            orgs.append(org)
+        with open(str_path, mode='r') as f:
+            for line in f.readlines():
+                label, xc, yc, w, h = line.strip().split()
+                xc, yc, w, h = float(xc), float(yc), float(w), float(h)
+                boxes.append([xc, yc, w, h])
+                texts.append(f"label: {label}")
+                org = Point.point2point((xc - w / 2, yc - h / 2),
+                                        in_source='CV',
+                                        to_source='Numpy',
+                                        in_relative=True,
+                                        to_relative=False,
+                                        shape_source='Numpy',
+                                        shape=img.shape[:2])
+                orgs.append(org)
         img = Box.put_box(img, boxes, in_source='CV', in_format=Box.BoxFormat.XCYC, in_relative=True)
         img = Box.put_text(img, texts, org=orgs, thickness=3, fontScale=3)
         return img
+
+    @staticmethod
+    def extract_label(label_path, img_path=None, shape=None, shape_source=None):
+        with open(label_path, mode='r') as f:
+            boxes, labels = [], []
+            for line in f.readlines():
+                label, b1, b2, b3, b4 = line.strip().split()
+                boxes.append([float(b1), float(b2), float(b3), float(b4)])
+                labels.append(int(label))
+
+        if img_path is not None:
+            import cv2
+            shape = cv2.imread(img_path).shape[:2]
+            shape_source = 'Numpy'
+        if shape is not None and shape_source is not None:
+            boxes = Box.box2box(boxes,
+                                in_source=Box.BoxSource.CV,
+                                to_source='Numpy',
+                                in_format='XCYC',
+                                to_format='XYXY',
+                                in_relative=True,
+                                to_relative=False,
+                                shape=shape,
+                                shape_source=shape_source)
+        return boxes, labels
 
     @get_from_config
     def detect_dir(self,
