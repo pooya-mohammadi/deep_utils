@@ -1,10 +1,12 @@
 import os
+from os.path import join
 import sys
 import numpy as np
 from deep_utils.utils.lib_utils.lib_decorators import get_from_config, expand_input, get_elapsed_time, rgb2bgr
 from deep_utils.vision.object_detection.main.main_object_detection import ObjectDetector
 from deep_utils.utils.box_utils.boxes import Box, Point
 from deep_utils.utils.os_utils.os_path import split_extension
+from deep_utils.utils.dir_utils.main import dir_train_test_split, transfer_directory_items
 from .config import Config
 
 
@@ -96,6 +98,21 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
         img = Box.put_box(img, boxes, in_source='CV', in_format=Box.BoxFormat.XCYC, in_relative=True)
         img = Box.put_text(img, texts, org=orgs, thickness=3, fontScale=3)
         return img
+
+    @staticmethod
+    def split_dataset(base_dir, out_dir, mode='cp', remove_out_dir=False):
+        img_train_names, img_val_names = dir_train_test_split(join(base_dir, 'images'),
+                                                              train_dir=join(out_dir, 'train', 'images'),
+                                                              val_dir=join(out_dir, 'val', 'images'),
+                                                              mode=mode,
+                                                              remove_out_dir=remove_out_dir)
+        img_train_labels = [os.path.splitext(name)[0] + '.txt' for name in img_train_names]
+        img_val_labels = [os.path.splitext(name)[0] + '.txt' for name in img_val_names]
+
+        transfer_directory_items(join(base_dir, 'labels'), join(out_dir, 'train', 'labels'),
+                                 img_train_labels, mode=mode, remove_out_dir=remove_out_dir)
+        transfer_directory_items(join(base_dir, 'labels'), join(out_dir, 'val', 'labels'), img_val_labels,
+                                 mode=mode, remove_out_dir=remove_out_dir)
 
     @staticmethod
     def extract_label(label_path, img_path=None, shape=None, shape_source=None):
