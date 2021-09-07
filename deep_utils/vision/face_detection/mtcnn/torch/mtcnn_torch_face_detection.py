@@ -184,4 +184,5 @@ class MTCNNTorchFaceDetector(FaceDetector):
                     face_dict[face] = points
                 img_landmarks.append(face_dict)
             landmarks_.append(img_landmarks)
-        return dict(boxes=boxes_, confidences=confidences_, landmarks=landmarks_)
+        output = self.output_class(boxes=boxes_, confidences=confidences_, landmarks=landmarks_)
+        return output

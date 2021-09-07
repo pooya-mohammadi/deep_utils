@@ -39,6 +39,11 @@ def expand_input(dim):
                 elif type(results) is dict:
                     results = {key: val[0] if val is not None and len(val) == 1 else val for key, val in
                                results.items()}
+                elif hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
+                    new_results = {key: val[0] if val is not None and len(val) == 1 else val for key, val in
+                                   results.items()}
+                    cls = type(results)
+                    results = cls(**new_results)
                 else:
                     results = results[0]
                 return results
@@ -61,6 +66,12 @@ def get_elapsed_time(func):
             elapsed_time = round(toc - tic, 4)
             if type(results) is dict:
                 results['elapsed_time'] = elapsed_time
+            elif hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
+                from deep_utils.utils.utils.main import dictnamedtuple
+                new_results = dict(results.items())
+                new_results['elapsed_time'] = elapsed_time
+                cls = dictnamedtuple(results.TypeName, list(results._fields) + ["elapsed_time"])
+                results = cls(**new_results)
             else:
                 results = tuple(list(results) + [elapsed_time])
             return results
@@ -100,4 +111,5 @@ def cast_kwargs_dict(func):
                 _kwargs = kwargs.get(kwarg, None)
                 kwargs[kwarg] = dict() if _kwargs is None else _kwargs
         return func(self, *args, **kwargs)
+
     return wrapper
