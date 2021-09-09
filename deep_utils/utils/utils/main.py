@@ -96,15 +96,6 @@ def dictnamedtuple(typename, field_names, *, rename=False, defaults=None, module
     _make.__func__.__doc__ = (f'Make a new {typename} object from a sequence '
                               'or iterable')
 
-    def _replace(self, /, **kwds):
-        result = self._make(_map(kwds.pop, field_names, self))
-        if kwds:
-            raise ValueError(f'Got unexpected field names: {list(kwds)!r}')
-        return result
-
-    _replace.__doc__ = (f'Return a new {typename} object replacing specified '
-                        'fields with new values')
-
     def __repr__(self):
         'Return a nicely formatted representation string'
         return self.__class__.__name__ + repr_fmt % self
@@ -117,6 +108,14 @@ def dictnamedtuple(typename, field_names, *, rename=False, defaults=None, module
         'Return self as a plain tuple.  Used by copy and pickle.'
         return _tuple(self)
 
+    def _replace(self, **kwds):
+        result = self._make(_map(kwds.pop, field_names, self))
+        if kwds:
+            raise ValueError(f'Got unexpected field names: {list(kwds)!r}')
+        return result
+
+    _replace.__doc__ = (f'Return a new {typename} object replacing specified '
+                        'fields with new values')
     # Modify function metadata to help with introspection and debugging
     for method in (__new__, _make.__func__, _replace,
                    __repr__, _asdict, __getnewargs__):
