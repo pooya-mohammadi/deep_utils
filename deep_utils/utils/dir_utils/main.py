@@ -56,8 +56,3 @@ def split_xy_dir(x_in_dir,
                              train_labels, mode=mode, remove_out_dir=remove_out_dir)
     transfer_directory_items(y_in_dir, y_val_dir, val_labels,
                              mode=mode, remove_out_dir=remove_out_dir)
-
-
-if __name__ == '__main__':
-    p = '/home/ai/projects/Irancel/object-detection/yolo'
-    split_xy_dir(join(p, 'images'), join(p, 'labels'))
