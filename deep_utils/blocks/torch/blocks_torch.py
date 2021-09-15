@@ -78,6 +78,20 @@ class BlocksTorch:
                 f"gn(group normalization")
         return layer_norm
 
+    @staticmethod
+    def res_basic_block(in_c, out_c, bias, down_sample=False):
+        from torch import nn
+        modules = []
+        names = []
+        for i in range(2):
+            modules.append(
+                BlocksTorch.conv_norm_act(int(in_c / 2) if down_sample and i == 0 else in_c, out_c,
+                                          act=False if i == 1 else 'relu',
+                                          s=(2, 2) if down_sample and i == 0 else (1, 1), conv_kwargs={'bias': bias}))
+            names.append(f"cnn_{i}_in{in_c}_f{out_c}")
+        res_block = nn.Sequential(OrderedDict({name: module for name, module in zip(names, modules)}))
+        return res_block
+
 
 if __name__ == '__main__':
     a = BlocksTorch.conv_norm_act(32, 64, move_forward=2)
