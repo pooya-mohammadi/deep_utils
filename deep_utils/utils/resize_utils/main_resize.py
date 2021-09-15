@@ -31,3 +31,35 @@ def get_img_shape(img):
         return np.expand_dims(img, axis=0).shape
     else:
         raise Exception(f'shape: {img.shape} is not an image')
+
+
+def resize_save_aspect_ratio(img, size):
+    from PIL import Image
+    from torchvision import transforms
+    import torch.nn.functional as F
+
+    w, h = img.size
+    ratio = h / w
+    if ratio > 1:
+        h = size
+        w = int(size / ratio)
+    elif ratio < 1:
+        h = int(size * ratio)
+        w = size
+    else:
+        return img.resize((size, size), Image.NEAREST)
+
+    image = img.resize((w, h), Image.NEAREST)
+    im = transforms.ToTensor()(image)
+    val = h - w
+    if val < 0:
+        a = 0
+        b = int(-val / 2)
+    else:
+        a = int(val / 2)
+        b = 0
+
+    result = F.pad(input=im, pad=(a, a, b, b))
+    image = transforms.ToPILImage()(result)
+
+    return image
