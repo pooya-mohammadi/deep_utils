@@ -3,6 +3,7 @@ from .ssd import *
 from .mtcnn import *
 from .haarcascade import *
 from .ultralight import *
+from .retinaface import *
 from deep_utils.utils.lib_utils.main_utils import list_utils, loader
 
 Face_Detection_Models = {
@@ -11,7 +12,8 @@ Face_Detection_Models = {
     "HaarcascadeCV2FaceDetector": HaarcascadeCV2FaceDetector,
     "MTCNNTFFaceDetector": MTCNNTFFaceDetector,
     "UltralightTorchFaceDetector": UltralightTorchFaceDetector,
-    "UltralightTFFaceDetector": UltralightTFFaceDetector
+    "UltralightTFFaceDetector": UltralightTFFaceDetector,
+    "RetinaFaceTorchFaceDetector": RetinaFaceTorchFaceDetector
     }
 
 list_face_detection_models = list_utils(Face_Detection_Models)
