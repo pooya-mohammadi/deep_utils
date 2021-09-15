@@ -34,3 +34,30 @@ def split_dir_of_dir(in_dir, train_dir='./train', val_dir='./val', test_size=0.1
         dir_ = join(in_dir, data)
         dir_train_test_split(dir_, train_dir=join(train_dir, data), val_dir=join(val_dir, data), mode=mode,
                              test_size=test_size, remove_out_dir=remove_out_dir)
+
+
+def split_xy_dir(x_in_dir,
+                 y_in_dir,
+                 x_train_dir='train/samples',
+                 y_train_dir='train/targets',
+                 x_val_dir='val/samples',
+                 y_val_dir='val/targets',
+                 mode='cp',
+                 remove_out_dir=False):
+    train_names, val_names = dir_train_test_split(x_in_dir,
+                                                  train_dir=x_train_dir,
+                                                  val_dir=x_val_dir,
+                                                  mode=mode,
+                                                  remove_out_dir=remove_out_dir)
+    train_labels = [os.path.splitext(name)[0] + '.txt' for name in train_names]
+    val_labels = [os.path.splitext(name)[0] + '.txt' for name in val_names]
+
+    transfer_directory_items(y_in_dir, y_train_dir,
+                             train_labels, mode=mode, remove_out_dir=remove_out_dir)
+    transfer_directory_items(y_in_dir, y_val_dir, val_labels,
+                             mode=mode, remove_out_dir=remove_out_dir)
+
+
+if __name__ == '__main__':
+    p = '/home/ai/projects/Irancel/object-detection/yolo'
+    split_xy_dir(join(p, 'images'), join(p, 'labels'))
