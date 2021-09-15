@@ -43,12 +43,14 @@ def split_xy_dir(x_in_dir,
                  x_val_dir='val/samples',
                  y_val_dir='val/targets',
                  mode='cp',
+                 val_size=0.1,
                  remove_out_dir=False):
     train_names, val_names = dir_train_test_split(x_in_dir,
                                                   train_dir=x_train_dir,
                                                   val_dir=x_val_dir,
                                                   mode=mode,
-                                                  remove_out_dir=remove_out_dir)
+                                                  remove_out_dir=remove_out_dir,
+                                                  test_size=val_size)
     train_labels = [os.path.splitext(name)[0] + '.txt' for name in train_names]
     val_labels = [os.path.splitext(name)[0] + '.txt' for name in val_names]
 
