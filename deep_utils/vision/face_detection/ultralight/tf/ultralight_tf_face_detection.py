@@ -8,11 +8,6 @@ from .utils.rfb_320 import create_rfb_net
 from .utils.slim_320 import create_slim_net
 import sys
 import cv2
-import tensorflow as tf
-
-physical_devices = tf.config.experimental.list_physical_devices('GPU')
-assert len(physical_devices) > 0, "Not enough GPU hardware devices available"
-tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
 
 class UltralightTFFaceDetector(FaceDetector):
@@ -22,6 +17,11 @@ class UltralightTFFaceDetector(FaceDetector):
                          download_variables=("RBF", "slim"),
                          **kwargs)
         self.config: Config
+        import tensorflow as tf
+        self.tf = tf
+        physical_devices = tf.config.experimental.list_physical_devices('GPU')
+        if len(physical_devices) < 0:
+            tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
     @download_decorator
     def load_model(self):
@@ -52,7 +52,7 @@ class UltralightTFFaceDetector(FaceDetector):
             print("The net type is wrong!")
             sys.exit(1)
 
-        model = tf.keras.models.load_model(model_path)
+        model = self.tf.keras.models.load_model(model_path)
         if images.ndim < 4:
             images = np.array([images])
 
