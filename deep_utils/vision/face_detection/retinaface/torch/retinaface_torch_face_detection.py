@@ -13,7 +13,7 @@ class RetinaFaceTorchFaceDetector(FaceDetector):
         from .src.layers.functions.prior_box import PriorBox
         from .src.utils.nms.py_cpu_nms import py_cpu_nms
         from .src.retinaface import RetinaFace
-        from .src.utils.box_utils import decode, decode_landm
+        from .src.utils.box_utils import decode, decode_landm, _preprocess
         from .src.load_model import load_model
         self.RetinaFace = RetinaFace
         self.load_model_weights = load_model
@@ -22,6 +22,7 @@ class RetinaFaceTorchFaceDetector(FaceDetector):
         self.py_cpu_nms = py_cpu_nms
         self.decode = decode
         self.decode_landm = decode_landm
+        self._preprocess = _preprocess
         self.resize = 1
         self.pretrained_mobilenet = None
         super().__init__(name=self.__class__.__name__,
@@ -42,7 +43,7 @@ class RetinaFaceTorchFaceDetector(FaceDetector):
 
     @get_from_config
     @get_elapsed_time
-    @rgb2bgr('rgb')
+    @rgb2bgr('bgr')
     @expand_input(3)
     def detect_faces(self,
                      images,
@@ -76,75 +77,80 @@ class RetinaFaceTorchFaceDetector(FaceDetector):
             images = np.array([images])
         net.eval()
         net.to(device)
-        boxes_, confidences_, landmarks_ = [], [], []
         face_points = ["left_eye", "right_eye", "nose", "mouth_left", "mouth_right"]
-        for img_n in range(images.shape[0]):
-            img = np.float32(images[img_n])
+        # for img_n in range(images.shape[0]):
+        #     img = np.float32(images[img_n])
+        # img = self.torch.FloatTensor(np.concatenate(images)).to(self.config.device)
 
-            im_height, im_width, _ = img.shape
-            scale = self.torch.Tensor([img.shape[1], img.shape[0], img.shape[1], img.shape[0]])
-            img -= (104, 117, 123)
-            img = img.transpose(2, 0, 1)
-            img = self.torch.from_numpy(img).unsqueeze(0)
-            img = img.to(device)
-            scale = scale.to(device)
+        img = self.torch.FloatTensor(self._preprocess(images)).to(device)
+        _, im_height, im_width = img[0].shape
+        scale = self.torch.Tensor([img[0].shape[2], img[0].shape[1], img[0].shape[2], img[0].shape[1]])
+        # im_height, im_width, _ = img.shape
+        # scale = self.torch.Tensor([img.shape[1], img.shape[0], img.shape[1], img.shape[0]])
+        # img -= (104, 117, 123)
+        # img = img.transpose(2, 0, 1)
+        # img = self.torch.from_numpy(img).unsqueeze(0)
+        img = img.to(device)
+        scale = scale.to(device)
+        loc, conf, landms = net(img)
 
-            loc, conf, landms = net(img)  # forward pass
-            priorbox = self.PriorBox(cfg, image_size=(im_height, im_width))
-            priors = priorbox.forward()
-            priors = priors.to(device)
-            prior_data = priors.data
-            boxes = self.decode(loc.data.squeeze(0), prior_data, cfg['variance'])
-            boxes = boxes * scale / self.resize
-            boxes = boxes.cpu().numpy()
-            scores = conf.squeeze(0).data.cpu().numpy()[:, 1]
-            landms = self.decode_landm(landms.data.squeeze(0), prior_data, cfg['variance'])
-            scale1 = self.torch.Tensor([img.shape[3], img.shape[2], img.shape[3], img.shape[2],
-                                        img.shape[3], img.shape[2], img.shape[3], img.shape[2],
-                                        img.shape[3], img.shape[2]])
-            scale1 = scale1.to(device)
-            landms = landms * scale1 / self.resize
-            landms = landms.cpu().numpy()
+        priorbox = self.PriorBox(cfg, image_size=(im_height, im_width))
+        priors = priorbox.forward()
+        priors = priors.to(device)
+        prior_data = priors.data
+        loc_data = loc.data.squeeze(0)
+        boxes = self.decode(loc_data, prior_data, cfg['variance'])
+        boxes = boxes * scale / self.resize
+        boxes = boxes.cpu().numpy()
+        scores = conf.squeeze(0).data.cpu().numpy()[:, 1]
+        landms = self.decode_landm(landms.data.squeeze(0), prior_data, cfg['variance'])
+        scale1 = self.torch.Tensor([img.shape[3], img.shape[2], img.shape[3], img.shape[2],
+                                    img.shape[3], img.shape[2], img.shape[3], img.shape[2],
+                                    img.shape[3], img.shape[2]])
+        scale1 = scale1.to(device)
+        landms = landms * scale1 / self.resize
+        landms = landms.cpu().numpy()
 
-            # ignore low scores
-            inds = np.where(scores > confidence)[0]
-            boxes = boxes[inds]
-            landms = landms[inds]
-            scores = scores[inds]
+        # ignore low scores
+        inds = np.where(scores > confidence)[0]
+        boxes = boxes[inds]
+        landms = landms[inds]
+        scores = scores[inds]
 
-            # keep top-K before NMS
-            order = scores.argsort()[::-1][:self.config.top_k]
-            boxes = boxes[order]
-            landms = landms[order]
-            scores = scores[order]
+        # keep top-K before NMS
+        order = scores.argsort()[::-1][:self.config.top_k]
+        boxes = boxes[order]
+        landms = landms[order]
+        scores = scores[order]
 
-            # do NMS
-            bboxes = np.hstack((boxes, scores[:, np.newaxis])).astype(np.float32, copy=False)
-            keep = self.py_cpu_nms(bboxes, self.config.nms_thresholds)
-            bboxes = bboxes[keep, :]
-            landms = landms[keep]
+        # do NMS
+        bboxes = np.hstack((boxes, scores[:, np.newaxis])).astype(np.float32, copy=False)
+        keep = self.py_cpu_nms(bboxes, self.config.nms_thresholds)
+        bboxes = bboxes[keep, :]
+        landms = landms[keep]
 
-            # keep top-K faster NMS
-            bboxes = bboxes[:self.config.keep_top_k, :]
-            landms = landms[:self.config.keep_top_k, :]
+        # keep top-K faster NMS
+        bboxes = bboxes[:self.config.keep_top_k, :]
+        landms = landms[:self.config.keep_top_k, :]
 
-            boxes_, confidences_, landmarks_ = [], [], []
-            for num in range(len(bboxes)):
-                box_tensor = bboxes[num, :]
-                boxes = [box_tensor[0], box_tensor[1], box_tensor[2], box_tensor[3]]
-                boxes = Box.box2box(boxes, in_source=Box.BoxSource.Torch, to_source=Box.BoxSource.Numpy)
-                boxes_.append(boxes)
-                confidences_.append(scores.round(round_prec))
-                if len(landms) != 0:
-                    landmarks = [[Point.point2point((landms[j][i], landms[j][5 + i]),
-                                                    in_source='Torch', to_source='Numpy') for i in range(5)] for j in
-                                 range(len(landms))]
-                img_landmarks = []
-                for i in range(len(landmarks)):
-                    face_dict = {}
-                    for points, face in zip(landmarks[i], face_points):
-                        face_dict[face] = points
-                    img_landmarks.append(face_dict)
-                landmarks_.append(img_landmarks)
+        boxes_, confidences_, landmarks_ = [], [], []
+        for num in range(len(bboxes)):
+            box_tensor = bboxes[num, :]
+            boxes = [box_tensor[0], box_tensor[1], box_tensor[2], box_tensor[3]]
+            boxes = Box.box2box(boxes, in_source=Box.BoxSource.Torch, to_source=Box.BoxSource.Numpy)
+            boxes_.append(boxes)
+            confidences_.append(scores.round(round_prec))
+            if len(landms) != 0:
+                landmarks = [[Point.point2point((landms[j][2 * i], landms[j][2 * i + 1]),
+                                                in_source='Torch', to_source='Numpy') for i in range(5)] for j in
+                             range(len(landms))]
+            img_landmarks = []
+            for i in range(len(landmarks)):
+                face_dict = {}
+                for points, face in zip(landmarks[i], face_points):
+                    face_dict[face] = points
+                img_landmarks.append(face_dict)
+            landmarks_.append(img_landmarks)
+
         output = self.output_class(boxes=boxes_, confidences=confidences_, landmarks=landmarks_[00])
         return output
