@@ -328,3 +328,21 @@ def nms(boxes, scores, overlap=0.5, top_k=200):
         # keep only elements with an IoU <= overlap
         idx = idx[IoU.le(overlap)]
     return keep, count
+
+
+def _preprocess(img):
+    """Preprocessing step before feeding the network.
+
+    Arguments:
+        img: a float numpy array of shape [h, w, c].
+
+    Returns:
+        a float numpy array of shape [1, c, h, w].
+    """
+    if len(img.shape) == 4:
+        img = img.transpose((0, 3, 1, 2))
+    else:
+        img = img.transpose((2, 0, 1))
+        img = np.expand_dims(img, 0)
+    img = (img - 127.5) * 0.0078125
+    return
