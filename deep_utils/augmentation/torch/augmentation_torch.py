@@ -138,3 +138,21 @@ class AugmentTorch:
                 transform = transforms.Lambda(lambda tensors: torch.stack([transform(t) for t in tensors]))
             transformations.append(transform)
         return transforms.Compose(transformations)
+
+
+def tensor_to_image(tensor, mean=None, std=None):
+    import torch
+    from torchvision import transforms
+
+    if mean is not None or std is not None:
+        c = tensor.size()[0]
+        if std is None:
+            std = torch.ones(c)
+        elif mean is None:
+            mean = torch.zeros(c)
+
+        tensor = transforms.Normalize(mean=[-m / s for m, s in zip(mean, std)], std=[1 / s for s in std])(tensor)
+
+    image = transforms.ToPILImage()(tensor)
+
+    return image
