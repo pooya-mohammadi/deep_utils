@@ -2,34 +2,11 @@ _nt_itemgetters = {}
 
 
 def dictnamedtuple(typename, field_names, *, rename=False, defaults=None, module=None):
-    """Returns a new subclass of tuple with named fields.
-
-    >>> Point = namedtuple('Point', ['x', 'y'])
-    >>> Point.__doc__                   # docstring for the new class
-    'Point(x, y)'
-    >>> p = Point(11, y=22)             # instantiate with positional args or keywords
-    >>> p[0] + p[1]                     # indexable like a plain tuple
-    33
-    >>> x, y = p                        # unpack like a regular tuple
-    >>> x, y
-    (11, 22)
-    >>> p.x + p.y                       # fields also accessible by name
-    33
-    >>> d = p._asdict()                 # convert to a dictionary
-    >>> d['x']
-    11
-    >>> Point(**d)                      # convert from a dictionary
-    Point(x=11, y=22)
-    >>> p._replace(x=100)               # _replace() is like str.replace() but targets named fields
-    Point(x=100, y=22)
-
-    """
-    from operator import itemgetter as _itemgetter
+    from operator import itemgetter as _itemgetter, eq as _eq
     from keyword import iskeyword as _iskeyword
-    import sys as _sys
     from collections import OrderedDict
-    # Validate the field names.  At the user's option, either generate an error
-    # message or automatically replace the field name with a valid name.
+    import sys as _sys
+
     if isinstance(field_names, str):
         field_names = field_names.replace(',', ' ').split()
     field_names = list(map(str, field_names))
@@ -134,8 +111,6 @@ def dictnamedtuple(typename, field_names, *, rename=False, defaults=None, module
         '__doc__': f'{typename}({arg_list})',
         '__slots__': (),
         '_fields': field_names,
-        '_field_defaults': field_defaults,
-        # alternate spelling for backward compatibility
         '_fields_defaults': field_defaults,
         '__new__': __new__,
         '_make': _make,
@@ -197,8 +172,10 @@ def dictnamedtuple(typename, field_names, *, rename=False, defaults=None, module
             value = getattr(self, key)
             return value
 
-        def __getitem__(self, key):
-            value = getattr(self, key)
-            return value
+        def __getitem__(self, item):
+            if type(item) is str:
+                item = self._fields.index(item)
+            val = super(DictNamedTuple, self).__getitem__(item)
+            return val
 
     return DictNamedTuple
