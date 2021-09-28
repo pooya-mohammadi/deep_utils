@@ -1,6 +1,4 @@
-import torch
 import math
-from collections import defaultdict
 import numpy as np
 from .box_utils import nms, _preprocess
 from deep_utils.utils.resize_utils.main_resize import resize
@@ -22,7 +20,7 @@ def run_first_stage(image, net, scale, threshold, device):
         a float numpy array of shape [n_boxes, 9],
             bounding boxes with scores and offsets (4 + 1 + 4).
     """
-
+    import torch
     # scale the image and convert it to a float array
     width, height = image.shape[1:3]
     sw, sh = math.ceil(width * scale), math.ceil(height * scale)
