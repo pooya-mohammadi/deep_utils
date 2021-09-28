@@ -10,20 +10,18 @@ from .src.first_stage import run_first_stage
 
 
 class MTCNNTFFaceDetector(FaceDetector):
+
     def __init__(self, **kwargs):
         super().__init__(name=self.__class__.__name__,
                          file_path=__file__,
                          download_variables=("pnet", "onet", 'rnet'),
                          **kwargs)
         self.config: Config
-        import tensorflow as tf
-        physical_devices = tf.config.experimental.list_physical_devices('GPU')
-        if len(physical_devices) < 0:
-            tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
     @download_decorator
     def load_model(self):
         # LOAD MODELS
+
         pnet = PNet(self.config.pnet)
         rnet = RNet(self.config.rnet)
         onet = ONet(self.config.onet)

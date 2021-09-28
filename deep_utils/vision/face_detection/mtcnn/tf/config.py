@@ -5,6 +5,7 @@ class Config:
     nms_thresholds = (0.7, 0.7, 0.7)
     min_detection_size = 12
     factor = 0.707
+    confidence = 0.8
     pnet_url = "https://github.com/Practical-AI/deep_utils/releases/download/0.1.0/pnet.h5"
     pnet_cache = 'weights/vision/face_detection/mtcnn/tf/pnet.h5'
     pnet = None
