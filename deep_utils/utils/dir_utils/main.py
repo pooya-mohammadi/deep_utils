@@ -6,7 +6,7 @@ from os.path import join
 def transfer_directory_items(in_dir, out_dir, transfer_list, mode='cp', remove_out_dir=False):
     print(f'starting to copying/moving from {in_dir} to {out_dir}')
     if remove_out_dir or os.path.isdir(out_dir):
-        os.system(f'rm -rf {out_dir}; mkdir -p {out_dir}')
+        remove_create(out_dir)
     else:
         os.makedirs(out_dir, exist_ok=True)
     if mode == 'cp':
@@ -58,3 +58,11 @@ def split_xy_dir(x_in_dir,
                              train_labels, mode=mode, remove_out_dir=remove_out_dir)
     transfer_directory_items(y_in_dir, y_val_dir, val_labels,
                              mode=mode, remove_out_dir=remove_out_dir)
+
+
+def remove_create(dir_):
+    import os
+    import shutil
+    if os.path.exists(dir_):
+        shutil.rmtree(dir_)
+    os.makedirs(dir_)
