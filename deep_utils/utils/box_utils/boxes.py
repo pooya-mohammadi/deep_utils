@@ -173,6 +173,16 @@ class Box:
             xc, yc, w, h = box
             x1, y1, x2, y2 = xc - w / 2, yc - h / 2, xc + w / 2, yc + h / 2
             box = [x1, y1, x2, y2]
+        elif in_format == Box.BoxFormat.XYWH.value and to_format == Box.BoxFormat.XCYC.value:
+            x1, y1, w, h = box
+            x2, y2 = x1 + w, y1 + h
+            xc, yc = (x1 + x2) / 2, (y1 + y2) / 2
+            box = [xc, yc, w, h]
+        elif in_format == Box.BoxFormat.XCYC.value and to_format == Box.BoxFormat.XYWH.value:
+            xc, yc, w, h = box
+            x1, y1 = xc - w // 2, yc - h // 2
+
+            box = [x1, y1, w, h]
         elif (in_format is None and to_format is None) or in_format == to_format:
             pass
         else:
