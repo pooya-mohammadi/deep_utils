@@ -8,6 +8,7 @@ from deep_utils.utils.box_utils.boxes import Box, Point
 from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.dir_utils.main import dir_train_test_split, transfer_directory_items
 from deep_utils.utils.dir_utils.main import remove_create
+from deep_utils.utils.opencv.main import show_destroy_cv2
 from .config import Config
 
 
@@ -98,6 +99,7 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
                 orgs.append(org)
         img = Box.put_box(img, boxes, in_source='CV', in_format=Box.BoxFormat.XCYC, in_relative=True)
         img = Box.put_text(img, texts, org=orgs, thickness=3, fontScale=3)
+        show_destroy_cv2(img)
         return img
 
     @staticmethod
