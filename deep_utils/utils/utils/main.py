@@ -30,14 +30,21 @@ else:
 
 def easy_argparse(*args):
     parser = argparse.ArgumentParser()
-
     for arg in args:
         tp = type(arg)
         if tp == dict:
             name = arg.pop('name')
+            if not name.startswith("--"):
+                name = "--" + name
             parser.add_argument(name, **arg)
         else:
             raise TypeError(
                 f"easy_argparse just supports dictionaries"
             )
-    return parser.parse_args()
+    argums_ = parser.parse_args()
+    val = argums_._get_kwargs()
+
+    keys = [i[0] for i in val]
+    value = [i[1] for i in val]
+    argument = dictnamedtuple('arguments', keys)
+    return argument(*value)
