@@ -7,6 +7,8 @@ from deep_utils.vision.object_detection.main.main_object_detection import Object
 from deep_utils.utils.box_utils.boxes import Box, Point
 from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.dir_utils.main import dir_train_test_split, transfer_directory_items
+from deep_utils.utils.dir_utils.main import remove_create
+from deep_utils.utils.opencv.main import show_destroy_cv2
 from .config import Config
 
 
@@ -97,6 +99,7 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
                 orgs.append(org)
         img = Box.put_box(img, boxes, in_source='CV', in_format=Box.BoxFormat.XCYC, in_relative=True)
         img = Box.put_text(img, texts, org=orgs, thickness=3, fontScale=3)
+        show_destroy_cv2(img)
         return img
 
     @staticmethod
@@ -156,11 +159,9 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
         import cv2
         results = dict()
         if res_label_dir and remove_dirs:
-            os.system(f'rm -rf {res_label_dir}')
-            os.system(f'mkdir -p {res_label_dir}')
+            remove_create(res_label_dir)
         if res_img_dir and remove_dirs:
-            os.system(f'rm -rf {res_img_dir}')
-            os.system(f'mkdir -p {res_img_dir}')
+            remove_create(res_img_dir)
         for item_name in os.listdir(dir_):
             _, extension = os.path.splitext(item_name)
             if extension in extensions:
@@ -195,8 +196,8 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
                                                  to_source='CV',
                                                  in_relative=False,
                                                  to_relative=True,
-                                                 img_shape_source='Numpy',
-                                                 img_shape=img.shape[:2])
+                                                 shape_source='Numpy',
+                                                 shape=img.shape[:2])
                         with open(res_path, mode='w') as f:
                             for (b1, b2, b3, b4), class_ in zip(xcyc_boxes, result['classes']):
                                 f.write(f'{class_} {b1} {b2} {b3} {b4}\n')

@@ -1,12 +1,10 @@
-import torch
 import numpy as np
-
 from deep_utils.vision.face_detection.main.main_face_detection import FaceDetector
 from deep_utils.utils.lib_utils.lib_decorators import get_from_config, expand_input, get_elapsed_time, rgb2bgr
 from deep_utils.utils.lib_utils.download_utils import download_decorator
 from deep_utils.utils.box_utils.boxes import Box, Point
 from .config import Config
-from .src.get_nets import PNet, RNet, ONet
+from .src.get_nets import get_nets
 from .src.box_utils import nms, calibrate_box, get_image_boxes, convert_to_square
 from .src.first_stage import run_first_stage
 
@@ -22,6 +20,7 @@ class MTCNNTorchFaceDetector(FaceDetector):
     @download_decorator
     def load_model(self):
         # LOAD MODELS
+        PNet, RNet, ONet = get_nets()
         pnet = PNet(self.config.pnet).to(self.config.device)
         rnet = RNet(self.config.rnet).to(self.config.device)
         onet = ONet(self.config.onet).to(self.config.device)
@@ -45,7 +44,7 @@ class MTCNNTorchFaceDetector(FaceDetector):
                      confidence=None,
                      round_prec=4,
                      get_time=False):
-
+        import torch
         # BUILD AN IMAGE PYRAMID
         width, height = img.shape[1:3]
         min_length = min(height, width)

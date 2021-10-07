@@ -6,7 +6,7 @@ from setuptools.command.install import install
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 
 
 class VerifyVersionCommand(install):
@@ -40,7 +40,7 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'numpy'
+        'numpy', "requests", "tqdm"
     ],
     cmdclass={
         'verify': VerifyVersionCommand,

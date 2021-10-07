@@ -1,8 +1,6 @@
-from tensorflow.keras.layers import Conv2D, Input, MaxPool2D, Flatten, Dense, Permute, PReLU
-from tensorflow.keras.models import Model
-
-
 def ONet(weight_path='onet.h5'):
+    from tensorflow.keras.layers import Conv2D, Input, MaxPool2D, Flatten, Dense, Permute, PReLU
+    from tensorflow.keras.models import Model
     input = Input(shape=[48, 48, 3])
     x = Conv2D(32, (3, 3), strides=1, padding='valid', name='conv1')(input)
     x = PReLU(shared_axes=[1, 2], name='prelu1')(x)
@@ -30,6 +28,8 @@ def ONet(weight_path='onet.h5'):
 
 
 def RNet(weight_path='rnet.h5'):
+    from tensorflow.keras.layers import Conv2D, Input, MaxPool2D, Flatten, Dense, Permute, PReLU
+    from tensorflow.keras.models import Model
     input = Input(shape=[24, 24, 3])  # change this shape to [None,None,3] to enable arbitraty shape input
     x = Conv2D(28, (3, 3), strides=1, padding='valid', name='conv1')(input)
     x = PReLU(shared_axes=[1, 2], name='prelu1')(x)
@@ -53,6 +53,8 @@ def RNet(weight_path='rnet.h5'):
 
 
 def PNet(weight_path='pnet.h5'):
+    from tensorflow.keras.layers import Conv2D, Input, MaxPool2D, Flatten, Dense, Permute, PReLU
+    from tensorflow.keras.models import Model
     input = Input(shape=[None, None, 3])
     x = Conv2D(10, (3, 3), strides=1, padding='valid', name='conv1')(input)
     x = PReLU(shared_axes=[1, 2], name='PReLU1')(x)
