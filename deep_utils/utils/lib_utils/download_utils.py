@@ -67,6 +67,9 @@ def get_file(fname,
 
 
 def download_file(url, file_path, unzip=False, remove_zip=False):
+    if url is None:
+        print('url is None. Exiting the function')
+        return
     if os.path.isdir(file_path):
         file_name = 'tmp'
         base_dir = file_path
