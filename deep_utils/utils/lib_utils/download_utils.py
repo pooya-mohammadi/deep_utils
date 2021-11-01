@@ -66,13 +66,19 @@ def get_file(fname,
     return fpath
 
 
-def download_file(url, file_path, unzip=False):
-    datadir, fname = os.path.split(file_path)
-    os.makedirs(datadir, exist_ok=True)
+def download_file(url, file_path, unzip=False, remove_zip=False):
+    if os.path.isdir(file_path):
+        file_name = 'tmp'
+        base_dir = file_path
+    else:
+        base_dir, file_name = os.path.split(file_path)
+    os.makedirs(base_dir, exist_ok=True)
+    download_des = os.path.join(base_dir, file_name)
     print('Downloading data from', url)
     error_msg = 'URL fetch failure on {}'
+
     try:
-        with open(file_path, 'wb') as f:
+        with open(download_des, 'wb') as f:
             response = requests.get(url, stream=True)
             total = response.headers.get('content-length')
 
@@ -89,24 +95,17 @@ def download_file(url, file_path, unzip=False):
                     sys.stdout.flush()
         sys.stdout.write('\n')
     except (Exception, KeyboardInterrupt):
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        if os.path.isfile(download_des):
+            os.remove(download_des)
         raise Exception(error_msg.format(url))
-    if file_path.endswith(".zip") and unzip:
+    if unzip:
         from zipfile import ZipFile
-        try:
-            final_path = file_path[:-4]
-            if os.path.exists(final_path):
-                print(f"The {final_path} already exists")
-                return
-            with ZipFile(file_path, 'r') as zip:
-                zip.printdir()
-                print(f'extracting {file_path}')
-                zip.extractall(file_path[:-4])
-                print(f'extracting is done!')
-            os.remove(file_path)
-        except (Exception, KeyboardInterrupt):
-            raise Exception(f"Error in extracting {file_path}")
+        with ZipFile(download_des, 'r') as zip:
+            print(f'extracting {download_des}')
+            zip.extractall(base_dir)
+            print(f'extracting is done!')
+        if remove_zip:
+            os.remove(download_des)
 
 
 def download_decorator(func):
@@ -126,5 +125,5 @@ def download_decorator(func):
 
 
 if __name__ == '__main__':
-    url = 'https://codeload.github.com/opencv/opencv-python/zip/refs/tags/57'
-    download_file(url, '/home/ai/remove.zip', unzip=True)
+    url = 'https://github.com/Practical-AI/deep_utils/archive/refs/tags/0.4.0.zip'
+    download_file(url, '/home/ai', unzip=True, remove_zip=True)
