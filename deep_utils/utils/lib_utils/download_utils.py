@@ -1,4 +1,5 @@
 import os
+import shutil
 import sys
 from functools import wraps
 import requests
@@ -66,25 +67,32 @@ def get_file(fname,
     return fpath
 
 
-def download_file(url, file_path, unzip=False, remove_zip=False):
+def download_file(url, download_dir, unzip=False, remove_zip=False, file_name=None):
     if url is None:
         print('url is None. Exiting the function')
         return
-    if os.path.isdir(file_path):
-        file_name = 'tmp'
-        base_dir = file_path
-    else:
-        base_dir, file_name = os.path.split(file_path)
-    os.makedirs(base_dir, exist_ok=True)
-    download_des = os.path.join(base_dir, file_name)
+    os.makedirs(download_dir, exist_ok=True)
     print('Downloading data from', url)
     error_msg = 'URL fetch failure on {}'
 
     try:
-        with open(download_des, 'wb') as f:
+        response = requests.get(url, stream=True)
+        total = response.headers.get('content-length')
+        while not total:
             response = requests.get(url, stream=True)
             total = response.headers.get('content-length')
+        try:
+            if file_name is None:
+                file_name = response.headers.get('filename')
+                if file_name is None:
+                    file_name = response.headers.get('content-disposition').split('=')[-1]
+        except:
+            file_name = os.path.split(url)[-1]
 
+        if not os.path.isdir(download_dir):
+            os.makedirs(download_dir, exist_ok=True)
+        download_des = os.path.join(download_dir, file_name)
+        with open(download_des, 'wb') as f:
             if total is None:
                 f.write(response.content)
             else:
@@ -105,7 +113,7 @@ def download_file(url, file_path, unzip=False, remove_zip=False):
         from zipfile import ZipFile
         with ZipFile(download_des, 'r') as zip:
             print(f'extracting {download_des}')
-            zip.extractall(base_dir)
+            zip.extractall(download_dir)
             print(f'extracting is done!')
         if remove_zip:
             os.remove(download_des)
@@ -128,5 +136,10 @@ def download_decorator(func):
 
 
 if __name__ == '__main__':
-    url = 'https://github.com/Practical-AI/deep_utils/archive/refs/tags/0.4.0.zip'
-    download_file(url, '/home/ai', unzip=True, remove_zip=True)
+    url = 'https://isic-challenge-data.s3.amazonaws.com/2016/ISBI2016_ISIC_Part1_Test_GroundTruth.zip'
+    download_file(url, '/home/ai/pooya', unzip=True, remove_zip=False)
+    download_file(url, '/home/ai/pooya', unzip=True, remove_zip=False, file_name='wow.zip')
+    download_file("https://github.com/Practical-AI/deep_utils/archive/refs/tags/0.4.2.zip", '/home/ai/pooya', unzip=True, remove_zip=True)
+    download_file("https://github.com/Practical-AI/deep_utils/archive/refs/tags/0.4.2.zip", '/home/ai/pooya', unzip=False, remove_zip=True)
+
+
