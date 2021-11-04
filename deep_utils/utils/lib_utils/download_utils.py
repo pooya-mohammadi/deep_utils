@@ -67,7 +67,7 @@ def get_file(fname,
     return fpath
 
 
-def download_file(url, download_dir, unzip=False, remove_zip=False, file_name=None):
+def download_file(url, download_dir='.', unzip=False, remove_zip=False, file_name=None):
     if url is None:
         print('url is None. Exiting the function')
         return
@@ -139,7 +139,7 @@ if __name__ == '__main__':
     url = 'https://isic-challenge-data.s3.amazonaws.com/2016/ISBI2016_ISIC_Part1_Test_GroundTruth.zip'
     download_file(url, '/home/ai/pooya', unzip=True, remove_zip=False)
     download_file(url, '/home/ai/pooya', unzip=True, remove_zip=False, file_name='wow.zip')
-    download_file("https://github.com/Practical-AI/deep_utils/archive/refs/tags/0.4.2.zip", '/home/ai/pooya', unzip=True, remove_zip=True)
-    download_file("https://github.com/Practical-AI/deep_utils/archive/refs/tags/0.4.2.zip", '/home/ai/pooya', unzip=False, remove_zip=True)
-
-
+    download_file("https://github.com/Practical-AI/deep_utils/archive/refs/tags/0.4.2.zip", '/home/ai/pooya',
+                  unzip=True, remove_zip=True)
+    download_file("https://github.com/Practical-AI/deep_utils/archive/refs/tags/0.4.2.zip", '/home/ai/pooya',
+                  unzip=False, remove_zip=True)
