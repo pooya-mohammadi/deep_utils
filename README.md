@@ -19,10 +19,10 @@ This repository contains the most frequently used deep learning modules and func
     pip install deep_utils
     
     # or from the repo
-    pip install git+https://github.com/Practical-AI/deep_utils.git
+    pip install git+https://github.com/pooya-mohammadi/deep_utils.git
    
     # or clone the repo
-    git clone https://github.com/Practical-AI/deep_utils.git deep_utils
+    git clone https://github.com/pooya-mohammadi/deep_utils.git deep_utils
     pip install -U deep_utils 
    ```
     
