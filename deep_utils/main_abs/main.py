@@ -31,7 +31,7 @@ class MainClass(ABC):
         separated_files = os.path.join('deep_utils', os.path.split(file_path)[0].split('deep_utils')[-1][1:])
         file_ = '.'.join(split_all(separated_files) + ["config"])
         config = import_module(file_, 'Config')
-        self.config = config
+        self.config = config()
 
         for arg, val in kwargs.items():
             try:

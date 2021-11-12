@@ -2,9 +2,10 @@ from typing import Union
 
 
 class CV2Config:
-    prototxt = None
-    caffemodel = None
-    resize_mode = 'cv2'
-    resize_size = (300, 300)
-    img_mean: Union[tuple, None] = None
-    img_scale_factor = 1
+    def __init__(self):
+        self.prototxt = None
+        self.caffemodel = None
+        self.resize_mode = 'cv2'
+        self.resize_size = (300, 300)
+        self.img_mean: Union[tuple, None] = None
+        self.img_scale_factor = 1
