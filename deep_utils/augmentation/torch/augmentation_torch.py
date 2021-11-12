@@ -140,9 +140,10 @@ class AugmentTorch:
         return transforms.Compose(transformations)
 
 
-def tensor_to_image(tensor, mean=None, std=None):
+def tensor_to_image(tensor, mean=None, std=None, return_array=True):
     import torch
     from torchvision import transforms
+    import numpy as np
 
     if mean is not None or std is not None:
         c = tensor.size()[0]
@@ -154,5 +155,6 @@ def tensor_to_image(tensor, mean=None, std=None):
         tensor = transforms.Normalize(mean=[-m / s for m, s in zip(mean, std)], std=[1 / s for s in std])(tensor)
 
     image = transforms.ToPILImage()(tensor)
-
+    if return_array:
+        image = np.array(image)
     return image
