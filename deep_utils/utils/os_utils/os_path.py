@@ -10,9 +10,13 @@ def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
 
-def split_extension(path, extension=None):
+def split_extension(path, extension=None, suffix=None):
     remain, extension_ = os.path.splitext(path)
-    if extension:
+    if extension and suffix:
+        return remain + suffix + extension
+    elif extension is None and suffix:
+        return remain + suffix + extension_
+    elif extension:
         return remain + extension
     return remain, extension_
 
