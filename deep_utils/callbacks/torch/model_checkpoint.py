@@ -1,3 +1,5 @@
+import os
+
 from deep_utils.utils.os_utils.os_path import split_extension
 
 
@@ -27,6 +29,7 @@ class ModelCheckPoint:
         self.epoch = 0
         self.verbose = verbose
         self.save_last = save_last
+        os.makedirs(os.path.split(model_path)[0], exist_ok=True)
 
     def __call__(self, monitor_val):
         self.epoch += 1
