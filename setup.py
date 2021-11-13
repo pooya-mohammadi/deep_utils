@@ -3,10 +3,13 @@ import os
 import setuptools
 from setuptools.command.install import install
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+try:
+    import pypandoc
+    long_description = pypandoc.convert('README.md', 'rst')
+except (IOError, ImportError):
+    long_description = open('README.md', mode='r').read()
 
-VERSION = "0.7.1"
+VERSION = "0.7.2"
 
 
 class VerifyVersionCommand(install):
