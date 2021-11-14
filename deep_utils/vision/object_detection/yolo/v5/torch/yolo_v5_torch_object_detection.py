@@ -17,6 +17,11 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
         super(YOLOV5TorchObjectDetector, self).__init__(name=self.__class__.__name__, file_path=__file__, **kwargs)
         self.config: Config
 
+    @staticmethod
+    def yolo_resize(img, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleFill=False, scaleup=True):
+        from .utils.datasets import letterbox
+        return letterbox(img, new_shape=new_shape, color=color, auto=auto, scaleFill=scaleFill, scaleup=scaleup)
+
     def load_model(self):
         import torch
         sys.path.append(os.path.split(__file__)[0])
@@ -45,10 +50,9 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
                        **kwargs
                        ):
         import torch
-        from .utils.datasets import letterbox
         from .utils.general import non_max_suppression, scale_coords
         im0 = img
-        img = np.array([letterbox(im, new_shape=img_size)[0] for im in im0])
+        img = np.array([self.yolo_resize(im, new_shape=img_size)[0] for im in im0])
         img = img.transpose((0, 3, 1, 2))
         img = np.ascontiguousarray(img)
         img = torch.from_numpy(img).to(self.config.device)
@@ -203,3 +207,14 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
                                 f.write(f'{class_} {b1} {b2} {b3} {b4}\n')
 
         return results
+
+    @staticmethod
+    def clean_samples(label_path, img_path, ext='.jpg'):
+        img_names = [os.path.splitext(img)[0] for img in os.listdir(img_path)]
+        label_names = [os.path.splitext(l)[0] for l in os.listdir(label_path)]
+        for label in label_names:
+            if label not in img_names:
+                os.remove(join(label_path, label + ".txt"))
+        for img_name in img_names:
+            if img_name not in label_names:
+                os.remove(join(img_path, img_name + ext))
