@@ -15,21 +15,17 @@ def img_to_b64(image: np.ndarray, extension: str = '.jpg') -> str:
     return base64_img
 
 
-def b64_to_img(image_string: str, is_rgb: bool = True) -> np.ndarray:
+def b64_to_img(image_string: str) -> np.ndarray:
     """
     Converts the input byte string to an RGB image
     :param image_string: base64 image string
-    :param is_rgb: whether the input string is made from an rgb image or bgr.
     :return: numpy image
             """
     import cv2
     import base64
-    import io
-    from PIL import Image
 
     img_data = base64.b64decode(image_string)
-    image = Image.open(io.BytesIO(img_data))
-    image = np.array(image)
-    if not is_rgb:
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image = np.array(bytearray(img_data), dtype=np.uint8)
+    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+
     return image
