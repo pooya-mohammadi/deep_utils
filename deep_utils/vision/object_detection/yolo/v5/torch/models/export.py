@@ -13,11 +13,11 @@ sys.path.append('/')  # to run '$ python *.py' files in subdirectories
 import torch
 import torch.nn as nn
 
-import models
-from models.experimental import attempt_load
-from utils.activations import Hardswish, SiLU
-from utils.general import colorstr, check_img_size, check_requirements, set_logging
-from utils.torch_utils import select_device
+import deep_utils.vision.object_detection.yolo.v5.torch.models as models
+from deep_utils.vision.object_detection.yolo.v5.torch.models.experimental import attempt_load
+from deep_utils.vision.object_detection.yolo.v5.torch.utils.activations import Hardswish, SiLU
+from deep_utils.vision.object_detection.yolo.v5.torch.utils.general import colorstr, check_img_size, check_requirements, set_logging
+from deep_utils.vision.object_detection.yolo.v5.torch.utils.torch_utils import select_device
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
