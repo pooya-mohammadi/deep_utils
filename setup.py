@@ -5,11 +5,12 @@ from setuptools.command.install import install
 
 try:
     import pypandoc
+
     long_description = pypandoc.convert('README.md', 'rst')
 except (IOError, ImportError):
     long_description = open('README.md', mode='r').read()
 
-VERSION = "0.8.3"
+VERSION = "0.8.4"
 
 
 class VerifyVersionCommand(install):
@@ -43,7 +44,7 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     install_requires=[
-        'numpy', "requests", "tqdm"
+        'numpy', "requests", "tqdm", "opencv-python"
     ],
     cmdclass={
         'verify': VerifyVersionCommand,
