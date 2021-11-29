@@ -23,9 +23,11 @@ heavy development, so please remember that many things may change. Please instal
 * [Installation](#installation)
 * [Vision](#vision)
     * [Face Detection](#face-detection)
-        * [Quick Start](#quick-start)
         * [MTCNN](#mtcnn)
-    * [Object Detection](#object-detection)
+* [Contributing](#Contributing)
+* [Licence](#Licence)
+* [Collaborators](#Collaborators)
+* [Contact](#Contact)
 * [References](#references)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -55,11 +57,16 @@ So, we created this enhanced one. This toolkit minimizes the deep learning teams
 ```
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+# Vision
+We support two subsets of models in Computer Vision. 
+* Face Detection
+* Object Detection
+
 ## Face Detection
 
 We have gathered a rich collection of face detection models that are as follows. If you need a model that we don't have, please feel free to open an issue or create a pull request.
 
-### MTCNN-Torch
+### MTCNN
 
 1. After Installing the library, import deep_utils and instantiate models:
 
