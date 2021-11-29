@@ -83,25 +83,29 @@ face_detector = face_detector_loader('MTCNNTorchFaceDetector')
 
 ```python
 import cv2
-from deep_utils import show_destroy_cv2, Box, download_file
+from deep_utils import show_destroy_cv2, Box, download_file, Point
 
 # Download an image
 download_file("https://raw.githubusercontent.com/pooya-mohammadi/deep_utils/master/examples/vision/data/movie-stars.jpg")
 
 # Load an image
-img = cv2.imread("movie-starts.jpg")
+img = cv2.imread("movie-stars.jpg")
 
 # show the image. Press a button to proceed
 show_destroy_cv2(img)
 
 # Detect the faces
-boxes, confidences = face_detector.detect_faces(img)
-    
-# Draw detected boxes on the image. 
-img = Box.put_box(img, boxes)
-    
+result = face_detector.detect_faces(img, is_rgb=False)
+
+# Draw detected boxes on the image.
+img = Box.put_box(img, result.boxes)
+
+# Draw the landmarks
+for landmarks in result.landmarks:
+    Point.put_point(img, list(landmarks.values()), radius=3)
+
 # show the results
-show_destroy_cv2(img) 
+show_destroy_cv2(img)
 ```
 The result:
 
