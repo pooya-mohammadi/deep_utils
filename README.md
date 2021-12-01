@@ -15,7 +15,7 @@
 </div>
 
 This repository contains the most frequently used deep learning models and functions. **Deep_Utils** is still under
-heavy development, so please remember that many things may change. Please install the latest version using pypi.
+heavy development, so take into consideration that many features may change in the future. Install the latest version using pypi.
 
 ## Table of contents
 
@@ -33,8 +33,8 @@ heavy development, so please remember that many things may change. Please instal
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## About the Project
-Many deep learning toolkits are available on GitHub; however, we didn't find one that suited our needs.
-So, we created this enhanced one. This toolkit minimizes the deep learning teams' coding effort to utilize the functionalities of famous deep learning models such as MTCNN in face detection, yolov5 in object detection, and many other repositories and models in various fields. In addition, it provides functions for preprocessing, monitoring, and manipulating datasets that can come in handy in any programming project.
+Many deep learning toolkits are available on GitHub; however, we couldn't find one that would suit our needs.
+So, we created this improved one. This toolkit minimizes the deep learning teams' coding efforts to utilize the functionalities of famous deep learning models such as MTCNN in face detection, yolov5 in object detection, and many other repositories and models in various fields. In addition, it provides functionalities for preprocessing, monitoring, and manipulating datasets that can come in handy in any programming project.
 
 **What we have done so far:**
 * The outputs of all the models are standard numpy
@@ -64,7 +64,7 @@ We support two subsets of models in Computer Vision.
 
 ## Face Detection
 
-We have gathered a rich collection of face detection models that are as follows. If you need a model that we don't have, please feel free to open an issue or create a pull request.
+We have gathered a rich collection of face detection models wich are mentioned in the following list. If you notice any model missing, feel free to open an issue or create a pull request.
 
 ### MTCNN
 
