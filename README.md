@@ -204,6 +204,14 @@ Distributed under the MIT License. See `LICENSE` for more information.
       </a>
     </td>
     <td align="center">
+      <a href="https://github.com/MenuaB">
+        <img src="https://avatars.githubusercontent.com/u/16352202?v=4" width="100px;" alt="Menua Bedrosian"/><br>
+        <sub>
+          <b>Menua Bedrosian </b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
       <a href="https://github.com/alirezakazemipour">
         <img src="https://avatars.githubusercontent.com/u/32295763?v=4" width="100px;" alt="Alireza Kazemipour"/><br>
         <sub>
