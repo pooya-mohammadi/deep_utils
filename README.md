@@ -24,6 +24,8 @@ heavy development, so take into consideration that many features may change in t
 * [Vision](#vision)
     * [Face Detection](#face-detection)
         * [MTCNN](#mtcnn)
+* [Utils](#utils)
+  * [DictNamedTuple](#dictnametuple)
 * [Contributing](#Contributing)
 * [Licence](#Licence)
 * [Collaborators](#Collaborators)
@@ -111,6 +113,41 @@ The result:
 
 <img src="https://raw.githubusercontent.com/pooya-mohammadi/deep_utils/master/examples/vision/data/movie-starts-mtccn-torch.jpg" alt="Logo" >
 <p align="right">(<a href="#top">back to top</a>)</p>
+
+## Utils
+
+
+### DictNamedTuple
+In this custom data type, we have added the methods of the Dict type to the NamedTuple type. You have access to .get(), .values(), .items() alongside all of the functionalities of a NamedTuple. Also, all the outputs of our models are DictNamedTuple, and you can modify and manipulate them easily. Let's see how to use it:
+
+```
+from deep_utils import dictnamedtuple
+# create a new object
+dict_object = dictnamedtuple(typename='letters', field_names=['firstname', 'lastname'])
+# pass the values
+instance_dict = dict_object(firstname='pooya', lastname='mohammadi')
+
+# get items and ...
+print("items: ", instance_dict.items())
+print("keys: ", instance_dict.keys())
+print("values: ", instance_dict.values())
+print("firstname: ", instance_dict.firstname)
+print("firstname: ", instance_dict['firstname'])
+print("lastname: ", instance_dict.lastname)
+print("lastname: ", instance_dict['lastname'])
+```
+
+```
+# results
+items:  [('firstname', 'pooya'), ('lastname', 'mohammadi')]
+keys:  ['firstname', 'lastname']
+values:  ['pooya', 'mohammadi']
+firstname:  pooya
+firstname:  pooya
+lastname:  mohammadi
+lastname:  mohammadi
+```
+
 <!-- CONTRIBUTING -->
 
 ## Contributing
