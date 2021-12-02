@@ -64,7 +64,7 @@ We support two subsets of models in Computer Vision.
 
 ## Face Detection
 
-We have gathered a rich collection of face detection models wich are mentioned in the following list. If you notice any model missing, feel free to open an issue or create a pull request.
+We have gathered a rich collection of face detection models which are mentioned in the following list. If you notice any model missing, feel free to open an issue or create a pull request.
 
 ### MTCNN
 
