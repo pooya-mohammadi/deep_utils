@@ -1,4 +1,5 @@
-[![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils) [![PyPI](https://img.shields.io/pypi/v/deep_utils.svg)](https://pypi.python.org/pypi/deep_utils)
+[![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils) [![PyPI](https://img.shields.io/pypi/v/deep_utils.svg)](https://pypi.python.org/pypi/deep_utils) [![build](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/automatic-release.yml/badge.svg)](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/automatic-release.yml)
+
 <div id="top"></div>
 <!-- PROJECT LOGO -->
 <br />
