@@ -9,7 +9,7 @@ def resize(img, dsize, in_source='Numpy', mode='cv2', interpolation=None):
         new_img = cv2_resize(img, dsize=dsize, interpolation=interpolation)
     elif mode.lower() == 'pil':
         from PIL import Image
-        img = img if type(img) == Image.Image else Image.fromarray(img)
+        img = img if isinstance(img, Image.Image) else Image.fromarray(img)
         new_img = img.resize(dsize, interpolation)
     else:
         raise ValueError(f'{mode} is not supported, supported types: cv2, ')

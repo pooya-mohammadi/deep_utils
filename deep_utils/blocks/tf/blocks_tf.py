@@ -14,11 +14,11 @@ class BlocksTF:
         norm_kwargs = dict() if norm_kwargs is None else norm_kwargs
         act_kwargs = dict() if act_kwargs is None else act_kwargs
         pool_kwargs = dict() if pool_kwargs is None else pool_kwargs
-        k = (k, k) if type(k) is int else k
-        s = (s, s) if type(s) is int else s
-        p = (p, p) if type(p) is int else p
-        pooling_s = (pooling_s, pooling_s) if type(pooling_s) is int else pooling_s
-        pooling_k = (pooling_k, pooling_k) if type(pooling_k) is int else pooling_k
+        k = (k, k) if isinstance(k, int) else k
+        s = (s, s) if isinstance(s, int) else s
+        p = (p, p) if isinstance(p, int) else p
+        pooling_s = (pooling_s, pooling_s) if isinstance(pooling_s, int) else pooling_s
+        pooling_k = (pooling_k, pooling_k) if isinstance(pooling_k, int) else pooling_k
         modules, names = [], []
         if conv:
             modules.append(BlocksTF.conv_2d(out_c, k, s, p, **conv_kwargs))

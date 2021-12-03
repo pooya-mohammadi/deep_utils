@@ -23,7 +23,7 @@ def dictnamedtuple(typename, field_names, *, rename=False, defaults=None, module
             seen.add(name)
 
     for name in [typename] + field_names:
-        if type(name) is not str:
+        if not isinstance(name, str):
             raise TypeError('Type names and field names must be strings')
         if not name.isidentifier():
             raise ValueError('Type names and field names must be valid '
@@ -173,7 +173,7 @@ def dictnamedtuple(typename, field_names, *, rename=False, defaults=None, module
             return value
 
         def __getitem__(self, item):
-            if type(item) is str:
+            if isinstance(item, str):
                 item = self._fields.index(item)
             val = super(DictNamedTuple, self).__getitem__(item)
             return val

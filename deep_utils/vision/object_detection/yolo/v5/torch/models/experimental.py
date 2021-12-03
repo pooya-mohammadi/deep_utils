@@ -120,9 +120,9 @@ def attempt_load(weights, map_location=None):
 
     # Compatibility updates
     for m in model.modules():
-        if type(m) in [nn.Hardswish, nn.LeakyReLU, nn.ReLU, nn.ReLU6, nn.SiLU]:
+        if isinstance(m, (nn.Hardswish, nn.LeakyReLU, nn.ReLU, nn.ReLU6, nn.SiLU)):
             m.inplace = True  # pytorch 1.7.0 compatibility
-        elif type(m) is Conv:
+        elif isinstance(m, Conv):
             m._non_persistent_buffers_set = set()  # pytorch 1.6.0 compatibility
 
     if len(model) == 1:
