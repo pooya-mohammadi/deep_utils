@@ -34,9 +34,9 @@ def expand_input(dim):
             elif len(in_.shape) == dim:
                 in_ = np.expand_dims(in_, axis=0)
                 results = func(self, in_, *args, **kwargs)
-                if type(results) is tuple:
+                if isinstance(results, tuple):
                     results = tuple([res[0] if res is not None and len(res) == 1 else res for res in results])
-                elif type(results) is dict:
+                elif isinstance(results, dict):
                     results = {key: val[0] if val is not None and len(val) == 1 else val for key, val in
                                results.items()}
                 elif hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
@@ -64,7 +64,7 @@ def get_elapsed_time(func):
             results = func(self, *args, **kwargs)
             toc = time.time()
             elapsed_time = round(toc - tic, 4)
-            if type(results) is dict:
+            if isinstance(results,  dict):
                 results['elapsed_time'] = elapsed_time
             elif hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
                 from deep_utils.utils.utils.main import dictnamedtuple

@@ -35,7 +35,7 @@ class MainClass(ABC):
 
         for arg, val in kwargs.items():
             try:
-                if type(arg) is dict:
+                if isinstance(arg, dict):
                     getattr(self.config, arg).update(val)
                 else:
                     setattr(self.config, arg, val)

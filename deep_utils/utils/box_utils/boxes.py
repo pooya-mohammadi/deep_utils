@@ -15,7 +15,7 @@ class Point:
     def point2point(point, in_source, to_source, in_relative=None, to_relative=None, shape=None, shape_source=None):
         if point is None or len(point) == 0:
             pass
-        elif type(point[0]) in [tuple, list, np.ndarray]:
+        elif isinstance(point[0], (tuple, list, np.ndarray)):
             point = [Point._point2point(p, in_source=in_source, to_source=to_source,
                                         in_relative=in_relative, to_relative=to_relative,
                                         shape=shape, shape_source=shape_source) for p in point]
@@ -27,9 +27,9 @@ class Point:
 
     @staticmethod
     def _point2point(point, in_source, to_source, in_relative=None, to_relative=None, shape=None, shape_source=None):
-        if type(in_source) is Point.PointSource:
+        if isinstance(in_source,  Point.PointSource):
             in_source = in_source.value
-        if type(to_source) is Point.PointSource:
+        if isinstance(to_source, Point.PointSource):
             to_source = to_source.value
 
         if (in_source in [Point.PointSource.Torch.value, Point.PointSource.CV.value] and to_source in [
@@ -60,7 +60,7 @@ class Point:
     @staticmethod
     def _put_point(img, point, radius, color=(0, 255, 0), thickness=None, lineType=None, shift=None, in_source="Numpy"):
         import cv2
-        if type(point) is not int:
+        if not isinstance(point, int):
             point = (int(point[0]), int(point[1]))
         point = Point.point2point(point, in_source=in_source, to_source="CV")
         return cv2.circle(img, point, radius, color, thickness, lineType, shift)
@@ -69,7 +69,7 @@ class Point:
     def put_point(img, point, radius, color=(0, 255, 0), thickness=None, lineType=None, shift=None, in_source="Numpy"):
         if point is None or len(point) == 0:
             pass
-        elif type(point[0]) in [tuple, list, np.ndarray]:
+        elif isinstance(point[0], (tuple, list, np.ndarray)):
             for p in point:
                 img = Point._put_point(img, p, radius, color, thickness, lineType, shift, in_source)
         else:
@@ -108,7 +108,7 @@ class Box:
                 return_int=None):
         if box is None or len(box) == 0:
             pass
-        elif type(box[0]) in [tuple, list, np.ndarray]:
+        elif isinstance(box[0], (tuple, list, np.ndarray)):
             box = [Box._box2box(b, in_format=in_format, to_format=to_format, in_source=in_source, to_source=to_source,
                                 in_relative=in_relative, to_relative=to_relative, shape=shape,
                                 shape_source=shape_source, out_type=out_type, return_int=return_int)
@@ -146,14 +146,14 @@ class Box:
         :param out_type: output type of the box. Supported types: list, tuple, numpy
         :return:
         """
-        if type(in_format) is Box.BoxFormat:
+        if isinstance(in_format, Box.BoxFormat):
             in_format = in_format.value
-        if type(to_format) is Box.BoxFormat:
+        if isinstance(to_format, Box.BoxFormat):
             to_format = to_format.value
 
-        if type(in_source) is Box.BoxSource:
+        if isinstance(in_source, Box.BoxSource):
             in_source = in_source.value
-        if type(to_source) is Box.BoxSource:
+        if isinstance(to_source, Box.BoxSource):
             to_source = to_source.value
 
         if in_format == Box.BoxFormat.XYWH.value and to_format == Box.BoxFormat.XYXY.value:
@@ -253,7 +253,7 @@ class Box:
                           shape=img.shape[:2],
                           shape_source='Numpy')
 
-        if type(img) is not np.ndarray:
+        if not isinstance(img, np.ndarray):
             img = np.array(img).astype(np.uint8)
         else:
             img = img.astype(np.uint8)
@@ -276,7 +276,7 @@ class Box:
                 in_source=BoxSource.Numpy):
         if box is None or len(box) == 0:
             pass
-        elif type(box[0]) in [tuple, list, np.ndarray]:
+        elif isinstance(box[0], (tuple, list, np.ndarray):
             for b in box:
                 img = Box._put_box(img, box=b, copy=copy, color=color, thickness=thickness, lineType=lineType,
                                    shift=shift, in_format=in_format, in_source=in_source, in_relative=in_relative)
@@ -301,7 +301,7 @@ class Box:
         img_part = []
         if bbox is None or len(bbox) == 0:
             pass
-        elif type(bbox[0]) in [tuple, list, np.ndarray]:
+        elif isinstance(bbox[0], (tuple, list, np.ndarray):
             img_part = [Box._get_box_img(img, b, box_format, box_source) for b in bbox]
         else:
             img_part = Box._get_box_img(img, bbox, box_format, box_source)
@@ -331,7 +331,7 @@ class Box:
                  org_source='Numpy'):
         if text is None or len(text) == 0 or org is None or len(org) == 0:
             pass
-        elif type(text) in [tuple, list, np.ndarray]:
+        elif isinstance(text, (tuple, list, np.ndarray)):
             for t, o in zip(text, org):
                 img = Box._put_text(img, t, o, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin,
                                     org_source=org_source)

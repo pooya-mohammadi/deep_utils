@@ -125,9 +125,9 @@ class AugmentTorch:
                 transform = arg
             if prob:
                 transform = transforms.RandomApply([transform], p=prob)
-            if type(transform) in [transforms.TenCrop, transforms.FiveCrop]:
+            if isinstance(transform,  (transforms.TenCrop, transforms.FiveCrop)):
                 use_lambda = True
-            if type(transform) in [transforms.Normalize]:
+            if isinstance(transform, transforms.Normalize):
                 if use_lambda:
                     to_append = transforms.Lambda(
                         lambda tensors: torch.stack([AugmentTorch.to_tensor()(t) for t in tensors]))

@@ -21,7 +21,7 @@ def dictnamedtuple(typename, field_names, *, rename=False, defaults=None, module
             seen.add(name)
 
     for name in [typename] + field_names:
-        if type(name) is not str:
+        if not isinstance(name,  str):
             raise TypeError('Type names and field names must be strings')
         if not name.isidentifier():
             raise ValueError('Type names and field names must be valid '

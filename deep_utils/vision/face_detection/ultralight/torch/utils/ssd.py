@@ -148,9 +148,9 @@ class MatchPrior(object):
         self.iou_threshold = iou_threshold
 
     def __call__(self, gt_boxes, gt_labels):
-        if type(gt_boxes) is np.ndarray:
+        if isinstance(gt_boxes,  np.ndarray):
             gt_boxes = torch.from_numpy(gt_boxes)
-        if type(gt_labels) is np.ndarray:
+        if isinstance(gt_labels, np.ndarray):
             gt_labels = torch.from_numpy(gt_labels)
         boxes, labels = assign_priors(gt_boxes, gt_labels,
                                                 self.corner_form_priors, self.iou_threshold)
