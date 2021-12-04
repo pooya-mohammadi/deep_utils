@@ -1,5 +1,6 @@
 from typing import Union
 
+import cv2.cv2
 import numpy as np
 from enum import Enum
 
@@ -27,7 +28,7 @@ class Point:
 
     @staticmethod
     def _point2point(point, in_source, to_source, in_relative=None, to_relative=None, shape=None, shape_source=None):
-        if isinstance(in_source,  Point.PointSource):
+        if isinstance(in_source, Point.PointSource):
             in_source = in_source.value
         if isinstance(to_source, Point.PointSource):
             to_source = to_source.value
@@ -380,6 +381,56 @@ class Box:
                           )
         area = box[2] * box[3]
         return area
+
+    @staticmethod
+    def fill_box(img,
+                 box,
+                 value,
+                 in_format=BoxFormat.XYXY,
+                 in_source=BoxSource.Numpy):
+        """
+        Fill the selected box with the specified value.
+        :param img: The input image
+        :param box: the box that should be filled
+        :param value: the value with which the box will be filled
+        :param in_format: box input format
+        :param in_source: box input source
+        :return: the filled box
+        """
+        bbox = Box.box2box(box,
+                           in_format=in_format,
+                           in_source=in_source,
+                           to_source=Box.BoxSource.Numpy,
+                           to_format=Box.BoxFormat.XYXY
+                           )
+        img[bbox[0]:bbox[2], bbox[1]:bbox[3]] = value
+        return img
+
+    @staticmethod
+    def fill_outer_box(img,
+                       box,
+                       value: int = 0,
+                       in_format=BoxFormat.XYXY,
+                       in_source=BoxSource.Numpy):
+        """
+        Fill the outer area of the selected box with the specified value.
+        :param img: The input image
+        :param box: the box that should remain fixed
+        :param value: the value with which the outer box will be filled, default is zero
+        :param in_format: box input format
+        :param in_source: box input source
+        :return: the filled box
+        """
+        bbox = Box.box2box(box,
+                           in_format=in_format,
+                           in_source=in_source,
+                           to_source=Box.BoxSource.Numpy,
+                           to_format=Box.BoxFormat.XYXY
+                           )
+        mask = np.ones_like(img, dtype=np.uint8) * value
+        mask[bbox[0]:bbox[2], bbox[1]:bbox[3]] = 1
+        img = cv2.multiply(img, mask)
+        return img
 
 
 if __name__ == '__main__':
