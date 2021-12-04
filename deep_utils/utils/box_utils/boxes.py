@@ -276,7 +276,7 @@ class Box:
                 in_source=BoxSource.Numpy):
         if box is None or len(box) == 0:
             pass
-        elif isinstance(box[0], (tuple, list, np.ndarray):
+        elif isinstance(box[0], (tuple, list, np.ndarray)):
             for b in box:
                 img = Box._put_box(img, box=b, copy=copy, color=color, thickness=thickness, lineType=lineType,
                                    shift=shift, in_format=in_format, in_source=in_source, in_relative=in_relative)
@@ -301,7 +301,7 @@ class Box:
         img_part = []
         if bbox is None or len(bbox) == 0:
             pass
-        elif isinstance(bbox[0], (tuple, list, np.ndarray):
+        elif isinstance(bbox[0], (tuple, list, np.ndarray)):
             img_part = [Box._get_box_img(img, b, box_format, box_source) for b in bbox]
         else:
             img_part = Box._get_box_img(img, bbox, box_format, box_source)

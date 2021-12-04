@@ -34,16 +34,16 @@ def expand_input(dim):
             elif len(in_.shape) == dim:
                 in_ = np.expand_dims(in_, axis=0)
                 results = func(self, in_, *args, **kwargs)
-                if isinstance(results, tuple):
-                    results = tuple([res[0] if res is not None and len(res) == 1 else res for res in results])
-                elif isinstance(results, dict):
-                    results = {key: val[0] if val is not None and len(val) == 1 else val for key, val in
-                               results.items()}
-                elif hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
+                if hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
                     new_results = {key: val[0] if val is not None and len(val) == 1 else val for key, val in
                                    results.items()}
                     cls = type(results)
                     results = cls(**new_results)
+                elif isinstance(results, tuple):
+                    results = tuple([res[0] if res is not None and len(res) == 1 else res for res in results])
+                elif isinstance(results, dict):
+                    results = {key: val[0] if val is not None and len(val) == 1 else val for key, val in
+                               results.items()}
                 else:
                     results = results[0]
                 return results
