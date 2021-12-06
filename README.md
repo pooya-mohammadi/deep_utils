@@ -32,6 +32,7 @@ heavy development, so take into consideration that many features may change in t
 * [Collaborators](#Collaborators)
 * [Contact](#Contact)
 * [References](#references)
+* [Citation](#citation)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
