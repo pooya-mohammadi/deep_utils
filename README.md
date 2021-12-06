@@ -149,6 +149,9 @@ lastname:  mohammadi
 lastname:  mohammadi
 ```
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+
 <!-- CONTRIBUTING -->
 
 ## Contributing
@@ -223,6 +226,7 @@ The LICENSE of each model is located inside its corresponding directory.
     </td>
   </tr>
 </table>
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 <!-- CONTACT -->
@@ -242,5 +246,19 @@ Project Link: [https://github.com/pooya-mohammadi/deep_utils](https://github.com
 
 1. Tim Esler's facenet-pytorch
    repo: [https://github.com/timesler/facenet-pytorch](https://github.com/timesler/facenet-pytorch)
+
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Citation
+
+Please cite deep-utils if it helps your research. You can use the following BibTeX entry:
+```
+@misc{deep_utils,
+	title = {deep_utils},
+	author = {Mohammadi Kazaj, Pooya},
+	howpublished = {\url{github.com/pooya-mohammadi/deep_utils}},
+	year = {2021}
+}
+```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
