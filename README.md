@@ -70,7 +70,7 @@ We support two subsets of models in Computer Vision.
 We have gathered a rich collection of face detection models which are mentioned in the following list. If you notice any model missing, feel free to open an issue or create a pull request.
 
 ### MTCNN
-
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pooya-mohammadi/Face/blob/master/_02_mtcnn_tf1/deep_utils_mtcnn.ipynb)
 1. After Installing the library, import deep_utils and instantiate models:
 
 ```python
@@ -156,7 +156,7 @@ lastname:  mohammadi
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 If you have a suggestion that would make this toolkit enhanced, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+Don't forget to give the project a ⭐️! Thanks again!
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
