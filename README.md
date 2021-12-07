@@ -78,7 +78,7 @@ We have gathered a rich collection of face detection models which are mentioned 
 from deep_utils import face_detector_loader, list_face_detection_models
     
 # This line will print all the available models 
-list_face_detection_models()
+print(list_face_detection_models())
    
 # Create a face detection model using MTCNN-Torch
 face_detector = face_detector_loader('MTCNNTorchFaceDetector')
