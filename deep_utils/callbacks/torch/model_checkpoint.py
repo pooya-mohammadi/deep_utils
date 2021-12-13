@@ -66,7 +66,7 @@ class ModelCheckPoint:
         self._add_file(save_dict, 'loss', self.loss)
         torch.save(save_dict, model_path)
         if print_:
-            print(f'model is saved in {model_path}')
+            print(f'[INFO] model is saved in {model_path}')
 
     @staticmethod
     def _add_file(dict_, name, file):
