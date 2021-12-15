@@ -1,6 +1,4 @@
 from typing import Union
-
-import cv2.cv2
 import numpy as np
 from enum import Enum
 
