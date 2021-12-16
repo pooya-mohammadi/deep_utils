@@ -1,5 +1,4 @@
 import os
-
 from deep_utils.utils.os_utils.os_path import split_extension
 
 
@@ -61,8 +60,8 @@ class ModelCheckPoint:
         import torch
         save_dict = self.static_dict if self.static_dict is not None else dict()
         save_dict['model_state_dict'] = self.model.state_dict()
-        self._add_file(save_dict, 'optimizer', self.optimizer)
-        self._add_file(save_dict, 'scheduler', self.scheduler)
+        self._add_file(save_dict, 'optimizer', self.optimizer.state_dict())
+        self._add_file(save_dict, 'scheduler', self.scheduler.state_dict())
         self._add_file(save_dict, 'loss', self.loss)
         torch.save(save_dict, model_path)
         if print_:
