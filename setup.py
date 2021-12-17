@@ -10,7 +10,7 @@ try:
 except (IOError, ImportError):
     long_description = open('README.md', mode='r').read()
 
-VERSION = "0.8.7"
+VERSION = "0.8.8"
 
 
 class VerifyVersionCommand(install):
