@@ -141,6 +141,15 @@ class AugmentTorch:
 
 
 def tensor_to_image(tensor, mean=None, std=None, return_array=True):
+    """
+    Note: Whenever the std is 255 the code returns wrong answers because converting to PIL format by default convert the
+     image to type uint8 which has 255 in it as well.
+    :param tensor:
+    :param mean:
+    :param std:
+    :param return_array:
+    :return:
+    """
     import torch
     from torchvision import transforms
     import numpy as np
