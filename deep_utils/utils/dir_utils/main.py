@@ -46,8 +46,20 @@ def dir_train_test_split(in_dir, train_dir='./train', val_dir='./val', test_size
 
 
 def split_dir_of_dir(in_dir, train_dir='./train', val_dir='./val', test_size=0.1, mode='cp', remove_out_dir=False):
+    if remove_out_dir:
+        remove_create(train_dir)
+        remove_create(val_dir)
     for data in os.listdir(in_dir):
         dir_ = join(in_dir, data)
+        if dir_ in [train_dir, val_dir]:
+            print(f"[INFO] {dir_} is equal to {val_dir} or {train_dir}, Skipping ...")
+            continue
+        if not os.path.isdir(dir_):
+            print(f"[INFO] {dir_} is not a directory, Skipping ...")
+            continue
+        if len(os.listdir(dir_)) == 0:
+            print(f"[INFO] {dir_} is empty, Skipping ...")
+            continue
         dir_train_test_split(dir_, train_dir=join(train_dir, data), val_dir=join(val_dir, data), mode=mode,
                              test_size=test_size, remove_out_dir=remove_out_dir)
 
