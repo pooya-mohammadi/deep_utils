@@ -1,6 +1,7 @@
 import os
 import shutil
 from os.path import join
+from typing import Tuple, List, Dict
 
 
 def transfer_directory_items(in_dir, out_dir, transfer_list, mode='cp', remove_out_dir=False, skip_transfer=False):
@@ -72,6 +73,7 @@ def split_xy_dir(x_in_dir,
                  y_val_dir='val/targets',
                  mode='cp',
                  val_size=0.1,
+                 skip_transfer=False,
                  remove_out_dir=False):
     train_names, val_names = dir_train_test_split(x_in_dir,
                                                   train_dir=x_train_dir,
@@ -86,6 +88,7 @@ def split_xy_dir(x_in_dir,
                              train_labels, mode=mode, remove_out_dir=remove_out_dir, skip_transfer=skip_transfer)
     transfer_directory_items(y_in_dir, y_val_dir, val_labels,
                              mode=mode, remove_out_dir=remove_out_dir, skip_transfer=skip_transfer)
+
 
 def crawl_directory_dataset(dir_: str, ext_filter: list = None) -> Tuple[List[str], List[int], Dict]:
     """
@@ -115,6 +118,7 @@ def crawl_directory_dataset(dir_: str, ext_filter: list = None) -> Tuple[List[st
             y.append(cls_index)
     print(f"[INFO] successfully crawled {dir_}")
     return x, y, label_map
+
 
 def remove_create(dir_):
     import os
