@@ -3,3 +3,4 @@ from .utils import *
 from .augmentation import *
 from .blocks import *
 from .callbacks import *
+from ._version import __version__

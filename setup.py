@@ -2,6 +2,7 @@ import sys
 import os
 import setuptools
 from setuptools.command.install import install
+from deep_utils._version import __version__ as VERSION
 
 try:
     import pypandoc
@@ -9,8 +10,6 @@ try:
     long_description = pypandoc.convert('README.md', 'rst')
 except (IOError, ImportError):
     long_description = open('README.md', mode='r').read()
-
-VERSION = "0.8.12"
 
 
 class VerifyVersionCommand(install):
