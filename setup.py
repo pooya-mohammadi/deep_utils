@@ -2,7 +2,8 @@ import sys
 import os
 import setuptools
 from setuptools.command.install import install
-from deep_utils._version import __version__ as VERSION
+
+VERSION = "0.8.13"
 
 try:
     import pypandoc
