@@ -3,7 +3,7 @@ import os
 import setuptools
 from setuptools.command.install import install
 
-VERSION = "0.8.14"
+VERSION = "0.8.15"
 
 try:
     import pypandoc
