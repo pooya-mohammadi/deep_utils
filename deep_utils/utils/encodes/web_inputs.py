@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def read_form(contents, ret_rgb: bool = False):
+def read_img_form(contents, ret_rgb: bool = False):
     """
     read input from a form request with cv2.
     :param contents: The parsed form input

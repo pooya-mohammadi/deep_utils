@@ -8,3 +8,4 @@ from .matplotlib_utils import *
 from .utils import *
 from .imshow_utils import *
 from .encodes import *
+from .minio_lib import *
