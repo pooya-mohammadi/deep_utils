@@ -18,7 +18,7 @@ class VerifyVersionCommand(install):
     description = 'verify that the git tag matches our version'
 
     def run(self):
-        tag = os.getenv('CIRCLE_TAG')
+        tag = os.getenv('GIT_TAG')
 
         if tag != VERSION:
             info = "Git tag: {0} does not match the version of this app: {1}".format(
@@ -26,6 +26,15 @@ class VerifyVersionCommand(install):
             )
             sys.exit(info)
 
+
+# Module dependencies
+requirements, dependency_links = [], []
+with open('requirements.txt') as f:
+    for line in f.read().splitlines():
+        if line.startswith('-e git+'):
+            dependency_links.append(line.replace('-e ', ''))
+        else:
+            requirements.append(line)
 
 setuptools.setup(
     name="deep_utils",
@@ -36,17 +45,18 @@ setuptools.setup(
     description="Deep Utils",
     long_description=long_description,
     long_description_content_type="text/markdown",
+    url="https://github.com/pooya-mohammadi/deep_utils",
     packages=setuptools.find_packages(),
+    include_package_data=True,
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    install_requires=requirements,
+    dependency_links=dependency_links,
     python_requires='>=3.6',
-    install_requires=[
-        'numpy', "requests", "tqdm", "opencv-python"
-    ],
-    cmdclass={
-        'verify': VerifyVersionCommand,
-    }
+    # cmdclass={
+    #     'verify': VerifyVersionCommand,
+    # }
 )
