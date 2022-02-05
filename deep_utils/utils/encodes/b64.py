@@ -53,7 +53,10 @@ def ndarray_to_b64(array: np.ndarray,
     shape = array.shape
     shape_bytes = base64.struct.pack(f'>6s{len(shape) + 1}I', bytes("shape:", "utf-8"), len(shape) * 4, *shape)
     array_bytes = base64.b64encode(array)
-    dtype_name = dtype.name
+    if isinstance(dtype, str):
+        dtype_name = dtype
+    else:
+        dtype_name = dtype.name      
     dtype_bytes = base64.struct.pack(f">6sI{len(dtype_name)}s", bytes("dtype:", "utf-8"), len(dtype_name),
                                      bytes(dtype_name, "utf-8"))
     if not append_dtype and not append_dtype:
