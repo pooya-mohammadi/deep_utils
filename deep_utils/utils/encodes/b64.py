@@ -35,7 +35,7 @@ def b64_to_img(image_string: str) -> np.ndarray:
 
 
 def ndarray_to_b64(array: np.ndarray,
-                   dtype: Union[None, tuple] = None,
+                   dtype: Union[None, str] = None,
                    append_shape=True,
                    append_dtype=True,
                    utf_8_decode=True,
