@@ -33,6 +33,50 @@ def get_img_shape(img):
         raise Exception(f'shape: {img.shape} is not an image')
 
 
+def resize_ratio(img, size: int, pad: bool = False, mode: str = 'cv2', pad_val: int = 0, return_pad: bool = False):
+    """
+    Resize an image while keeping aspect-ratio
+    Args:
+        img: input image
+        size: max-size
+        mode: cv2 or pil
+        pad: Pad the smaller size to become equal to the bigger one.
+        pad_val: Value for padding
+        return_pad: returns pad values for further processes, default is false. return: image, (h_top, h_bottom, w_left, w_right)
+
+    Returns: resized image
+
+    """
+    if mode == 'cv2':
+        import cv2
+        import math
+        h, w = img.shape[:2]
+        ratio = h / w
+        if ratio > 1:
+            h = size
+            w = int(size / ratio)
+            h_top, h_bottom = 0, 0
+            w_pad = (size - w)
+            w_left, w_right = math.ceil(w_pad / 2), w_pad // 2
+        elif ratio < 1:
+            h = int(size * ratio)
+            w = size
+            w_left, w_right = 0, 0
+            h_pad = (size - h)
+            h_top, h_bottom = math.ceil(h_pad / 2), h_pad // 2
+        else:
+            h, w = size, size
+            w_left, w_right, h_bottom, h_top = 0, 0, 0, 0
+        image = cv2.resize(img, (w, h), interpolation=cv2.INTER_NEAREST)
+        if pad:
+            image = cv2.copyMakeBorder(image, h_top, h_bottom, w_left, w_right, cv2.BORDER_CONSTANT, value=pad_val)
+            if return_pad:
+                return image, (h_top, h_bottom, w_left, w_right)
+        return image
+    else:
+        raise ValueError(f"Requested mode: {mode} is not supported!")
+
+
 def resize_save_aspect_ratio(img, size):
     from PIL import Image
     from torchvision import transforms
@@ -63,3 +107,14 @@ def resize_save_aspect_ratio(img, size):
     image = transforms.ToPILImage()(result)
 
     return image
+
+
+if __name__ == '__main__':
+    import cv2
+
+    img = cv2.imread("/home/ai/projects/Irancel-Service/hard_samples/0013903470.jpg")
+    print(f"[INFO] input shape: {img.shape}")
+    img = resize_ratio(img, 900)
+    print(f"[INFO] output shape: {img.shape}")
+    cv2.imshow('', img)
+    cv2.waitKey(0)
