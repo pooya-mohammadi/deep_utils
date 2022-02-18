@@ -419,6 +419,7 @@ class Box:
         :param in_source: box input source
         :return: the filled box
         """
+        import cv2
         bbox = Box.box2box(box,
                            in_format=in_format,
                            in_source=in_source,
