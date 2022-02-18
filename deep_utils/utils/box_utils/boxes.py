@@ -75,6 +75,22 @@ class Point:
             img = Point._put_point(img, point, radius, color, thickness, lineType, shift, in_source)
         return img
 
+    @staticmethod
+    def sort_points(pts: Union[list, tuple]):
+        """
+        Sort a list of 4 points based on upper-left, upper-right, down-right, down-left
+        :param pts:
+        :return:
+        """
+        top_points = sorted(pts, key=lambda l: l[0])[:2]
+        top_left = min(top_points, key=lambda l: l[1])
+        top_right = max(top_points, key=lambda l: l[1])
+        pts.remove(top_left)
+        pts.remove(top_right)
+        down_left = min(pts, key=lambda l: l[1])
+        down_right = max(pts, key=lambda l: l[1])
+        return top_left, top_right, down_right, down_left
+
 
 class Box:
     class BoxFormat(Enum):
