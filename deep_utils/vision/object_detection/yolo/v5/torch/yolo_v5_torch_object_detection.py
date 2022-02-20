@@ -1,7 +1,10 @@
 import os
+import shutil
 from os.path import join
 import sys
+from typing import List
 import numpy as np
+from tqdm import tqdm
 from deep_utils.utils.lib_utils.lib_decorators import get_from_config, expand_input, get_elapsed_time, rgb2bgr
 from deep_utils.vision.object_detection.main.main_object_detection import ObjectDetector
 from deep_utils.utils.box_utils.boxes import Box, Point
@@ -220,3 +223,49 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
         for img_name in img_names:
             if img_name not in label_names:
                 os.remove(join(img_path, img_name + ext))
+
+    @staticmethod
+    def combine_datasets(dataset_paths: List[str], final_dataset_path: str, remove_final_dataset: bool = False):
+        """
+
+        Args:
+            dataset_paths: A list of datasets that should be joined
+            final_dataset_path: path to final dataset
+            remove_final_dataset: whether to remove final dataset path or not!
+
+        Returns:
+
+        """
+        if remove_final_dataset:
+            remove_create(final_dataset_path)
+        final_images = os.path.join(final_dataset_path, "images")
+        final_labels = os.path.join(final_dataset_path, "labels")
+
+        os.makedirs(final_images, exist_ok=True)
+        os.makedirs(final_labels, exist_ok=True)
+
+        for dataset_path in dataset_paths:
+            images_path = os.path.join(dataset_path, "images")
+            labels_path = os.path.join(dataset_path, "labels")
+
+            if os.path.isdir(images_path) and os.path.isdir(labels_path):
+                pass
+            else:
+                print(f"[INFO] {images_path} or {labels_path} do not exit!")
+            # to make sure it's not replicated
+            img_index = len(os.listdir(final_images)) + len(os.listdir(final_labels))
+            img_dict = dict()
+            for img_name in tqdm(os.listdir(images_path), total=len(os.listdir(images_path)),
+                                 desc=f"copying {images_path} to {final_images}"):
+                img_path = os.path.join(images_path, img_name)
+                new_name = split_extension(img_name, suffix=f"_{img_index}")
+                shutil.copy(img_path, os.path.join(final_images, new_name))
+                img_dict[os.path.splitext(img_name)[0]] = img_index
+                img_index += 1
+            for lbl_name in tqdm(os.listdir(labels_path), total=len(os.listdir(labels_path)),
+                                 desc=f"copying {labels_path} to {final_labels}"):
+                lbl_path = os.path.join(labels_path, lbl_name)
+                lbl_index = img_dict.get(os.path.splitext(lbl_name)[0], img_index)
+                new_name = split_extension(lbl_name, suffix=f"_{lbl_index}")
+                shutil.copy(lbl_path, os.path.join(final_labels, new_name))
+                img_index += 1
