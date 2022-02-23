@@ -62,3 +62,75 @@ def value_error_log(logger: Union[None, logging.Logger], message: str):
     """
     log_print(logger, message, log_type='error')
     raise ValueError(message)
+
+
+def save_params(param_path, args):
+    """
+    Save the arguments in the given path.
+    Args:
+        param_path:
+        args:
+
+    Returns:
+
+    """
+    print("[INFO] Saving params!")
+    with open(param_path, mode='w') as f:
+        arguments = vars(args)
+        for key, val in arguments.items():
+            f.write(f"{key} {val}\n")
+    print(f"[INFO] Params are successfully saved in {param_path}!")
+
+
+def get_conf_matrix(class_name_map, y_pred, y_true,
+                    save_path=None,
+                    conf_csv_name="conf_matrix.csv",
+                    conf_jpg_name="conf_matrix.jpg"):
+    """
+    Computes config matrix and saves the csv and jpg file if the save_path is provided!
+    Args:
+        class_name_map:
+        y_pred:
+        y_true:
+        save_path:
+        conf_csv_name:
+        conf_jpg_name:
+
+    Returns: configuration matrix
+
+    """
+    from sklearn.metrics import confusion_matrix
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    conf_matrix = confusion_matrix(y_true, y_pred)
+    df_cm = pd.DataFrame(conf_matrix, index=list(class_name_map.keys()), columns=list(class_name_map.keys()))
+    plt.figure(figsize=(10, 7))
+    sns.heatmap(df_cm, annot=True, fmt='g')
+    plt.xlabel("")
+    plt.ylabel("")
+    if save_path is not None:
+        df_cm.to_csv(os.path.join(save_path, conf_csv_name))
+        plt.savefig(os.path.join(save_path, conf_jpg_name))
+    print("[INFO] confusion matrix is successfully generated!")
+    return conf_matrix
+
+
+def get_cls_report(y_pred, y_true, save_path=None):
+    """
+    Generate classification report and saves them if the save_path is provided!
+    Args:
+        y_pred:
+        y_true:
+        save_path:
+
+    Returns:
+
+    """
+    from sklearn.metrics import classification_report
+    report = classification_report(y_true, y_pred)
+    if save_path:
+        with open(save_path, mode='w') as f:
+            f.write(report)
+    print('[INFO] Successfully generated classification report')
+    return report

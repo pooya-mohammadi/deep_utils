@@ -126,3 +126,34 @@ def remove_create(dir_):
     if os.path.exists(dir_):
         shutil.rmtree(dir_)
     os.makedirs(dir_)
+
+
+def mkdir_incremental(dir_path: str, base_name='exp', fix_name=None):
+    """
+    makes new directories, if it exists increment it and makes another one. Good for hyperparameter tuning!
+    Args:
+        dir_path:
+        base_name:
+        fix_name: If provided this will be created!
+
+    Returns:
+
+    """
+    if fix_name is not None:
+        final_path = os.path.join(dir_path, fix_name)
+        os.makedirs(final_path, exist_ok=True)
+    else:
+        folders = []
+        for dir_ in os.listdir(dir_path):
+            if base_name in dir_:
+                counter = dir_.split(base_name + '_')[-1]
+                if counter.isdigit():
+                    folders.append(int(counter))
+        if len(folders) == 0:
+            final_path = os.path.join(dir_path, base_name + f"_1")
+        else:
+            max_counter = max(folders)
+            final_path = os.path.join(dir_path, base_name + f"_{max_counter + 1}")
+        os.makedirs(final_path)
+
+    return final_path
