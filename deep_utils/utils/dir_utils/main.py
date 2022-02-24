@@ -139,6 +139,7 @@ def mkdir_incremental(dir_path: str, base_name='exp', fix_name=None):
     Returns:
 
     """
+    os.makedirs(dir_path, exist_ok=True)
     if fix_name is not None:
         final_path = os.path.join(dir_path, fix_name)
         os.makedirs(final_path, exist_ok=True)

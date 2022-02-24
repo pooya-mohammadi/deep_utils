@@ -64,12 +64,13 @@ def value_error_log(logger: Union[None, logging.Logger], message: str):
     raise ValueError(message)
 
 
-def save_params(param_path, args):
+def save_params(param_path, args, logger=None):
     """
     Save the arguments in the given path.
     Args:
         param_path:
         args:
+        logger: If provided the message will be logged unless will be printed to console!
 
     Returns:
 
@@ -79,13 +80,14 @@ def save_params(param_path, args):
         arguments = vars(args)
         for key, val in arguments.items():
             f.write(f"{key} {val}\n")
-    print(f"[INFO] Params are successfully saved in {param_path}!")
+    log_print(logger, f"[INFO] Params are successfully saved in {param_path}!")
 
 
 def get_conf_matrix(class_name_map, y_pred, y_true,
                     save_path=None,
                     conf_csv_name="conf_matrix.csv",
-                    conf_jpg_name="conf_matrix.jpg"):
+                    conf_jpg_name="conf_matrix.jpg",
+                    logger=None):
     """
     Computes config matrix and saves the csv and jpg file if the save_path is provided!
     Args:
@@ -95,6 +97,7 @@ def get_conf_matrix(class_name_map, y_pred, y_true,
         save_path:
         conf_csv_name:
         conf_jpg_name:
+        logger: If provided the message will be logged unless will be printed to console!
 
     Returns: configuration matrix
 
@@ -112,17 +115,18 @@ def get_conf_matrix(class_name_map, y_pred, y_true,
     if save_path is not None:
         df_cm.to_csv(os.path.join(save_path, conf_csv_name))
         plt.savefig(os.path.join(save_path, conf_jpg_name))
-    print("[INFO] confusion matrix is successfully generated!")
+    log_print(logger, "[INFO] confusion matrix is successfully generated!")
     return conf_matrix
 
 
-def get_cls_report(y_pred, y_true, save_path=None):
+def get_cls_report(y_pred, y_true, save_path=None, logger=None):
     """
     Generate classification report and saves them if the save_path is provided!
     Args:
         y_pred:
         y_true:
         save_path:
+        logger: If provided the message will be logged unless will be printed to console!
 
     Returns:
 
@@ -132,5 +136,5 @@ def get_cls_report(y_pred, y_true, save_path=None):
     if save_path:
         with open(save_path, mode='w') as f:
             f.write(report)
-    print('[INFO] Successfully generated classification report')
+    log_print(logger, '[INFO] Successfully generated classification report')
     return report
