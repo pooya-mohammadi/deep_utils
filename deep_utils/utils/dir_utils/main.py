@@ -1,7 +1,7 @@
 import os
 import shutil
 from os.path import join
-from typing import Tuple, List, Dict
+from typing import Tuple, List, Dict, Union
 
 
 def transfer_directory_items(in_dir, out_dir, transfer_list, mode='cp', remove_out_dir=False, skip_transfer=False):
@@ -90,11 +90,13 @@ def split_xy_dir(x_in_dir,
                              mode=mode, remove_out_dir=remove_out_dir, skip_transfer=skip_transfer)
 
 
-def crawl_directory_dataset(dir_: str, ext_filter: list = None) -> Tuple[List[str], List[int], Dict]:
+def crawl_directory_dataset(dir_: str, ext_filter: list = None, map_labels=False) -> Union[
+    Tuple[List[str], List[int]], Tuple[List[str], List[int], Dict]]:
     """
     crawls a directory of classes and returns the full path of the items paths and their class names
     :param dir_: path to directory of classes
     :param ext_filter: extensions that will be passed and others will be dropped
+    :param map_labels: This map the labels to indices
     :return: Tuple[List[str], List[int], Dict], x_list containing the paths, y_list containing the class_names, and
     label_map dictionary.
     """
@@ -110,14 +112,20 @@ def crawl_directory_dataset(dir_: str, ext_filter: list = None) -> Tuple[List[st
                 print(f"[INFO] {item_path} with {ext} is not in ext_filtering: {ext_filter}")
                 continue
             x.append(item_path)
-            if cls_name not in label_map:
-                cls_index = len(label_map)
-                label_map[cls_name] = cls_index
+            if map_labels:
+                if cls_name not in label_map:
+                    cls_index = len(label_map)
+                    label_map[cls_name] = cls_index
+                else:
+                    cls_index = label_map[cls_name]
+                y.append(cls_index)
             else:
-                cls_index = label_map[cls_name]
-            y.append(cls_index)
+                y.append(cls_name)
     print(f"[INFO] successfully crawled {dir_}")
-    return x, y, label_map
+    if map_labels:
+        return x, y, label_map
+    else:
+        return x, y
 
 
 def remove_create(dir_):
