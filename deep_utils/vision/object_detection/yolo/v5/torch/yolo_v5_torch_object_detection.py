@@ -110,7 +110,8 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
         return img
 
     @staticmethod
-    def split_dataset(base_dir, out_dir, mode='cp', test_size=0.2, remove_out_dir=False, skip_transfer=True):
+    def split_dataset(base_dir, out_dir, mode='cp', test_size=0.2, remove_out_dir=False, skip_transfer=True,
+                      remove_in_dir=False):
         img_train_names, img_val_names = dir_train_test_split(join(base_dir, 'images'),
                                                               train_dir=join(out_dir, 'train', 'images'),
                                                               val_dir=join(out_dir, 'val', 'images'),
@@ -122,9 +123,10 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
 
         transfer_directory_items(join(base_dir, 'labels'), join(out_dir, 'train', 'labels'),
                                  img_train_labels, mode=mode, remove_out_dir=remove_out_dir,
-                                 skip_transfer=skip_transfer)
+                                 skip_transfer=skip_transfer, remove_in_dir=remove_in_dir)
         transfer_directory_items(join(base_dir, 'labels'), join(out_dir, 'val', 'labels'), img_val_labels,
-                                 mode=mode, remove_out_dir=remove_out_dir, skip_transfer=skip_transfer)
+                                 mode=mode, remove_out_dir=remove_out_dir, skip_transfer=skip_transfer,
+                                 remove_in_dir=remove_in_dir)
 
     @staticmethod
     def extract_label(label_path, img_path=None, shape=None, shape_source=None):

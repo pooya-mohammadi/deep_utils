@@ -4,7 +4,22 @@ from os.path import join
 from typing import Tuple, List, Dict, Union
 
 
-def transfer_directory_items(in_dir, out_dir, transfer_list, mode='cp', remove_out_dir=False, skip_transfer=False):
+def transfer_directory_items(in_dir, out_dir, transfer_list, mode='cp', remove_out_dir=False, skip_transfer=False,
+                             remove_in_dir=False):
+    """
+
+    Args:
+        in_dir:
+        out_dir:
+        transfer_list:
+        mode:
+        remove_out_dir:
+        skip_transfer:
+        remove_in_dir: if mode is mv and this is set to true the in_dir will be removed!
+
+    Returns:
+
+    """
     print(f'starting to copying/moving from {in_dir} to {out_dir}')
     if remove_out_dir or os.path.isdir(out_dir):
         remove_create(out_dir)
@@ -19,7 +34,6 @@ def transfer_directory_items(in_dir, out_dir, transfer_list, mode='cp', remove_o
                     print('[INFO] shutil.copy did not find the file, skipping...')
                 else:
                     raise FileNotFoundError()
-
     elif mode == 'mv':
         for name in transfer_list:
             try:
@@ -29,24 +43,41 @@ def transfer_directory_items(in_dir, out_dir, transfer_list, mode='cp', remove_o
                     print('[INFO] shutil.move did not find the file, skipping...')
                 else:
                     raise FileNotFoundError()
+        if remove_in_dir:
+            shutil.rmtree(in_dir)
     else:
         raise ValueError(f'{mode} is not supported, supported modes: mv and cp')
     print(f'finished copying/moving from {in_dir} to {out_dir}')
 
 
 def dir_train_test_split(in_dir, train_dir='./train', val_dir='./val', test_size=0.1, mode='cp', remove_out_dir=False,
-                         skip_transfer=False):
+                         skip_transfer=False, remove_in_dir=False):
     from sklearn.model_selection import train_test_split
     list_ = os.listdir(in_dir)
     train_name, val_name = train_test_split(list_, test_size=test_size)
     transfer_directory_items(in_dir, train_dir, train_name, mode=mode, remove_out_dir=remove_out_dir,
-                             skip_transfer=skip_transfer)
+                             skip_transfer=skip_transfer, remove_in_dir=False)
     transfer_directory_items(in_dir, val_dir, val_name, mode=mode, remove_out_dir=remove_out_dir,
-                             skip_transfer=skip_transfer)
+                             skip_transfer=skip_transfer, remove_in_dir=remove_in_dir)
     return train_name, val_name
 
 
-def split_dir_of_dir(in_dir, train_dir='./train', val_dir='./val', test_size=0.1, mode='cp', remove_out_dir=False):
+def split_dir_of_dir(in_dir, train_dir='./train', val_dir='./val', test_size=0.1, mode='cp', remove_out_dir=False,
+                     remove_in_dir=False):
+    """
+
+    Args:
+        in_dir:
+        train_dir:
+        val_dir:
+        test_size:
+        mode:
+        remove_out_dir:
+        remove_in_dir: if mode is mv and this is set to true the in_dir will be removed!
+
+    Returns:
+
+    """
     if remove_out_dir:
         remove_create(train_dir)
         remove_create(val_dir)
@@ -62,7 +93,9 @@ def split_dir_of_dir(in_dir, train_dir='./train', val_dir='./val', test_size=0.1
             print(f"[INFO] {dir_} is empty, Skipping ...")
             continue
         dir_train_test_split(dir_, train_dir=join(train_dir, data), val_dir=join(val_dir, data), mode=mode,
-                             test_size=test_size, remove_out_dir=remove_out_dir)
+                             test_size=test_size, remove_out_dir=remove_out_dir, remove_in_dir=remove_in_dir)
+    if mode == 'mv' and remove_in_dir:
+        shutil.rmtree(in_dir)
 
 
 def split_xy_dir(x_in_dir,
@@ -74,7 +107,8 @@ def split_xy_dir(x_in_dir,
                  mode='cp',
                  val_size=0.1,
                  skip_transfer=False,
-                 remove_out_dir=False):
+                 remove_out_dir=False,
+                 remove_in_dir=False):
     train_names, val_names = dir_train_test_split(x_in_dir,
                                                   train_dir=x_train_dir,
                                                   val_dir=x_val_dir,
@@ -85,9 +119,11 @@ def split_xy_dir(x_in_dir,
     val_labels = [os.path.splitext(name)[0] + '.txt' for name in val_names]
 
     transfer_directory_items(y_in_dir, y_train_dir,
-                             train_labels, mode=mode, remove_out_dir=remove_out_dir, skip_transfer=skip_transfer)
+                             train_labels, mode=mode, remove_out_dir=remove_out_dir, skip_transfer=skip_transfer,
+                             remove_in_dir=remove_in_dir)
     transfer_directory_items(y_in_dir, y_val_dir, val_labels,
-                             mode=mode, remove_out_dir=remove_out_dir, skip_transfer=skip_transfer)
+                             mode=mode, remove_out_dir=remove_out_dir, skip_transfer=skip_transfer,
+                             remove_in_dir=remove_in_dir)
 
 
 def crawl_directory_dataset(dir_: str, ext_filter: list = None, map_labels=False) -> Union[
