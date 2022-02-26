@@ -3,6 +3,7 @@ import shutil
 import sys
 from functools import wraps
 import requests
+from deep_utils.utils.utils.logging_ import log_print, value_error_log
 
 
 def get_file(fname,
@@ -67,14 +68,15 @@ def get_file(fname,
     return fpath
 
 
-def download_file(url, download_dir='.', unzip=False, remove_zip=False, file_name=None):
+def download_file(url, download_dir='.', unzip=False, remove_zip=False, file_name=None, logger=None,
+                  remove_download=False):
     if url is None:
-        print('url is None. Exiting the function')
-        return
-    os.makedirs(download_dir, exist_ok=True)
-    print('Downloading data from', url)
-    error_msg = 'URL fetch failure on {}'
+        value_error_log(logger, message='url is None. Exiting the function')
 
+    os.makedirs(download_dir, exist_ok=True)
+    log_print(logger, f'Downloading data from {url}')
+    error_msg = 'URL fetch failure on {}'
+    download_des = None
     try:
         response = requests.get(url, stream=True)
         total = response.headers.get('content-length')
@@ -106,17 +108,34 @@ def download_file(url, download_dir='.', unzip=False, remove_zip=False, file_nam
                     sys.stdout.flush()
         sys.stdout.write('\n')
     except (Exception, KeyboardInterrupt):
-        if os.path.isfile(download_des):
+        if download_des is not None and os.path.isfile(download_des) and remove_download:
+            log_print(logger, f"ًRemoving {download_des} due to error")
             os.remove(download_des)
+        log_print(logger, error_msg.format(url), log_type='error')
         raise Exception(error_msg.format(url))
     if unzip:
-        from zipfile import ZipFile
-        with ZipFile(download_des, 'r') as zip:
-            print(f'extracting {download_des}')
-            zip.extractall(download_dir)
-            print(f'extracting is done!')
-        if remove_zip:
-            os.remove(download_des)
+        unzip_func(download_des, download_dir, remove_zip, logger)
+
+
+def unzip_func(zip_file, res_dir, remove_zip=False, logger=None):
+    """
+    A file to unzip zip files!
+    Args:
+        zip_file:
+        res_dir:
+        remove_zip:
+        logger:
+
+    Returns:
+
+    """
+    from zipfile import ZipFile
+    with ZipFile(zip_file, 'r') as zip:
+        zip.extractall(res_dir)
+        log_print(logger, f'Successfully extracted {zip_file} to {res_dir}!')
+    if zip_file is not None and remove_zip:
+        os.remove(zip_file)
+        log_print(logger, f'Successfully removed {zip_file}!')
 
 
 def download_decorator(func):
