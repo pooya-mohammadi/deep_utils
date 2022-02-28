@@ -1,1 +1,1 @@
-from .imshow_utils import group_show
+from .imshow_utils import group_show, visualize_segmentation_batches

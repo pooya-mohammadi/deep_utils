@@ -1,10 +1,27 @@
 import numpy as np
 from deep_utils.utils.resize_utils.main_resize import resize
 from deep_utils.utils.box_utils.boxes import Box
+from deep_utils.utils.utils.logging_ import log_print
 
 
 def group_show(images, size=(128, 128), n_channels=3, texts=None, text_org=None, text_kwargs=None, title=None,
                title_org=None, title_kwargs=None):
+    """
+    Visualizing a group of images in a grid! Returns a numpy array.
+    Args:
+        images:
+        size:
+        n_channels:
+        texts:
+        text_org:
+        text_kwargs:
+        title:
+        title_org:
+        title_kwargs:
+
+    Returns:
+
+    """
     import math
     title_kwargs = dict() if title_kwargs is None else title_kwargs
     text_kwargs = dict() if text_kwargs is None else text_kwargs
@@ -34,3 +51,25 @@ def group_show(images, size=(128, 128), n_channels=3, texts=None, text_org=None,
         img = Box.put_text(img, text=title, org=title_org, **title_kwargs)
     img = img.astype(np.uint8)
     return img
+
+
+def visualize_segmentation_batches(data_loader, save_path, n_samples=10, logger=None):
+    """
+    Visualize and Save Segmentation Batches!
+    """
+    import cv2
+    import os
+
+    os.makedirs(save_path, exist_ok=True)
+    c = 0
+    for en, (x, y) in enumerate(data_loader):
+        images = []
+        for x_, y_ in zip(x, y):
+            images.append(x_ * 255)
+            images.append(np.stack((y_[..., 0] * 255,) * 3, axis=-1))
+        img = group_show(images)
+        cv2.imwrite(os.path.join(save_path, f'batch_samples_{c}.jpg'), img[..., ::-1])
+        c += 1
+        if c >= n_samples:
+            break
+    log_print(logger, "Successfully visualized input samples!")
