@@ -27,6 +27,7 @@ heavy development, so take into consideration that many features may change in t
         * [MTCNN](#mtcnn)
 * [Utils](#utils)
   * [DictNamedTuple](#dictnametuple)
+* [Tests](#tests)
 * [Contributing](#Contributing)
 * [Licence](#Licence)
 * [Collaborators](#Collaborators)
@@ -152,7 +153,11 @@ lastname:  mohammadi
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+<!-- Tests -->
 
+## Tests
+Tests are done for python 3.8 and 3.9. Deep-Utils will probably run without any errors on lower versions as well.
+<p align="right">(<a href="#top">back to top</a>)</p>
 <!-- CONTRIBUTING -->
 
 ## Contributing

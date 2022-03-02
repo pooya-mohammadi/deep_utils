@@ -8,9 +8,9 @@ VERSION = "0.8.21"
 try:
     import pypandoc
 
-    long_description = pypandoc.convert('README.md', 'rst')
+    long_description = pypandoc.convert('Readme.md', 'rst')
 except (IOError, ImportError):
-    long_description = open('README.md', mode='r').read()
+    long_description = open('Readme.md', mode='r').read()
 
 
 class VerifyVersionCommand(install):
