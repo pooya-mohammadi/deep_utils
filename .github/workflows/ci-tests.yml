@@ -38,4 +38,4 @@ jobs:
           pip install pytest
         # Run the tests. I'm using pytest and the file is in the test's directory.
       - name: Run tests
-        run: pytest --pyargs tests/test*
+        run: pytest --pyargs tests/*
