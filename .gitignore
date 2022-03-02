@@ -8,3 +8,4 @@ deep_utils.egg-info
 .ipynb_checkpoints
 *.h5
 *.egg-info
+/.pytest_cache/
