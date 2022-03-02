@@ -30,26 +30,30 @@ def get_logger(name: str, log_path: Union[str, None] = None) -> logging.Logger:
     return logger
 
 
-def log_print(logger: Union[None, logging.Logger], message: str, log_type="info"):
+def log_print(logger: Union[None, logging.Logger], message: str, log_type="info", verbose=1):
     """
     Logs the input messages with the given log_type. In case the logger object is not provided, prints the message.
     :param logger:
     :param message:
     :param log_type:
+    :param verbose: whether to print/log or not!
     :return:
     """
     if log_type == 'info':
         if logger is not None and isinstance(logger, logging.Logger):
             logger.info(message)
         else:
-            print(f'[INFO] {message}')
+            if verbose:
+                print(f'[INFO] {message}')
     elif log_type == 'error':
         if logger is not None and isinstance(logger, logging.Logger):
             logger.error(message)
         else:
-            print(f'[ERROR] {message}')
+            if verbose:
+                print(f'[ERROR] {message}')
     else:
-        print(f'[ERROR] log_type: {log_type} is not supported')
+        if verbose:
+            print(f'[ERROR] log_type: {log_type} is not supported')
         raise ValueError("[ERROR] log_type: {log_type} is not supported")
 
 
