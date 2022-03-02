@@ -1,7 +1,4 @@
 import warnings
-import pytest
-from pathlib import Path
-from pydoc import locate
 
 warnings.filterwarnings('ignore')
 
@@ -9,7 +6,7 @@ warnings.filterwarnings('ignore')
 def test_resize_ratio():
     """
     Testing the resize_ratio function
-    Returns:
+    Returns: Nothing
 
     """
     import numpy as np
