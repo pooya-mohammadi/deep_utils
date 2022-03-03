@@ -82,7 +82,7 @@ class FPN(nn.Module):
 
     def forward(self, input):
         # names = list(input.keys())
-        input = list(input.values())
+        input = list(input.logs())
 
         output1 = self.output1(input[0])
         output2 = self.output2(input[1])

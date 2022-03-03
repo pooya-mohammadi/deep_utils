@@ -1,10 +1,11 @@
 import os
 import logging
 import sys
+from pathlib import Path
 from typing import Union
 
 
-def get_logger(name: str, log_path: Union[str, None] = None) -> logging.Logger:
+def get_logger(name: str, log_path: Union[str, Path, None] = None) -> logging.Logger:
     """
     Creates a logger for a given name
     :param name: The name that logger will be created for

@@ -721,7 +721,7 @@ def print_mutation(results, hyp, save_dir, bucket):
     keys = ('metrics/precision', 'metrics/recall', 'metrics/mAP_0.5', 'metrics/mAP_0.5:0.95',
             'val/box_loss', 'val/obj_loss', 'val/cls_loss') + tuple(hyp.keys())  # [results + hyps]
     keys = tuple(x.strip() for x in keys)
-    vals = results + tuple(hyp.values())
+    vals = results + tuple(hyp.logs())
     n = len(keys)
 
     # Download (optional)
@@ -743,12 +743,12 @@ def print_mutation(results, hyp, save_dir, bucket):
     with open(evolve_yaml, 'w') as f:
         data = pd.read_csv(evolve_csv)
         data = data.rename(columns=lambda x: x.strip())  # strip keys
-        i = np.argmax(fitness(data.values[:, :7]))  #
+        i = np.argmax(fitness(data.logs[:, :7]))  #
         f.write('# YOLOv5 Hyperparameter Evolution Results\n' +
                 f'# Best generation: {i}\n' +
                 f'# Last generation: {len(data)}\n' +
                 '# ' + ', '.join(f'{x.strip():>20s}' for x in keys[:7]) + '\n' +
-                '# ' + ', '.join(f'{x:>20.5g}' for x in data.values[i, :7]) + '\n\n')
+                '# ' + ', '.join(f'{x:>20.5g}' for x in data.logs[i, :7]) + '\n\n')
         yaml.safe_dump(hyp, f, sort_keys=False)
 
     if bucket:

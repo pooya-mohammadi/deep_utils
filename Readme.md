@@ -91,7 +91,8 @@ import cv2
 from deep_utils import show_destroy_cv2, Box, download_file, Point
 
 # Download an image
-download_file("https://raw.githubusercontent.com/pooya-mohammadi/deep_utils/master/examples/vision/data/movie-stars.jpg")
+download_file(
+    "https://raw.githubusercontent.com/pooya-mohammadi/deep_utils/master/examples/vision/data/movie-stars.jpg")
 
 # Load an image
 img = cv2.imread("movie-stars.jpg")
@@ -107,7 +108,7 @@ img = Box.put_box(img, result.boxes)
 
 # Draw the landmarks
 for landmarks in result.landmarks:
-    Point.put_point(img, list(landmarks.values()), radius=3)
+    Point.put_point(img, list(landmarks.logs()), radius=3)
 
 # show the results
 show_destroy_cv2(img)

@@ -1,21 +1,23 @@
 import os
 from deep_utils.utils.os_utils.os_path import split_extension
+from deep_utils.utils.utils.logging_ import log_print
 
 
-class ModelCheckPoint:
+class ModelCheckPointTorch:
     def __init__(self,
                  model_path,
                  model,
                  monitor='min',
                  save_best_only=True,
                  overwrite=True,
-                 verbose=True,
                  save_last=True,
                  loss=None,
                  optimizer=None,
                  scheduler=None,
                  static_dict=None,
-                 monitor_val=None):
+                 monitor_val=None,
+                 logger=None,
+                 verbose=True):
         """
 
         :param model_path:
@@ -46,8 +48,11 @@ class ModelCheckPoint:
         self.epoch = 0
         self.verbose = verbose
         self.save_last = save_last
+        self.logger = logger
         os.makedirs(os.path.split(model_path)[0], exist_ok=True)
-        print(f'[INFO] Initializing checkpointer with monitor-mode:{monitor} from monitor-val:{monitor_val}')
+        log_print(self.logger, f'Initializing checkpointer with monitor-mode:{monitor} from monitor-val:{monitor_val}',
+                  verbose=verbose)
+
     def __call__(self, monitor_val, **kwargs):
         self.epoch += 1
         if self.save_best_only:
@@ -85,9 +90,11 @@ class ModelCheckPoint:
         torch.save(save_dict, model_path)
         if print_:
             if "monitor_val" in extra:
-                print(f'[INFO] model is saved in {model_path} with monitor-val: {extra["monitor_val"]}')
+                log_print(self.logger,
+                          f'monitor-val: {extra["monitor_val"]}, model is saved in {model_path}',
+                          verbose=self.verbose)
             else:
-                print(f'[INFO] model is saved in {model_path}')
+                log_print(self.logger, f'model is saved in {model_path}', verbose=self.verbose)
 
     @staticmethod
     def _add_file(dict_, name, file):
