@@ -1,0 +1,1 @@
+from .persian import *

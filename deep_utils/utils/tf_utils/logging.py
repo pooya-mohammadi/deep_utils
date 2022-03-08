@@ -23,4 +23,4 @@ def save_train_val_figures(history, save_path, logger=None):
         plt.ylabel(key)
         plt.title(f'Metric {key}')
         plt.savefig(os.path.join(save_path, key + '.jpg'), dpi=500)
-    log_print(logger, f"Successfully saved figures to {save_path}!")
+    log_print(logger=logger, message="Successfully saved figures to {save_path}!")

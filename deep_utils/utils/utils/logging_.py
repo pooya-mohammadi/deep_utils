@@ -80,12 +80,12 @@ def save_params(param_path, args, logger=None):
     Returns:
 
     """
-    print("[INFO] Saving params!")
+    log_print(logger, f"Saving params!")
     with open(param_path, mode='w') as f:
         arguments = vars(args)
         for key, val in arguments.items():
             f.write(f"{key} {val}\n")
-    log_print(logger, f"[INFO] Params are successfully saved in {param_path}!")
+    log_print(logger, f"Params are successfully saved in {param_path}!")
 
 
 def get_conf_matrix(class_name_map, y_pred, y_true,
@@ -120,7 +120,7 @@ def get_conf_matrix(class_name_map, y_pred, y_true,
     if save_path is not None:
         df_cm.to_csv(os.path.join(save_path, conf_csv_name))
         plt.savefig(os.path.join(save_path, conf_jpg_name))
-    log_print(logger, "[INFO] confusion matrix is successfully generated!")
+    log_print(logger, "Confusion matrix is successfully generated!")
     return conf_matrix
 
 
@@ -141,5 +141,5 @@ def get_cls_report(y_pred, y_true, save_path=None, logger=None):
     if save_path:
         with open(save_path, mode='w') as f:
             f.write(report)
-    log_print(logger, '[INFO] Successfully generated classification report')
+    log_print(logger, 'Successfully generated classification report')
     return report
