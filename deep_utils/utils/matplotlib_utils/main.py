@@ -1,3 +1,6 @@
+MATPLOTLIB_COLORS = ["green", "orange", "blue", "black"]
+
+
 def show_plt(img, is_rgb, figsize=None):
     import matplotlib
     matplotlib.use('TkAgg')
