@@ -16,7 +16,7 @@
 </div>
 
 This repository contains the most frequently used deep learning models and functions. **Deep_Utils** is still under
-heavy development, so take into consideration that many features may change in the future. Install the latest version using pypi.
+heavy development, so take into consideration that many features may change in the future and make sure to install the latest version using pypi.
 
 ## Table of contents
 
