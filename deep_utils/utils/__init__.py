@@ -12,3 +12,4 @@ from .minio_lib import *
 from .optimizers import *
 from .tf_utils import *
 from .np_utils import *
+from .coco_utils import *
