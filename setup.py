@@ -36,6 +36,19 @@ with open('requirements.txt') as f:
         else:
             requirements.append(line)
 
+cv_requirements = [
+    "opencv-python>=4.5.5.58"
+]
+
+tf_requirements = [
+                      "tensorflow>=2.6.0",
+                  ] + cv_requirements
+
+torch_requirements = [
+                         "torch>=1.8.0",
+                         "torchvision>=0.10.0"
+                     ] + cv_requirements
+
 setuptools.setup(
     name="deep_utils",
     version=VERSION,
@@ -53,10 +66,8 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    extras_require={"cv": cv_requirements, "tf": tf_requirements, "torch": torch_requirements},
     install_requires=requirements,
     dependency_links=dependency_links,
     python_requires='>=3.6',
-    # cmdclass={
-    #     'verify': VerifyVersionCommand,
-    # }
 )
