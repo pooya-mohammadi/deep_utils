@@ -1,4 +1,4 @@
-[![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils) [![PyPI](https://img.shields.io/pypi/v/deep_utils.svg)](https://pypi.python.org/pypi/deep_utils) [![build](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/ci-tests.yml/badge.svg)](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/ci-tests.yml) [![build](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/automatic-release.yml/badge.svg)](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/automatic-release.yml) 
+[![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils) [![PyPI](https://img.shields.io/pypi/v/deep_utils.svg)](https://pypi.python.org/pypi/deep_utils) [![build](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/ci-tests.yml/badge.svg)](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/ci-tests.yml)
 
 <div id="top"></div>
 <!-- PROJECT LOGO -->
@@ -16,7 +16,7 @@
 </div>
 
 This repository contains the most frequently used deep learning models and functions. **Deep_Utils** is still under
-heavy development, so take into consideration that many features may change in the future. Install the latest version using pypi.
+heavy development, so take into consideration that many features may change in the future and make sure to install the latest version using pypi.
 
 ## Table of contents
 
