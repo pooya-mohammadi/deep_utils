@@ -51,7 +51,7 @@ So, we created this improved one. This toolkit minimizes the deep learning teams
 ## Installation:
 ```bash
     # pip: recommended
-    pip install -U deep_utils
+    pip install -U deep-utils
     
     # repository
     pip install git+https://github.com/pooya-mohammadi/deep_utils.git
@@ -60,6 +60,19 @@ So, we created this improved one. This toolkit minimizes the deep learning teams
     git clone https://github.com/pooya-mohammadi/deep_utils.git deep_utils
     pip install -U deep_utils 
 ```
+
+### Installation types:
+1. minimal installation:
+   1. `pip install deep-utils`
+2. minial vision installation
+   1. `pip install deep-utils[cv]`
+3. tensorflow installation:
+   1. `pip install deep-utils[tf]`
+4. torch installation:
+   1. `pip install deep-utils[torch]`
+    
+```
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 # Vision
