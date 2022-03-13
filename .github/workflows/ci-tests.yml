@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         # Run in all these versions of python
-        python-version: [3.8, 3.9]
+        python-version: [ 3.8, 3.9 ]
     steps:
       # Checkout the latest code from the repo
       - name: Checkout repo
@@ -29,8 +29,8 @@ jobs:
       - name: Display Python version
         run: python -c "import sys; print(sys.version)"
         # Install the package using the setup.py
-      - name: Install package
-        run: python setup.py install easy_install deep_utils[cv]
+      - name: "Install CV dependencies"
+        run: pip install .[cv]
         # Install pytest (you can use some other testing utility)
       - name: Install pytest
         run: |

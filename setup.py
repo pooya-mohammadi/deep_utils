@@ -1,7 +1,4 @@
-import sys
-import os
 import setuptools
-from setuptools.command.install import install
 
 VERSION = "0.8.22"
 
@@ -12,29 +9,14 @@ try:
 except (IOError, ImportError):
     long_description = open('Readme.md', mode='r').read()
 
-
-class VerifyVersionCommand(install):
-    """Custom command to verify that the git tag matches our version"""
-    description = 'verify that the git tag matches our version'
-
-    def run(self):
-        tag = os.getenv('GIT_TAG')
-
-        if tag != VERSION:
-            info = "Git tag: {0} does not match the version of this app: {1}".format(
-                tag, VERSION
-            )
-            sys.exit(info)
-
-
 # Module dependencies
-requirements, dependency_links = [], []
-with open('requirements.txt') as f:
-    for line in f.read().splitlines():
-        if line.startswith('-e git+'):
-            dependency_links.append(line.replace('-e ', ''))
-        else:
-            requirements.append(line)
+dependency_links = []
+
+requirements = [
+    "numpy>=1.21.0",
+    "requests>=2.27.1",
+    "tqdm>=4.62.3",
+]
 
 cv_requirements = [
     "opencv-python>=4.5.5.58"
