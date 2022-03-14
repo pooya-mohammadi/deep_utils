@@ -1,7 +1,7 @@
 import inspect
 import os
 from abc import ABC
-from typing import Union, Any
+from typing import Union, Any, Dict
 from deep_utils.utils.lib_utils.main_utils import import_module
 from deep_utils.utils.os_utils import split_all
 
@@ -45,7 +45,7 @@ class MainClass(ABC):
             else:
                 raise ValueError(f"[ERROR] the config file does not contain argument: {arg}")
 
-    def __dict_update(self, out_dict: dict[str, Any], in_dict: dict[str, Any]):
+    def __dict_update(self, out_dict: Dict[str, Any], in_dict: Dict[str, Any]):
         for arg, val in in_dict.items():
             if arg in out_dict:
                 source = out_dict[arg]
