@@ -1,7 +1,7 @@
 import inspect
 import os
 from abc import ABC
-from typing import Union
+from typing import Union, Any
 from deep_utils.utils.lib_utils.main_utils import import_module
 from deep_utils.utils.os_utils import split_all
 
@@ -32,12 +32,29 @@ class MainClass(ABC):
         file_ = '.'.join(split_all(separated_files) + ["config"])
         config = import_module(file_, 'Config')
         self.config = config()
-
         for arg, val in kwargs.items():
-            try:
-                if isinstance(arg, dict):
-                    getattr(self.config, arg).update(val)
+            if hasattr(self.config, arg):
+                if val is None:
+                    continue
+                source = getattr(self.config, arg)
+                if isinstance(val, dict) and isinstance(source, dict):
+                    target = self.__dict_update(source, val)
+                    setattr(self.config, arg, target)
                 else:
                     setattr(self.config, arg, val)
-            except:
-                pass
+            else:
+                raise ValueError(f"[ERROR] the config file does not contain argument: {arg}")
+
+    def __dict_update(self, out_dict: dict[str, Any], in_dict: dict[str, Any]):
+        for arg, val in in_dict.items():
+            if arg in out_dict:
+                source = out_dict[arg]
+                if isinstance(val, dict) and isinstance(source, dict):
+                    target = self.__dict_update(source, val)
+                    out_dict[arg] = target
+                else:
+                    out_dict[arg] = val
+            else:
+                out_dict[arg] = val
+
+        return out_dict

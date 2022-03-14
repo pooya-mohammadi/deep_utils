@@ -20,6 +20,3 @@ class ObjectDetector(MainClass):
     def detect_dir(self, dir_, confidence=None, iou_thresh=None, classes=None,
                    extensions=('.png', '.jpg', '.jpeg'), save_results=False, save_in_file=False, **kwargs):
         pass
-
-    # @classmethod
-    # def load_cls(cls):

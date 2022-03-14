@@ -5,20 +5,46 @@ import sys
 from typing import List
 import numpy as np
 from tqdm import tqdm
-import torch
+from deep_utils.main_abs import MainClass
 from deep_utils.utils.lib_utils.lib_decorators import get_from_config, expand_input, get_elapsed_time, rgb2bgr
-from deep_utils.vision.object_detection.main.main_object_detection import ObjectDetector
 from deep_utils.utils.box_utils.boxes import Box, Point
 from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.dir_utils.main import dir_train_test_split, transfer_directory_items
 from deep_utils.utils.dir_utils.main import remove_create
 from deep_utils.utils.opencv.main import show_destroy_cv2
+from deep_utils.utils.utils import dictnamedtuple
 from .config import Config
+import torch
+from pathlib import Path
+
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[0]  # YOLOv5 root directory
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  # add ROOT to PATH
+from .utils.general import non_max_suppression, scale_coords
+
+OUTPUT_CLASS = dictnamedtuple("Object", ["classes", "boxes", "confidences", "class_names"])
 
 
-class YOLOV5TorchObjectDetector(ObjectDetector):
-    def __init__(self, **kwargs):
-        super(YOLOV5TorchObjectDetector, self).__init__(name=self.__class__.__name__, file_path=__file__, **kwargs)
+class YOLOV5TorchObjectDetector(MainClass):
+
+    def __init__(self,
+                 class_names=None,
+                 model_weight=None,
+                 device='cpu',
+                 img_size=(320, 320),
+                 confidence=0.4,
+                 iou_thresh=0.45,
+                 **kwargs):
+        super(YOLOV5TorchObjectDetector, self).__init__(name=self.__class__.__name__,
+                                                        file_path=__file__,
+                                                        class_names=class_names,
+                                                        model_weight=model_weight,
+                                                        device=device,
+                                                        img_size=img_size,
+                                                        confidence=confidence,
+                                                        iou_thresh=iou_thresh,
+                                                        **kwargs)
         self.config: Config
 
     @staticmethod
@@ -52,9 +78,20 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
                        get_time=False,
                        img_size=None,
                        **kwargs
-                       ):
-        import torch
-        from .utils.general import non_max_suppression, scale_coords
+                       ) -> OUTPUT_CLASS:
+        """
+
+        :param img:
+        :param is_rgb: Is used with rgb2bgr. The required conversion is done automatically.
+        :param confidence:
+        :param iou_thresh:
+        :param classes: target class indices, the rest will be ignored!
+        :param agnostic:
+        :param get_time:
+        :param img_size:
+        :param kwargs:
+        :return:
+        """
         im0 = img
         img = np.array([self.yolo_resize(im, new_shape=img_size)[0] for im in im0])
         img = img.transpose((0, 3, 1, 2))
@@ -79,12 +116,11 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
                     cls = int(cls.item())
                     self.classes[i].append(cls)
                     self.class_names[i].append(self.config.class_names[cls])
-        return dict(
-            classes=self.classes,
-            boxes=self.boxes,
-            confidences=self.confidences,
-            class_names=self.class_names
-        )
+        output = OUTPUT_CLASS(classes=self.classes,
+                              boxes=self.boxes,
+                              confidences=self.confidences,
+                              class_names=self.class_names)
+        return output
 
     @staticmethod
     def test_label(img_path, str_path):
