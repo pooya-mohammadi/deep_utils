@@ -5,6 +5,7 @@ import sys
 from typing import List
 import numpy as np
 from tqdm import tqdm
+import torch
 from deep_utils.utils.lib_utils.lib_decorators import get_from_config, expand_input, get_elapsed_time, rgb2bgr
 from deep_utils.vision.object_detection.main.main_object_detection import ObjectDetector
 from deep_utils.utils.box_utils.boxes import Box, Point
@@ -26,7 +27,7 @@ class YOLOV5TorchObjectDetector(ObjectDetector):
         return letterbox(img, new_shape=new_shape, color=color, auto=auto, scaleFill=scaleFill, scaleup=scaleup)
 
     def load_model(self):
-        import torch
+
         sys.path.append(os.path.split(__file__)[0])
         from .models.experimental import attempt_load
         if self.config.model_weight:
