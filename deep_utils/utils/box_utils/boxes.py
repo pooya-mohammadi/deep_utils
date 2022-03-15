@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Iterable, Sequence
 import numpy as np
 from enum import Enum
 
@@ -338,7 +338,7 @@ class Box:
                  text,
                  org,
                  fontFace=None,
-                 fontScale=1,
+                 fontScale: float = 1,
                  color=(0, 255, 0),
                  thickness=1,
                  lineType=None,
@@ -448,18 +448,90 @@ class Box:
         return img
 
     @staticmethod
-    def put_box_text(img, box, label='', color=(128, 128, 128), txt_color=(255, 255, 255), lw=2):
+    def _put_box_text(img, box, label, color=(128, 128, 128), txt_color=(255, 255, 255), thickness=2):
         import cv2
         p1, p2 = (int(box[0]), int(box[1])), (int(box[2]), int(box[3]))
-        cv2.rectangle(img, p1, p2, color, thickness=lw, lineType=cv2.LINE_AA)
-        tf = max(lw - 1, 1)  # font thickness
-        w, h = cv2.getTextSize(label, 0, fontScale=lw / 3, thickness=tf)[0]  # text width, height
+        img = Box.put_box(img, box, color=color, thickness=thickness, lineType=cv2.LINE_AA, in_source=Box.BoxSource.CV)
+        text_font = max(thickness - 1, 1)  # font thickness
+        w, h = cv2.getTextSize(label, 0, fontScale=thickness / 3, thickness=text_font)[0]  # text width, height
         outside = p1[1] - h - 3 >= 0  # label fits outside box
         p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
-        cv2.rectangle(img, p1, p2, color, -1, cv2.LINE_AA)  # filled
-        cv2.putText(img, label, (p1[0], p1[1] - 2 if outside else p1[1] + h + 2), 0, lw / 3, txt_color,
-                    thickness=tf, lineType=cv2.LINE_AA)
+        img = Box.put_box(img, [*p1, *p2], color=color, thickness=-1, lineType=cv2.LINE_AA, in_source=Box.BoxSource.CV)
+        x0, x1 = p1[0], p1[1] - 2 if outside else p1[1] + h + 2
+        img = Box.put_text(img, label, (x0, x1), fontFace=0, fontScale=thickness / 3, color=txt_color, thickness=text_font,
+                           lineType=cv2.LINE_AA, org_source="CV")
+        return img
+
+    @staticmethod
+    def put_box_text(img: Union[Sequence, np.ndarray], box: Union[Sequence], label: Union[Sequence, str],
+                     color=(128, 128, 128), txt_color=(255, 255, 255), thickness=2):
+        """
+            :param img:
+            :param box: It should be in numpy source!
+            :param label:
+            :param color:
+            :param txt_color:
+            :param thickness:
+            :return:
+            """
+        box = Box.box2box(box, in_source=Box.BoxSource.Numpy, to_source=Box.BoxSource.CV)
+        if isinstance(img, Sequence) and isinstance(box[0], Sequence) and isinstance(label, Sequence):
+            if isinstance(color, Sequence) and isinstance(color[0], Sequence):
+                if isinstance(txt_color, Sequence) and isinstance(txt_color[0], Sequence):
+                    for b, l, c, t_c in zip(box, label, color, txt_color):
+                        img = Box._put_box_text(img, b, l, c, t_c, thickness)
+                else:
+                    for b, l, c in zip(box, label, color):
+                        img = Box._put_box_text(img, b, l, c, txt_color, thickness)
+            else:
+                for b, l in zip(box, label):
+                    img = Box._put_box_text(img, b, l, color, txt_color, thickness)
+        else:
+            img = Box._put_box_text(img, box, label, color, txt_color, thickness)
+        return img
 
 
+# @staticmethod
+# def _put_box_text(img, box, label, color=(128, 128, 128), txt_color=(255, 255, 255), thickness=2):
+#     import cv2
+#     Box.put_box(img, box, color, thickness=thickness, lineType=cv2.LINE_AA)
+#     tf = max(thickness - 1, 1)  # font thickness
+#     w, h = cv2.getTextSize(label, 0, fontScale=thickness / 3, thickness=tf)[0]  # text width, height
+#
+#     outside = box[1] - h - 3 >= 0  # label fits outside box
+#     p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
+#     img = cv2.rectangle(img, p1, p2, color, -1, cv2.LINE_AA)  # filled
+#     img = cv2.putText(img, label, (p1[0], p1[1] - 2 if outside else p1[1] + h + 2), 0, thickness / 3, txt_color,
+#                       thickness=tf, lineType=cv2.LINE_AA)
+#     return img
+#
+#
+# @staticmethod
+# def put_box_text(img: Union[Sequence, np.ndarray], box: Union[Sequence], label: Union[Sequence, str],
+#                  color=(128, 128, 128), txt_color=(255, 255, 255), thickness=2):
+#     """
+#
+#     :param img:
+#     :param box: It should be in numpy format
+#     :param label:
+#     :param color:
+#     :param txt_color:
+#     :param thickness:
+#     :return:
+#     """
+#     if isinstance(img, Iterable) and isinstance(box, Iterable) and isinstance(label, Iterable):
+#         if isinstance(color, Sequence) and isinstance(color[0], Sequence):
+#             if isinstance(txt_color, Sequence) and isinstance(txt_color[0], Sequence):
+#                 for b, l, c, t_c in zip(box, label, color, txt_color):
+#                     img = Box._put_box_text(img, b, l, c, t_c, thickness)
+#             else:
+#                 for b, l, c in zip(box, label, color):
+#                     img = Box._put_box_text(img, b, l, c, txt_color, thickness)
+#         else:
+#             for b, l in zip(box, label):
+#                 img = Box._put_box_text(img, b, l, color, txt_color, thickness)
+#     else:
+#         img = Box._put_box_text(img, box, label, color, txt_color, thickness)
+#     return img
 if __name__ == '__main__':
     print(Box.BoxFormat.XYXY is Box.BoxFormat)

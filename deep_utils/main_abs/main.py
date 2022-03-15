@@ -32,18 +32,7 @@ class MainClass(ABC):
         file_ = '.'.join(split_all(separated_files) + ["config"])
         config = import_module(file_, 'Config')
         self.config = config()
-        for arg, val in kwargs.items():
-            if hasattr(self.config, arg):
-                if val is None:
-                    continue
-                source = getattr(self.config, arg)
-                if isinstance(val, dict) and isinstance(source, dict):
-                    target = self.__dict_update(source, val)
-                    setattr(self.config, arg, target)
-                else:
-                    setattr(self.config, arg, val)
-            else:
-                raise ValueError(f"[ERROR] the config file does not contain argument: {arg}")
+        self.update_config(**kwargs)
 
     def __dict_update(self, out_dict: Dict[str, Any], in_dict: Dict[str, Any]):
         for arg, val in in_dict.items():
@@ -58,3 +47,17 @@ class MainClass(ABC):
                 out_dict[arg] = val
 
         return out_dict
+
+    def update_config(self, **kwargs):
+        for arg, val in kwargs.items():
+            if hasattr(self.config, arg):
+                if val is None:
+                    continue
+                source = getattr(self.config, arg)
+                if isinstance(val, dict) and isinstance(source, dict):
+                    target = self.__dict_update(source, val)
+                    setattr(self.config, arg, target)
+                else:
+                    setattr(self.config, arg, val)
+            else:
+                raise ValueError(f"[ERROR] the config file does not contain argument: {arg}")

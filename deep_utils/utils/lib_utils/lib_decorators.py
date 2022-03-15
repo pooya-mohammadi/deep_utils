@@ -1,6 +1,8 @@
 import inspect
 import time
 from functools import wraps
+from typing import Sequence
+
 import numpy as np
 
 
@@ -64,7 +66,7 @@ def get_elapsed_time(func):
             results = func(self, *args, **kwargs)
             toc = time.time()
             elapsed_time = round(toc - tic, 4)
-            if isinstance(results,  dict):
+            if isinstance(results, dict):
                 results['elapsed_time'] = elapsed_time
             elif hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
                 from deep_utils.utils.utils.main import dictnamedtuple
@@ -84,22 +86,66 @@ def rgb2bgr(in_):
     def inner_decorator(func):
         @wraps(func)
         def wrapper(self, in_img, *args, **kwargs):
-            is_rgb = kwargs.get('is_rgb', False)
-            if not is_rgb and in_ == 'rgb':
-                in_img = in_img[..., ::-1]
-            elif is_rgb and in_ == 'bgr':
-                in_img = in_img[..., ::-1]
-            elif is_rgb and in_ == 'gray':
-                in_img = np.dot(in_img[..., :3], [0.299, 0.587, 0.144])
-                in_img = in_img.astype(np.uint8)
-            elif not is_rgb and in_ == 'gray':
-                in_img = np.dot(in_img[..., :3][..., ::-1], [0.299, 0.587, 0.144])
-                in_img = in_img.astype(np.uint8)
+            is_rgb = kwargs.get('is_rgb')
+            # if not is_rgb and in_ == 'rgb':
+            #     in_img = in_img[..., ::-1]
+            # elif is_rgb and in_ == 'bgr':
+            #     in_img = in_img[..., ::-1]
+            # elif is_rgb and in_ == 'gray':
+            #     in_img = np.dot(in_img[..., :3], [0.299, 0.587, 0.144])
+            #     in_img = in_img.astype(np.uint8)
+            # elif not is_rgb and in_ == 'gray':
+            #     in_img = np.dot(in_img[..., :3][..., ::-1], [0.299, 0.587, 0.144])
+            #     in_img = in_img.astype(np.uint8)
+            in_img = lib_rgb2bgr(in_img, target_type=in_, is_rgb=is_rgb)
             return func(self, in_img, *args, **kwargs)
 
         return wrapper
 
     return inner_decorator
+
+
+def lib_rgb2bgr(in_img, target_type, is_rgb):
+    if not is_rgb and target_type == 'rgb':
+        in_img = in_img[..., ::-1]
+    elif is_rgb and target_type == 'bgr':
+        in_img = in_img[..., ::-1]
+    elif is_rgb and target_type == 'gray':
+        in_img = np.dot(in_img[..., :3], [0.299, 0.587, 0.144])
+        in_img = in_img.astype(np.uint8)
+    elif not is_rgb and target_type == 'gray':
+        in_img = np.dot(in_img[..., :3][..., ::-1], [0.299, 0.587, 0.144])
+        in_img = in_img.astype(np.uint8)
+    else:
+        raise ValueError(f"[ERROR] The input target_type: {target_type} is not supported!")
+    return in_img
+
+
+def in_shape_fix(in_: np.ndarray, size=4):
+    if len(in_.shape) == size:
+        return in_
+    elif len(in_.shape) == size - 1:
+        return np.expand_dims(in_, axis=0)
+    else:
+        raise ValueError(f"[Error] Input size: {in_.shape} is not valid!")
+
+
+def out_shape_fix(results):
+    if hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
+        new_results = {key: val[0] if val is not None and isinstance(val, Sequence) and len(val) == 1 else val for
+                       key, val in results.items()}
+        cls = type(results)
+        results = cls(**new_results)
+    elif isinstance(results, tuple):
+        results = tuple(
+            [val[0] if val is not None and isinstance(val, Sequence) and len(val) == 1 else val for val in results])
+    elif isinstance(results, dict):
+        results = {key: val[0] if val is not None and isinstance(val, Sequence) and len(val) == 1 else val for key, val
+                   in
+                   results.items()}
+    else:
+        results = results[0]
+    return results
 
 
 def cast_kwargs_dict(func):
