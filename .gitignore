@@ -9,3 +9,5 @@ deep_utils.egg-info
 *.h5
 *.egg-info
 /.pytest_cache/
+*.pt
+*.pth
