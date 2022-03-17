@@ -1,8 +1,9 @@
+import pytest
 import warnings
 
 warnings.filterwarnings('ignore')
 
-
+@pytest.mark.basic
 def test_resize_ratio():
     """
     Testing the resize_ratio function

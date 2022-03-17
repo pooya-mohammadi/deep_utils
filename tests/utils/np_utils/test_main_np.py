@@ -1,8 +1,7 @@
 import pytest
-
 from deep_utils import repeat_dimension
 
-
+@pytest.mark.basic
 def test_repeat_dimension():
     """
     Testing the repeat dimension function

@@ -23,7 +23,10 @@ FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
-from .utils.general import non_max_suppression, scale_coords
+from .utils_.general import non_max_suppression, scale_coords
+from .models.experimental import attempt_load
+from .utils_.datasets import letterbox
+
 
 OUTPUT_CLASS = dictnamedtuple("Object", ["class_indices", "boxes", "confidences", "class_names", "elapsed_time"])
 
@@ -59,14 +62,11 @@ class YOLOV5TorchObjectDetector(MainClass):
 
     @staticmethod
     def yolo_resize(img, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleFill=False, scaleup=True):
-        from .utils.datasets import letterbox
+
         return letterbox(img, new_shape=new_shape, color=color, auto=auto, scaleFill=scaleFill, scaleup=scaleup)
 
     def load_model(self):
-
-        sys.path.append(os.path.split(__file__)[0])
-        from .models.experimental import attempt_load
-        if self.config.model_weight:
+        # if self.config.model_weight:
             self.model = attempt_load(self.config.model_weight, map_location=self.config.device)
             self.model.to(self.config.device)
             self.model.eval()

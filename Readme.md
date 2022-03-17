@@ -171,6 +171,8 @@ lastname:  mohammadi
 
 ## Tests
 Tests are done for python 3.8 and 3.9. Deep-Utils will probably run without any errors on lower versions as well.
+
+**Note**: Model tests are done on CPU devices provided by GitHub Actions. GPU based models are tested manually by the authors.
 <p align="right">(<a href="#top">back to top</a>)</p>
 <!-- CONTRIBUTING -->
 

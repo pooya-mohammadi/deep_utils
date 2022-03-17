@@ -19,10 +19,10 @@ if str(ROOT) not in sys.path:
 
 from models.common import *
 from models.experimental import *
-from utils.autoanchor import check_anchor_order
-from utils.general import LOGGER, check_version, check_yaml, make_divisible, print_args
-from utils.plots import feature_visualization
-from utils.torch_utils import fuse_conv_and_bn, initialize_weights, model_info, scale_img, select_device, time_sync
+from utils_.autoanchor import check_anchor_order
+from utils_.general import LOGGER, check_version, check_yaml, make_divisible, print_args
+from utils_.plots import feature_visualization
+from utils_.torch_utils import fuse_conv_and_bn, initialize_weights, model_info, scale_img, select_device, time_sync
 
 try:
     import thop  # for FLOPs computation
@@ -323,7 +323,7 @@ if __name__ == '__main__':
                 print(f'Error in {cfg}: {e}')
 
     # Tensorboard (not working https://github.com/ultralytics/yolov5/issues/2898)
-    # from torch.utils.tensorboard import SummaryWriter
+    # from torch.utils_.tensorboard import SummaryWriter
     # tb_writer = SummaryWriter('.')
     # LOGGER.info("Run 'tensorboard --logdir=models' to view tensorboard at http://localhost:6006/")
     # tb_writer.add_graph(torch.jit.trace(model, img, strict=False), [])  # add model graph

@@ -9,7 +9,7 @@ class Config:
                        'pizza', 'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv',
                        'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink',
                        'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush']
-        self.model_weight = None
+        self.model_weight = "yolov5s.pt"
         self.device = 'cpu'
         self.img_size = (320, 320)
         self.confidence = 0.4

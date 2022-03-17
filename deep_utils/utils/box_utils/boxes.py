@@ -475,7 +475,7 @@ class Box:
             :return:
             """
         box = Box.box2box(box, in_source=Box.BoxSource.Numpy, to_source=Box.BoxSource.CV)
-        if isinstance(img, Sequence) and isinstance(box[0], Sequence) and isinstance(label, Sequence):
+        if isinstance(box, Sequence) and isinstance(box[0], Sequence) and isinstance(label, Sequence):
             if isinstance(color, Sequence) and isinstance(color[0], Sequence):
                 if isinstance(txt_color, Sequence) and isinstance(txt_color[0], Sequence):
                     for b, l, c, t_c in zip(box, label, color, txt_color):

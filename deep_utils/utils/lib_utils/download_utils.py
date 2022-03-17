@@ -91,8 +91,6 @@ def download_file(url, download_dir='.', unzip=False, remove_zip=False, file_nam
         except:
             file_name = os.path.split(url)[-1]
 
-        if not os.path.isdir(download_dir):
-            os.makedirs(download_dir, exist_ok=True)
         download_des = os.path.join(download_dir, file_name)
         with open(download_des, 'wb') as f:
             if total is None:
@@ -115,6 +113,7 @@ def download_file(url, download_dir='.', unzip=False, remove_zip=False, file_nam
         raise Exception(error_msg.format(url))
     if unzip:
         unzip_func(download_des, download_dir, remove_zip, logger)
+    return download_des
 
 
 def unzip_func(zip_file, res_dir, remove_zip=False, logger=None):
