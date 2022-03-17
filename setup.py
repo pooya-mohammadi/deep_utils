@@ -27,7 +27,7 @@ tf_requirements = [
                   ] + cv_requirements
 
 torch_requirements = [
-                         "torch>=1.8.0,<1.11.0"
+                         "torch>=1.8.0,<1.11.0",
                          "torchvision>=0.10.0"
                      ] + cv_requirements
 
