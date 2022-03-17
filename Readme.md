@@ -70,8 +70,6 @@ So, we created this improved one. This toolkit minimizes the deep learning teams
    1. `pip install deep-utils[tf]`
 4. torch installation:
    1. `pip install deep-utils[torch]`
-    
-```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
