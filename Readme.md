@@ -24,7 +24,9 @@ heavy development, so take into consideration that many features may change in t
 * [Installation](#installation)
 * [Vision](#vision)
     * [Face Detection](#face-detection)
-        * [MTCNN](#mtcnn)
+      * [MTCNN](#mtcnn)
+    * [Object Detection](#object-detection)
+      * [yolov5](#yolov5)
 * [Utils](#utils)
   * [DictNamedTuple](#dictnametuple)
 * [Tests](#tests)
@@ -84,7 +86,7 @@ We have gathered a rich collection of face detection models which are mentioned 
 
 ### MTCNN
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pooya-mohammadi/Face/blob/master/_02_mtcnn_tf1/deep_utils_mtcnn.ipynb)
-1. After Installing the library, import deep_utils and instantiate models:
+1. After Installing the library, import deep_utils and instantiate the model:
 
 ```python
 from deep_utils import face_detector_loader, list_face_detection_models
@@ -127,6 +129,66 @@ show_destroy_cv2(img)
 The result:
 
 <img src="https://raw.githubusercontent.com/pooya-mohammadi/deep_utils/master/examples/vision/data/movie-starts-mtccn-torch.jpg" alt="Logo" >
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Object Detection
+
+### YoloV5
+YoloV5 by far is one of the top-5 most used object detection models. The training process is straight forward and the results
+are spectacular. However, using a trained model can be very challenging because of several files that yolov5's model needs in production. 
+To tackle this issue we have wrapped yolov5's models in a simple module whose usage will be illustrated in the following section.<br/>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/https:/github.com/pooya-mohammadi/deep-utils-notebooks/blob/main/vision/object-detection/yolov5/deep_utils_yolov5.ipynb)
+1. After Installing the library, import deep_utils and instantiate the model:
+
+```commandline
+# import the model
+from deep_utils import YOLOV5TorchObjectDetector
+# instantiate with the default parameters
+yolov5 = YOLOV5TorchObjectDetector()
+# print the parameters
+print(yolov5)
+```
+2. Download and visualize the test image
+```commandline
+import cv2
+from deep_utils import Box, download_file, Point, show_destroy_cv2
+from PIL import Image
+
+# Download an image
+download_file("https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/vision/images/dog.jpg")
+
+# Load an image
+base_image = cv2.imread("dog.jpg")
+
+# pil.Image is used for visualization
+Image.fromarray(base_image[...,::-1]) # convert to rgb
+# visualize using oepncv
+# show_destroy_cv2(base_image) 
+```
+The result:
+
+<img src="https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/vision/images/dog.jpg" alt="Logo" >
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+3. Detect and visualize Objects
+```commandline
+# Detect the objects
+# the image is opened by cv2 which results to a BGR image. Therefore the `is_rgb` is set to `False` 
+result = yolov5.detect_objects(base_image, is_rgb=False, confidence=0.5)
+
+# Draw detected boxes on the image.
+img = Box.put_box_text(base_image,
+                       box=result.boxes,
+                       label=[f"{c_n} {c}" for c_n, c in zip(result.class_names, result.confidences)])
+
+# pil.Image is used for visualization
+Image.fromarray(img[...,::-1]) # convert to rgb
+# visualize using oepncv
+# show_destroy_cv2(img)
+```
+
+<img src="https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/vision/images/dog_yolov5.jpg" alt="Logo" >
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Utils
