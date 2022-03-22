@@ -138,7 +138,7 @@ YoloV5 by far is one of the top-5 most used object detection models. The trainin
 are spectacular. However, using a trained model can be very challenging because of several files that yolov5's model needs in production. 
 To tackle this issue we have wrapped yolov5's models in a simple module whose usage will be illustrated in the following section.<br/>
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pooya-mohammadi/deep-utils-notebooks/blob/main/vision/object-detection/yolov5/deep_utils_yolov5.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pooya-mohammadi/deep-utils-notebooks/blob/main/vision/object-detection/yolov5/deep-utils-yolov5.ipynb)
 1. After Installing the library, import deep_utils and instantiate the model:
 
 ```commandline
