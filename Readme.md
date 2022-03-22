@@ -141,7 +141,7 @@ To tackle this issue we have wrapped yolov5's models in a simple module whose us
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/pooya-mohammadi/deep-utils-notebooks/blob/main/vision/object-detection/yolov5/deep-utils-yolov5.ipynb)
 1. After Installing the library, import deep_utils and instantiate the model:
 
-```commandline
+```python
 # import the model
 from deep_utils import YOLOV5TorchObjectDetector
 # instantiate with the default parameters
@@ -150,7 +150,7 @@ yolov5 = YOLOV5TorchObjectDetector()
 print(yolov5)
 ```
 2. Download and visualize the test image
-```commandline
+```python
 import cv2
 from deep_utils import Box, download_file, Point, show_destroy_cv2
 from PIL import Image
@@ -172,7 +172,7 @@ The result:
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 3. Detect and visualize Objects
-```commandline
+```python
 # Detect the objects
 # the image is opened by cv2 which results to a BGR image. Therefore the `is_rgb` is set to `False` 
 result = yolov5.detect_objects(base_image, is_rgb=False, confidence=0.5)
