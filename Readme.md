@@ -318,7 +318,7 @@ Pooya Mohammadi:
 * LinkedIn [www.linkedin.com/in/pooya-mohammadi](www.linkedin.com/in/pooya-mohammadi)
 * Email: [pooyamohammadikazaj@gmail.com](pooyamohammadikazaj@gmail.com)
 
-Project Link: [https://github.com/pooya-mohammadi/deep_utils](https://github.com/your_username/repo_name)
+Project's Link: [https://github.com/pooya-mohammadi/deep_utils](https://github.com/your_username/repo_name)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
