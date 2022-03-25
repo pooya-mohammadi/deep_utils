@@ -9,7 +9,7 @@ def requires_backends(obj, backends):
     checks = (BACKENDS_MAPPING[backend] for backend in backends)
     failed = [msg.format(name) for available, msg in checks if not available()]
     if failed:
-        raise ImportError("".join(failed))
+        print("".join(failed))
 
 
 class DummyObject(type):
