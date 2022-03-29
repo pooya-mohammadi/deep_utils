@@ -23,10 +23,12 @@ heavy development, so take into consideration that many features may change in t
 * [About The Project](#about-the-project)
 * [Installation](#installation)
 * [Vision](#vision)
-    * [Face Detection](#face-detection)
-      * [MTCNN](#mtcnn)
-    * [Object Detection](#object-detection)
-      * [yolov5](#yolov5)
+  * [Face Detection](#face-detection)
+    * [MTCNN](#mtcnn)
+  * [Object Detection](#object-detection)
+    * [yolov5](#yolov5)
+* [Augmentation](#augmentation)
+  * [CutMix](#cutmix) 
 * [Utils](#utils)
   * [DictNamedTuple](#dictnametuple)
 * [Tests](#tests)
@@ -189,6 +191,72 @@ Image.fromarray(img[...,::-1]) # convert to rgb
 ```
 
 <img src="https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/vision/images/dog_yolov5.jpg" alt="Logo" >
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Augmentation
+
+### CutMix
+
+<a href="https://colab.research.google.com/github/pooya-mohammadi/deep-utils-notebooks/blob/main/augmentation/cutmix/cutmix.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+
+CutMix is one of the best augmentation methods that's proven to be very effective in different vision-based project. 
+Therefore, CutMix is now available on `deep_utils` to be used both for segmentation and classification tasks. Let some examples:
+
+#### Segmentation
+```python
+import cv2
+import numpy as np
+from PIL import Image
+from deep_utils import CutMixAug, group_show, repeat_dimension
+
+# creating random images, the code for this section can be found in the colab notebook
+image_a = np.zeros((300, 300, 3), np.uint8) * 255
+mask_a = np.zeros_like(image_a)
+pt1 = (150, 100)
+pt2 = (100, 200)
+pt3 = (200, 200)
+
+
+triangle_cnt = np.array( [pt1, pt2, pt3] )
+
+image_a = cv2.drawContours(image_a, [triangle_cnt], 0, (0,255,0), -1)
+mask_a = cv2.drawContours(mask_a, [triangle_cnt], 0, (255, 255, 255), -1)
+
+image_b = np.zeros((300, 300, 3), np.uint8) * 255
+mask_b = np.zeros_like(image_b)
+
+pt1 = (150, 150)
+
+image_b = cv2.circle(image_b, pt1, 50, (0,255,0), -1)
+mask_b = cv2.circle(mask_b, pt1, 50, (255, 255, 255), -1)
+
+# CutMix for two individual images:
+cutmix_img, cutmix_mask = CutMixAug.seg_cutmix(image_a, mask_a[...,0], image_b, mask_b[...,0], beta=1)
+```
+The input and output are as follows:
+
+**Input:**
+
+<img src="https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/augmentation/cutmix/two_images.jpg" alt="Logo" ><br/>
+
+**Output:**
+
+<img src="https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/augmentation/cutmix/cutmix_two_images.jpg" alt="Logo" >
+
+As it illustrated in the above image a section of the triangle and the circle are combined together. By changing `seg_cutmix` to `seg_cutmix_batch` one can use CutMix augmentation for batch of images.
+```python
+cutmix_img, cutmix_mask = CutMixAug.seg_cutmix_batch(a_images=batch_img, a_masks=batch_mask[...,0], beta=1)
+```
+
+**Input:**
+
+<img src="https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/augmentation/cutmix/batch_img.jpg" alt="cutmix" ><br/>
+
+**Output:**
+
+<img src="https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/augmentation/cutmix/batch_cutmix.jpg" alt="cutmix" >
+
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Utils
