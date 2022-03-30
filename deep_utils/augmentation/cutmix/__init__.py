@@ -1,1 +1,7 @@
-from .cutmix_aug import CutMixAug
+from .cutmix_tf import CutMixTF
+
+try:
+    from deep_utils.dummy_objects.augmentation.cutmix import CutMixTorch
+    from deep_utils.augmentation.cutmix.cutmix_torch import CutMixTorch
+except:
+    pass

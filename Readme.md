@@ -197,7 +197,7 @@ Image.fromarray(img[...,::-1]) # convert to rgb
 
 ### CutMix
 
-<a href="https://colab.research.google.com/github/pooya-mohammadi/deep-utils-notebooks/blob/main/augmentation/cutmix/cutmix.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://colab.research.google.com/github/pooya-mohammadi/deep-utils-notebooks/blob/main/augmentation/cutmix/cutmix_tf.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 
 CutMix is one of the best augmentation methods that's proven to be very effective in different vision-based project. 
 Therefore, CutMix is now available on `deep_utils` to be used both for segmentation and classification tasks. Let some examples:
@@ -207,7 +207,7 @@ Therefore, CutMix is now available on `deep_utils` to be used both for segmentat
 import cv2
 import numpy as np
 from PIL import Image
-from deep_utils import CutMixAug, group_show, repeat_dimension
+from deep_utils import CutMixTF, group_show, repeat_dimension
 
 # creating random images, the code for this section can be found in the colab notebook
 image_a = np.zeros((300, 300, 3), np.uint8) * 255
@@ -231,7 +231,7 @@ image_b = cv2.circle(image_b, pt1, 50, (0,255,0), -1)
 mask_b = cv2.circle(mask_b, pt1, 50, (255, 255, 255), -1)
 
 # CutMix for two individual images:
-cutmix_img, cutmix_mask = CutMixAug.seg_cutmix(image_a, mask_a[...,0], image_b, mask_b[...,0], beta=1)
+cutmix_img, cutmix_mask = CutMixTF.seg_cutmix(image_a, mask_a[...,0], image_b, mask_b[...,0], beta=1)
 ```
 The input and output are as follows:
 
@@ -245,7 +245,7 @@ The input and output are as follows:
 
 As it illustrated in the above image a section of the triangle and the circle are combined together. By changing `seg_cutmix` to `seg_cutmix_batch` one can use CutMix augmentation for batch of images.
 ```python
-cutmix_img, cutmix_mask = CutMixAug.seg_cutmix_batch(a_images=batch_img, a_masks=batch_mask[...,0], beta=1)
+cutmix_img, cutmix_mask = CutMixTF.seg_cutmix_batch(a_images=batch_img, a_masks=batch_mask[...,0], beta=1)
 ```
 
 **Input:**

@@ -2,7 +2,7 @@ import numpy as np
 from deep_utils.utils.utils.shuffle_utils import shuffle_group
 
 
-class CutMixAug:
+class CutMixTF:
 
     @staticmethod
     def _get_bbox(size, lam):
@@ -42,9 +42,9 @@ class CutMixAug:
         """
         if len(sizes) == 3:
             b = sizes[0]
-            boxes = np.array([CutMixAug._get_bbox(sizes[1:], lam) for _ in range(b)])
+            boxes = np.array([CutMixTF._get_bbox(sizes[1:], lam) for _ in range(b)])
         elif len(sizes) == 2:
-            boxes = np.array(CutMixAug._get_bbox(sizes, lam))
+            boxes = np.array(CutMixTF._get_bbox(sizes, lam))
         else:
             raise ValueError(f"input size: {len(sizes)} is not valid!")
         return boxes
@@ -74,7 +74,7 @@ class CutMixAug:
 
         x_cutmix, y_cutmix = [], []
         for a_img, b_img, a_mask, b_mask in zip(a_images, b_images, a_masks, b_masks):
-            x, y = CutMixAug.seg_cutmix(a_img, a_mask, b_img, b_mask, beta)
+            x, y = CutMixTF.seg_cutmix(a_img, a_mask, b_img, b_mask, beta)
             x_cutmix.append(x)
             y_cutmix.append(y)
         return np.array(x_cutmix, dtype=np.uint8), np.array(y_cutmix, dtype=np.uint8)
@@ -92,7 +92,7 @@ class CutMixAug:
         """
         # Get lambda & box
         lam = np.random.beta(beta, beta)
-        (x1, y1, x2, y2) = CutMixAug.get_bbox(a_img.shape[:-1], lam)
+        (x1, y1, x2, y2) = CutMixTF.get_bbox(a_img.shape[:-1], lam)
         # generate mask
         mask = np.ones_like(a_img)
         mask[x1:x2, y1:y2, :] = 0
@@ -104,25 +104,46 @@ class CutMixAug:
         return x, y
 
     @staticmethod
-    def cls_cutmix(image_a, label_a, beta=1, image_b=None, label_b=None, shuffle=True):
-        if image_b is None:
-            image_b = image_a
-            label_b = label_a
+    def cls_cutmix_batch(a_images, a_labels, b_images=None, b_labels=None, beta=1, shuffle=True):
+        """
 
-        image_a, label_a, image_b, label_b = image_a.copy(), label_a.copy(), image_b.copy(), label_b.copy()
+        :param a_images:
+        :param a_labels:
+        :param b_images:
+        :param b_labels:
+        :param beta:
+        :param input_type:
+        :param shuffle:
+        :return:
+        """
+
+        if b_images is None:
+            b_images = a_images
+            b_labels = a_labels
+
+        a_images, a_labels, b_images, b_labels = a_images.copy(), a_labels.copy(), b_images.copy(), b_labels.copy()
 
         if shuffle:
-            shuffle_group(image_a)
-            shuffle_group(image_b)
+            shuffle_group(a_images)
+            shuffle_group(b_images)
 
+        x_cutmix, y_cutmix = [], []
+        for a_img, b_img, a_label, b_label in zip(a_images, b_images, a_labels, b_labels):
+            img_cutmix, label_cutmix = CutMixTF._cls_cutmix(a_images, a_img, a_label, b_images, b_label, beta)
+            x_cutmix.append(img_cutmix)
+            y_cutmix.append(label_cutmix)
+
+        return np.array(x_cutmix), np.array(y_cutmix)
+
+    @staticmethod
+    def _cls_cutmix(a_images, a_img, a_label, b_images, b_label, beta):
         lam = np.random.beta(beta, beta)
-        boxes = CutMixAug.get_bbox(image_a.shape, lam)
-
-        # img_cutmix
-        img_cutmix_mask = np.ones_like(image_a)
-        for i, (x1, y1, x2, y2) in enumerate(boxes):
-            img_cutmix_mask[i, x1:x2, y1:y2, :] = 0
-        img_cutmix = (np.multiply(image_a, img_cutmix_mask) + np.multiply(image_b, (abs(1. - img_cutmix_mask)))).astype(
+        (x1, y1, x2, y2) = CutMixTF.get_bbox(a_img.shape, lam)
+        # create mask
+        img_cutmix_mask = np.ones_like(a_img)
+        img_cutmix_mask[x1:x2, y1:y2, :] = 0
+        img_cutmix = (
+                np.multiply(a_images, img_cutmix_mask) + np.multiply(b_images, (abs(1. - img_cutmix_mask)))).astype(
             np.uint8)
-        label_cutmix = lam * label_a + label_b * (1 - lam)
+        label_cutmix = lam * a_label + b_label * (1 - lam)
         return img_cutmix, label_cutmix
