@@ -20,3 +20,12 @@ def persian_num2english(input_string: str):
         "۰": "0"}
     output_string = "".join([NUM_MAP.get(c, c) for c in input_string])
     return output_string
+
+
+def arabic_char2fa_char(input_string: str):
+    arabic2persian = {
+        "ك": "ک",
+        "ي": "ی",
+    }
+    out_string = "".join(arabic2persian.get(s, s) for s in input_string)
+    return out_string
