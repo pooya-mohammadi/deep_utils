@@ -18,7 +18,6 @@ from .config import Config
 import torch
 from pathlib import Path
 
-
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
@@ -26,7 +25,6 @@ if str(ROOT) not in sys.path:
 from .utils_.general import non_max_suppression, scale_coords
 from .models.experimental import attempt_load
 from .utils_.datasets import letterbox
-
 
 OUTPUT_CLASS = dictnamedtuple("Object", ["class_indices", "boxes", "confidences", "class_names", "elapsed_time"])
 
@@ -67,12 +65,12 @@ class YOLOV5TorchObjectDetector(MainClass):
 
     def load_model(self):
         # if self.config.model_weight:
-            self.model = attempt_load(self.config.model_weight, map_location=self.config.device)
-            self.model.to(self.config.device)
-            self.model.eval()
-            img = torch.zeros((1, 3, *self.config.img_size), device=self.config.device)
-            self.model(img)
-            print(f'{self.name}: weights are loaded')
+        self.model = attempt_load(self.config.model_weight, map_location=self.config.device)
+        self.model.to(self.config.device)
+        self.model.eval()
+        img = torch.zeros((1, 3, *self.config.img_size), device=self.config.device)
+        self.model(img)
+        print(f'{self.name}: weights are loaded')
 
     def detect_objects(self,
                        img,
