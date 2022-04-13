@@ -3,7 +3,8 @@ from pathlib import Path
 import shutil
 from os.path import join
 from typing import Tuple, List, Dict, Union
-from deep_utils.utils.utils.logging_ import log_print
+from deep_utils.utils.utils.logging_ import value_error_log, log_print
+from deep_utils.utils.os_utils.os_path import split_extension
 
 
 def transfer_directory_items(in_dir, out_dir, transfer_list, mode='cp', remove_out_dir=False, skip_transfer=False,
@@ -216,3 +217,65 @@ def mkdir_incremental(dir_path: str, base_name='exp', fix_name=None) -> Path:
         os.makedirs(final_path)
 
     return Path(final_path)
+
+
+def cp_mv_all(input_dir, res_dir, mode="cp", filter_ext: Union[list, None] = None, logger=None, verbose=1):
+    """
+    Using shutil library all the move/copy all the files from one directory to another one!
+    :param input_dir:
+    :param res_dir:
+    :param mode:
+    :param filter_ext:
+    :return:
+    """
+    n = 0
+    for f_name in os.listdir(input_dir):
+        _, ext = split_extension(f_name)
+        if filter_ext is not None and ext in filter_ext:
+            continue
+        f_in_path = os.path.join(input_dir, f_name)
+        f_out_path = os.path.join(res_dir, f_name)
+        if mode == "cp":
+            shutil.copy(f_in_path, f_out_path)
+            n += 1
+        elif mode == "mv":
+            shutil.move(f_in_path, f_out_path)
+            n += 1
+        else:
+            raise value_error_log(logger, f"mode {mode} is not supported!")
+    log_print(logger, f"Successfully moved {n} items with filters: {filter_ext} from {input_dir} to {res_dir}")
+
+
+def split_segmentation_dirs(in_images, in_masks, out_train="./train", out_val="./val", image_dir_name="images",
+                            mask_dir_name="masks", img_ext=None, mask_ext=None,
+                            mode='cp', test_size=0.2, remove_out_dir=False,
+                            remove_in_dir=False, skip_transfer=False,
+                            ):
+    from sklearn.model_selection import train_test_split
+    if img_ext is None and mask_ext is None:
+        in_image_list = os.listdir(in_images)
+        in_mask_list = os.listdir(in_masks)
+        in_mask_dict = {split_extension(i)[0]: i for i in in_mask_list}
+
+        in_image_list_train, in_image_list_val = train_test_split(in_image_list, test_size=test_size)
+        in_mask_list_train = [in_mask_dict[split_extension(i)[0]] for i in in_image_list_train]
+        in_mask_list_val = [in_mask_dict[split_extension(i)[0]] for i in in_image_list_val]
+    else:
+        in_image_list = [i for i in os.listdir(in_images) if i.endswith(img_ext)]
+        in_image_list_train, in_image_list_val = train_test_split(in_image_list, test_size=test_size)
+        in_mask_list_train = [split_extension(i, extension=mask_ext) for i in in_image_list_train]
+        in_mask_list_val = [split_extension(i, extension=mask_ext) for i in in_image_list_val]
+
+    transfer_directory_items(in_images, join(out_train, image_dir_name),
+                             in_image_list_train, mode=mode, remove_out_dir=remove_out_dir,
+                             skip_transfer=skip_transfer, remove_in_dir=remove_in_dir)
+    transfer_directory_items(in_images, join(out_val, image_dir_name),
+                             in_image_list_val, mode=mode, remove_out_dir=remove_out_dir,
+                             skip_transfer=skip_transfer, remove_in_dir=remove_in_dir)
+
+    transfer_directory_items(in_masks, join(out_train, mask_dir_name),
+                             in_mask_list_train, mode=mode, remove_out_dir=remove_out_dir,
+                             skip_transfer=skip_transfer, remove_in_dir=remove_in_dir)
+    transfer_directory_items(in_masks, join(out_val, mask_dir_name),
+                             in_mask_list_val, mode=mode, remove_out_dir=remove_out_dir,
+                             skip_transfer=skip_transfer, remove_in_dir=remove_in_dir)
