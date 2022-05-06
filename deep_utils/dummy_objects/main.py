@@ -1,4 +1,5 @@
 from deep_utils.utils.lib_utils.framework_utils import BACKENDS_MAPPING
+from deep_utils.utils.utils.str_utils import color_str
 
 
 def requires_backends(obj, backends):
@@ -9,6 +10,7 @@ def requires_backends(obj, backends):
     checks = (BACKENDS_MAPPING[backend] for backend in backends)
     failed = [msg.format(name) for available, msg in checks if not available()]
     if failed:
+        color_str("".join(failed), color="red", mode=["bold", "underline"])
         print("".join(failed))
 
 
