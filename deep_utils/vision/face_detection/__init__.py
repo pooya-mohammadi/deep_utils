@@ -18,7 +18,7 @@ if not is_cv2_available():
     from deep_utils.dummy_objects.vision.face_detection import HaarcascadeCV2FaceDetector
 else:
     from deep_utils.vision.face_detection.ssd.cv2.caffe.ssd_cv2_caffe_face_detection import SSDCV2CaffeFaceDetector
-    from deep_utils.vision.face_detection.haarcascade.cv2.haarcascade_cv2_face_detection import \
+    from deep_utils.vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection import \
         HaarcascadeCV2FaceDetector
 
 if not is_tf_available():
