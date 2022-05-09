@@ -179,12 +179,13 @@ def crawl_directory_dataset(dir_: str, ext_filter: list = None, map_labels=False
         return x, y
 
 
-def remove_create(dir_):
+def remove_create(dir_, logger=None, verbose=1):
     import os
     import shutil
     if os.path.exists(dir_):
         shutil.rmtree(dir_)
     os.makedirs(dir_)
+    log_print(logger, f"Successfully reomved and created dir: {dir_}", verbose=verbose)
 
 
 def mkdir_incremental(dir_path: str, base_name='exp', fix_name=None) -> Path:
