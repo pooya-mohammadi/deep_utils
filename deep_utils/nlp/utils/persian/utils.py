@@ -1,8 +1,9 @@
-def persian_num2english(input_string: str):
+def persian_num2english(input_string: str, reverse: bool = False):
     """
     Converts persian numbers to english
     Args:
         input_string:
+        reverse: If set to True, converts english 2 persian!
 
     Returns:
 
@@ -18,6 +19,8 @@ def persian_num2english(input_string: str):
         "۸": "8",
         "۹": "9",
         "۰": "0"}
+    if reverse:
+        NUM_MAP = {v: k for k, v in NUM_MAP.items()}
     output_string = "".join([NUM_MAP.get(c, c) for c in input_string])
     return output_string
 

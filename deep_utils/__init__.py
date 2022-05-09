@@ -5,4 +5,5 @@ from .blocks import *
 from .callbacks import *
 from .nlp import *
 from .gis import *
+from .audio import *
 from ._version import __version__
