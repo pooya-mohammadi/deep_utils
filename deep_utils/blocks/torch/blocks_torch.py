@@ -5,16 +5,37 @@ from collections import OrderedDict
 class BlocksTorch:
     @staticmethod
     def conv_norm_act(in_c, out_c, k=(3, 3), s=(1, 1), p=(1, 1),
-                      norm='bn', act='relu', conv=True, index=0, conv_kwargs: dict = None,
+                      norm=None, act='relu', conv=True, index=None, conv_kwargs: dict = None,
                       norm_kwargs: dict = None, act_kwargs: dict = None,
                       pooling=None, pooling_k=(2, 2), pooling_s=(2, 2),
                       pool_kwargs=None, move_forward=0):
+        """
+
+        :param in_c:
+        :param out_c:
+        :param k:
+        :param s:
+        :param p:
+        :param norm:
+        :param act:
+        :param conv:
+        :param index:
+        :param conv_kwargs:
+        :param norm_kwargs:
+        :param act_kwargs:
+        :param pooling:
+        :param pooling_k:
+        :param pooling_s:
+        :param pool_kwargs:
+        :param move_forward: Move forward will shift the conv and act and bn, consider a block should start with a relu not a cnn...
+        :return:
+        """
         from torch import nn
         conv_kwargs = dict() if conv_kwargs is None else conv_kwargs
         norm_kwargs = dict() if norm_kwargs is None else norm_kwargs
         act_kwargs = dict() if act_kwargs is None else act_kwargs
         pool_kwargs = dict() if pool_kwargs is None else pool_kwargs
-        k = (k, k) if isinstance(k,  int) else k
+        k = (k, k) if isinstance(k, int) else k
         s = (s, s) if isinstance(s, int) else s
         p = (p, p) if isinstance(p, int) else p
         pooling_s = (pooling_s, pooling_s) if isinstance(pooling_s, int) else pooling_s
@@ -22,19 +43,23 @@ class BlocksTorch:
         modules, names = [], []
         if conv:
             modules.append(BlocksTorch.conv_2d(in_c, out_c, k, s, p, **conv_kwargs))
-            names.append(f"conv2d_{index}_in{in_c}_f{out_c}_k{k[0]}_s{s[0]}")
+            names.append(f"conv" + (f"_{index}" if index else ""))
         if norm:
             modules.append(BlocksTorch.load_layer_norm(norm, out_c=out_c, **norm_kwargs))
-            names.append(f"{norm}2d_{index}")
+            names.append(f"{norm}"+ (f"_{index}" if index else ""))
         if act:
+            if act == 'relu':
+                act_kwargs_ = {"inplace": True}
+                act_kwargs_.update(act_kwargs)
+                act_kwargs = act_kwargs_
             modules.append(BlocksTorch.load_activation(act, **act_kwargs))
-            names.append(f"{act}_{index}")
+            names.append(f"{act}" + (f"_{index}" if index else ""))
         modules = shift_lst(modules, move_forward=move_forward % 3)
         names = shift_lst(names, move_forward=move_forward % 3)
         if pooling:
             pooling_layer = BlocksTorch.load_pooling(pooling, pooling_k, pooling_s, **pool_kwargs)
             modules.append(pooling_layer)
-            names.append(f"{pooling}2d_{index}")
+            names.append(f"{pooling}" + (f"_{index}" if index else ""))
         cnn = nn.Sequential(OrderedDict({name: module for name, module in zip(names, modules)}))
         return cnn
 
