@@ -35,7 +35,7 @@ def get_func_time(func) -> Callable:
         results = func(*args, **kwargs)
         toc = time.time()
         elapsed_time = round(toc - tic, 4)
-        print(f"elapsed time for {func.__name__}: {elapsed_time}")
+        print(f"elapsed time for {func.__name__}: {elapsed_time} seconds")
         return results
 
     return wrapper
