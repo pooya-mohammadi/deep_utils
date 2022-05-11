@@ -35,7 +35,7 @@ def b64_to_img(image_string: str) -> np.ndarray:
 
 
 def ndarray_to_b64(array: np.ndarray,
-                   dtype: Union[None, str] = None,
+                   dtype: Union[None, str, type] = None,
                    append_shape=False,
                    append_dtype=False,
                    decode=None,
@@ -55,8 +55,12 @@ def ndarray_to_b64(array: np.ndarray,
     array_bytes = base64.b64encode(array)
     if isinstance(dtype, str):
         dtype_name = dtype
-    else:
+    elif isinstance(dtype, type):
+        dtype_name = dtype.__name__
+    elif isinstance(dtype, np.dtype):
         dtype_name = dtype.name
+    else:
+        value_error_log(logger, f"dtype: {dtype} is not supported!")
     dtype_bytes = base64.struct.pack(f">6sI{len(dtype_name)}s", bytes("dtype:", "utf-8"), len(dtype_name),
                                      bytes(dtype_name, "utf-8"))
     if not append_dtype and not append_dtype:
@@ -101,6 +105,8 @@ def b64_to_ndarray(byte_array, dtype, shape, logger: Union[None, logging.Logger]
         log_print(logger, f"dtype is not defined in byte_array nor as an input, setting dtype to {dtype}")
     elif isinstance(dtype, str):
         pass
+    elif isinstance(dtype, type):
+        dtype = str(dtype)
     else:
         value_error_log(logger, f"dtype: {dtype} is not supported!")
 
@@ -110,18 +116,20 @@ def b64_to_ndarray(byte_array, dtype, shape, logger: Union[None, logging.Logger]
         byte_array = byte_array[shape_len + 10:]
     elif shape is None:
         log_print(logger, f"shape is not defined in byte_array nor as input")
-    elif isinstance(shape, tuple):
+    elif isinstance(shape, tuple) or isinstance(shape, list):
         pass
     else:
         value_error_log(logger, f"shape: {shape} is not supported!")
-
+    if isinstance(byte_array, str):
+        byte_array = bytes(byte_array, encoding="utf-8")
     ndarray = np.frombuffer(base64.decodebytes(byte_array), dtype=dtype)
     if shape is not None:
         ndarray = ndarray.reshape(shape)
     return ndarray
 
-# if __name__ == '__main__':
-#     array = np.random.random((20, 5)).astype(np.float32)
-#     res = ndarray_to_b64(array, decode='utf-8')
-#     new_array = b64_to_ndarray(res, dtype='float32', shape=(20, 5), encode='utf-8')
-#     print(np.all(array == new_array))
+
+if __name__ == '__main__':
+    array = np.random.random((20, 5)).astype(np.float32)
+    res = ndarray_to_b64(array, decode='utf-8')
+    new_array = b64_to_ndarray(res, dtype='float32', shape=(20, 5), encode='utf-8')
+    print(np.all(array == new_array))
