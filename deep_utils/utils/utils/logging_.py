@@ -5,11 +5,12 @@ from pathlib import Path
 from typing import Union
 
 
-def get_logger(name: str, log_path: Union[str, Path, None] = None) -> logging.Logger:
+def get_logger(name: str, log_path: Union[str, Path, None] = None, remove_previous_handlers=True) -> logging.Logger:
     """
     Creates a logger for a given name
     :param name: The name that logger will be created for
     :param log_path: In which logger information will be saved
+    :param remove_previous_handlers: If set to true, removes previous handlers to prevent repeated prints
     :return:
     """
     logger = logging.getLogger(name)
@@ -26,8 +27,10 @@ def get_logger(name: str, log_path: Union[str, Path, None] = None) -> logging.Lo
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
 
+    if remove_previous_handlers:
+        logger.handlers = [logger.handlers[-1]]
     logger.setLevel(logging.INFO)
-    print(f"[INFO] Successfully created logger for {name}")
+    print(f"[INFO] Successfully created logger for {name}" + f" in {log_path}" if log_path else "")
     return logger
 
 
