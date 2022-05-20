@@ -232,7 +232,7 @@ def cp_mv_all(input_dir, res_dir, mode="cp", filter_ext: Union[list, None] = Non
     n = 0
     for f_name in os.listdir(input_dir):
         _, ext = split_extension(f_name)
-        if filter_ext is not None and ext in filter_ext:
+        if filter_ext is not None and ext not in filter_ext:
             continue
         f_in_path = os.path.join(input_dir, f_name)
         f_out_path = os.path.join(res_dir, f_name)
@@ -244,7 +244,8 @@ def cp_mv_all(input_dir, res_dir, mode="cp", filter_ext: Union[list, None] = Non
             n += 1
         else:
             raise value_error_log(logger, f"mode {mode} is not supported!")
-    log_print(logger, f"Successfully moved {n} items with filters: {filter_ext} from {input_dir} to {res_dir}")
+    log_print(logger, f"Successfully moved {n} items with filters: {filter_ext} from {input_dir} to {res_dir}",
+              verbose=verbose)
 
 
 def split_segmentation_dirs(in_images, in_masks, out_train="./train", out_val="./val", image_dir_name="images",
