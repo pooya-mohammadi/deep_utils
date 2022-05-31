@@ -14,6 +14,58 @@ class REUtils:
         return input_string.strip()
 
     @staticmethod
+    def split_char_number_sentence(input_address):
+        return " ".join(REUtils.split_char_number(var) for var in input_address.split(' '))
+
+    @staticmethod
+    def split_word_punctuation_sentence(input_address):
+        return " ".join(REUtils.split_word_punctuation(var) for var in input_address.split(' '))
+
+    @staticmethod
+    def split_char_number(input_string, punctuations=",*!+-.،"):
+        """
+        creates a space between english numbers and other characters
+        :param input_string:
+        :param punctuations:
+        :return:
+         >>> REUtils.split_char_number("s12")
+         's 12'
+         >>> REUtils.split_char_number(",")
+         ','
+        """
+        if "+" in punctuations:
+            punctuations = punctuations.replace("+", "")
+            plus = r"|\+"
+        else:
+            plus = ""
+        return " ".join(re.findall(rf"[^\W\d]+|\d+|[{punctuations}]+{plus}", input_string))
+
+    @staticmethod
+    def split_word_punctuation(input_string, punctuations=",*!+-.،"):
+        r"""
+        creates a space between characters and punctuations.
+        \W is opposite of \w and ^ means it's reverse
+        :param input_string:
+        :param punctuations
+        :return:
+        >>> REUtils.split_word_punctuation("تهران+")
+        'تهران +'
+        >>> REUtils.split_word_punctuation("21+")
+        '21 +'
+        >>> REUtils.split_word_punctuation("۲۱+")
+        '۲۱ +'
+        >>> REUtils.split_word_punctuation("pooya+")
+        'pooya +'
+        """
+
+        if "+" in punctuations:
+            punctuations = punctuations.replace("+", "")
+            plus = r"|\+"
+        else:
+            plus = ""
+        return " ".join(re.findall(rf"[^\W^_]+|[{punctuations}]+{plus}", input_string))
+
+    @staticmethod
     def replace(input_string, pattern, result):
         input_string = re.sub(pattern, result, input_string)
         return input_string
@@ -42,4 +94,6 @@ class REUtils:
 
 
 if __name__ == '__main__':
-    REUtils.replace_single_char("")
+    str_ = "s12"
+    output = REUtils.split_char_number(str_)
+    print(output)
