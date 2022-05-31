@@ -18,7 +18,49 @@ class NERAugmentation:
         assert len(tokens_x) == len(labels_y), f"[ERROR] number of tokens and labels is not equal"
 
 
-class NERAugReplacementDict(NERAugmentation):
+class NERAugRemove(NERAugmentation):
+    def __init__(self,
+                 remove_dict: Dict[Tuple[str, str], float],
+                 tokenizer: Callable[[str], List[str]] = str.split,
+                 ner_type="BIO"):
+        super(NERAugRemove, self).__init__(ner_type=ner_type)
+        self.tokenizer = tokenizer
+
+        self.p_dict = {}
+        self.augmentation_len_dict = defaultdict(list)
+        for (query_tokens, query_label), prob in remove_dict.items():
+            query_tokens = tuple(self.tokenizer(query_tokens))
+            key = (query_tokens, query_label)
+            # Getting probabilities from the vals
+            self.p_dict[key] = prob
+            # This code will convert str to list[str] if the input labels were string!
+            # Getting the labels from vals
+            self.augmentation_len_dict[len(query_tokens)].append((query_tokens, query_label))
+        self.aug_tokens_lengths = sorted(list(self.augmentation_len_dict.keys()), reverse=True)
+
+    def __call__(self, tokens_x: Union[Tuple[str], List[str]],
+                 labels_y: Union[Tuple[str], List[str]]):
+        super().__call__(tokens_x, labels_y)
+
+        for token_len in self.aug_tokens_lengths:
+            for query_tokens, query_label in self.augmentation_len_dict[token_len]:
+                token_index = 0
+                p = self.p_dict[(query_tokens, query_label)]
+                while token_index <= (len(tokens_x) - token_len):
+                    selected_tokens = tokens_x[token_index: token_index + token_len]
+                    selected_labels = labels_y[token_index: token_index + token_len]
+                    if query_tokens == tuple(selected_tokens) and (
+                            not query_label or check_bio_labels(selected_labels, query_label)) and random.random() <= p:
+                        del tokens_x[token_index: token_index + token_len]
+                        del labels_y[token_index: token_index + token_len]
+                        token_index -= token_len
+                        # continue
+                    token_index += 1
+
+        return tokens_x, labels_y
+
+
+class NERAugReplacement(NERAugmentation):
     """
     This class replaces a single token with a single token
     """
@@ -27,16 +69,16 @@ class NERAugReplacementDict(NERAugmentation):
                  replacement_dict: Dict[Tuple[str, Union[None, str]], Tuple[List[str], float]],
                  tokenizer: Callable[[str], List[str]] = str.split,
                  ner_type="BIO"):
-        super(NERAugReplacementDict, self).__init__(ner_type=ner_type)
+        super(NERAugReplacement, self).__init__(ner_type=ner_type)
         self.tokenizer = tokenizer
 
-        self.replacement_p_dict = {}
+        self.p_dict = {}
         self.augmentation_len_dict = defaultdict(list)
         for (query_tokens, query_label), (replacement_tokens, prob) in replacement_dict.items():
             query_tokens = tuple(self.tokenizer(query_tokens))
             key = (query_tokens, query_label)
             # Getting probabilities from the vals
-            self.replacement_p_dict[key] = prob
+            self.p_dict[key] = prob
             # This code will convert str to list[str] if the input labels were string!
             # Getting the labels from vals
             replacement_tokens = [self.tokenizer(replacement_token) for replacement_token in replacement_tokens]
@@ -51,7 +93,7 @@ class NERAugReplacementDict(NERAugmentation):
         for token_len in self.aug_tokens_lengths:
             for query_tokens, query_label, replace_tokens, replace_labels in self.augmentation_len_dict[token_len]:
                 token_index = 0
-                p = self.replacement_p_dict[(query_tokens, query_label)]
+                p = self.p_dict[(query_tokens, query_label)]
                 while token_index <= (len(tokens_x) - token_len):
                     selected_tokens = tokens_x[token_index: token_index + token_len]
                     selected_labels = labels_y[token_index: token_index + token_len]
@@ -70,11 +112,15 @@ class NERAugReplacementDict(NERAugmentation):
 
 
 if __name__ == '__main__':
-    replacement = NERAugReplacementDict(replacement_dict={("خیابان", "street"): (["خ", "خ."], 0.5),
-                                                          ("کوچه", "alley"): (["ک", "ک."], 0.5),
-                                                          ("-", "o"): (["  ", ",", "_", "-"], 0.5),
-                                                          ("بلوار", "boulevard"): (["بل", "بل."], 0.5),
-                                                          })
+    replacement = NERAugReplacement(replacement_dict={("خیابان", "street"): (["خ", "خ."], 0.5),
+                                                      ("کوچه", "alley"): (["ک", "ک."], 0.5),
+                                                      ("-", "o"): ([",", "-"], 0.5),
+                                                      ("بلوار", "boulevard"): (["بل", "بل."], 0.5),
+                                                      })
+    removal = NERAugRemove(remove_dict={
+        ("-", "o"): 0.5,
+        ("استان", "province"): 0.2
+    })
     address = {'tokens': ['استان',
                           'قم',
                           '-',
@@ -120,5 +166,6 @@ if __name__ == '__main__':
                           'B-phone',
                           'I-phone']}
     tokens, labels = replacement(tokens_x=address['tokens'], labels_y=address['labels'])
+    tokens, labels = removal(tokens_x=tokens, labels_y=labels)
     for t, l in zip(tokens, labels):
         print(t, l)
