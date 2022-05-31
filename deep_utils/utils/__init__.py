@@ -15,3 +15,5 @@ from .np_utils import *
 from .coco_utils import *
 from .decorators import *
 from .ctc_decoder import *
+from .re_utils import *
+from .random_utils import *
