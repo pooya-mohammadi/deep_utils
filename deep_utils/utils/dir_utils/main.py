@@ -149,6 +149,8 @@ def crawl_directory_dataset(dir_: str, ext_filter: list = None, map_labels=False
     label_map = dict()
     for cls_name in os.listdir(dir_):
         cls_path = join(dir_, cls_name)
+        if not os.path.isdir(cls_path):
+            continue
         for item_name in os.listdir(cls_path):
             item_path = join(cls_path, item_name)
             name, ext = os.path.splitext(item_name)
@@ -281,3 +283,21 @@ def split_segmentation_dirs(in_images, in_masks, out_train="./train", out_val=".
     transfer_directory_items(in_masks, join(out_val, mask_dir_name),
                              in_mask_list_val, mode=mode, remove_out_dir=remove_out_dir,
                              skip_transfer=skip_transfer, remove_in_dir=remove_in_dir)
+
+
+def find_file(dir_path, name, ext=".ckpt", logger=None, verbose=1):
+    """
+    finds the closest file to the input name in the input dir_path
+    :param dir_path:
+    :param name:
+    :param ext:
+    :param logger:
+    :param verbose:
+    :return:
+    """
+    for file_name in os.listdir(dir_path):
+        if file_name.startswith(name) and file_name.endswith(ext):
+            log_print(logger, f"name: {file_name} found in dir: {dir_path}", verbose=verbose)
+            return join(dir_path, file_name)
+    log_print(logger, f"name: {name} not found in dir: {dir_path}", log_type="warning", verbose=verbose)
+    return None
