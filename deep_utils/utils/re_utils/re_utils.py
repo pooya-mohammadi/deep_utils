@@ -71,14 +71,14 @@ class REUtils:
         return input_string
 
     @staticmethod
-    def get_left_right_linespace(value, left="[\s,]*", right="\s+"):
+    def get_left_right_linespaces(value, left="[\s,]*", right="\s+"):
         expression = left + value + right
         return expression
 
     @staticmethod
     def replace_single_char(input_string, replace_expression, result_expression, left="[\s,]+", right="\s+"):
         """
-        Replaces a single character with a whole word
+        Replaces a single character with a complete word
         :param input_string: 
         :param replace_expression:
         :param result_expression:
@@ -87,7 +87,7 @@ class REUtils:
         :return:
         """
         input_string = " " + input_string  # for those starting at index zero
-        pattern = REUtils.get_left_right_linespace(replace_expression, left=left, right=right)
+        pattern = REUtils.get_left_right_linespaces(replace_expression, left=left, right=right)
         input_string = REUtils.replace(input_string, pattern, " " + result_expression + " ")
         input_string = REUtils.cleaning(input_string)  # This is done to clean up extra spaces and other characters!
         return input_string
