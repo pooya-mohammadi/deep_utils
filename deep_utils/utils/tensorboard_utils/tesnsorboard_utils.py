@@ -1,7 +1,6 @@
 import traceback
 from os.path import join
 import numpy as np
-from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 
 
 class TensorboardUtils:
@@ -40,6 +39,7 @@ class TensorboardUtils:
 
     @staticmethod
     def save_df(path, file_name=None):
+        from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
         import pandas as pd
 
         try:
