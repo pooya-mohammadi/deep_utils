@@ -14,6 +14,7 @@ from deep_utils.utils.dir_utils.main import dir_train_test_split, transfer_direc
 from deep_utils.utils.dir_utils.main import remove_create
 from deep_utils.utils.opencv.main import show_destroy_cv2
 from deep_utils.utils.utils import dictnamedtuple
+from deep_utils.utils.utils.logging_ import log_print
 from .config import Config
 import torch
 from pathlib import Path
@@ -275,15 +276,24 @@ class YOLOV5TorchObjectDetector(MainClass):
         return results
 
     @staticmethod
-    def clean_samples(label_path, img_path, ext='.jpg'):
-        img_names = [os.path.splitext(img)[0] for img in os.listdir(img_path)]
+    def clean_samples(label_path, img_path, logger=None, verbose=1):
+        image_names, image_exts = [], []
+        for img in os.listdir(img_path):
+            image_name, image_ext = os.path.splitext(img)
+            image_names.append(image_name)
+            image_exts.append(image_ext)
         label_names = [os.path.splitext(l)[0] for l in os.listdir(label_path)]
+
         for label in label_names:
-            if label not in img_names:
-                os.remove(join(label_path, label + ".txt"))
-        for img_name in img_names:
+            if label not in image_names:
+                label_path = join(label_path, label + ".txt")
+                log_print(logger, f"Removed {label_path}", verbose=verbose)
+                os.remove(label_path)
+        for img_name, img_ext in zip(image_names, image_exts):
             if img_name not in label_names:
-                os.remove(join(img_path, img_name + ext))
+                image_path = join(img_path, img_name + img_ext)
+                log_print(logger, f"Removed {image_path}", verbose=verbose)
+                os.remove(image_path)
 
     @staticmethod
     def combine_datasets(dataset_paths: List[str], final_dataset_path: str, remove_final_dataset: bool = False):
