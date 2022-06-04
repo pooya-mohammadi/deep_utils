@@ -17,3 +17,5 @@ from .decorators import *
 from .ctc_decoder import *
 from .re_utils import *
 from .random_utils import *
+from .memory_utils import *
+from .tensorboard_utils import *
