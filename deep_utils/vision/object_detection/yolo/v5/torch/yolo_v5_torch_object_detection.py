@@ -277,6 +277,7 @@ class YOLOV5TorchObjectDetector(MainClass):
 
     @staticmethod
     def clean_samples(label_path, img_path, logger=None, verbose=1):
+        c = 0
         image_names, image_exts = [], []
         for img in os.listdir(img_path):
             image_name, image_ext = os.path.splitext(img)
@@ -289,11 +290,14 @@ class YOLOV5TorchObjectDetector(MainClass):
                 label_path = join(label_path, label + ".txt")
                 log_print(logger, f"Removed {label_path}", verbose=verbose)
                 os.remove(label_path)
+                c += 1
         for img_name, img_ext in zip(image_names, image_exts):
             if img_name not in label_names:
                 image_path = join(img_path, img_name + img_ext)
                 log_print(logger, f"Removed {image_path}", verbose=verbose)
                 os.remove(image_path)
+                c += 1
+        log_print(logger, f"Removed {c} samples!", verbose=verbose)
 
     @staticmethod
     def combine_datasets(dataset_paths: List[str], final_dataset_path: str, remove_final_dataset: bool = False):
