@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import torch
 
 
@@ -21,7 +23,7 @@ class MemoryUtilsTorch:
         b = torch.cuda.memory_allocated(device)
         model_memory = b - a
         # model_input = sample_input.unsqueeze(0).repeat(batch_size, 1)
-        model(sample_input.to(device)).sum()
+        model(sample_input.to(device))
         c = torch.cuda.memory_allocated(device)
         if use_amp:
             amp_multiplier = .5
@@ -44,26 +46,28 @@ class MemoryUtilsTorch:
         return total_memory
 
     @staticmethod
-    def memory_test(model, optimizer_type=torch.optim.Adam, batch_size=1, use_amp=False,
-                    device=0):
-        sample_input = torch.randn((batch_size, 3, 224, 224), dtype=torch.float32, )
+    def memory_test(model, optimizer_type=torch.optim.Adam,
+                    input_size: Tuple[int, int, int, int] = (1, 3, 224, 224),
+                    use_amp=False, device=0, get_extra_info=True):
+        sample_input = torch.randn(input_size, dtype=torch.float32, )
         max_mem_est = MemoryUtilsTorch.estimate_memory(model, sample_input,
                                                        optimizer_type=optimizer_type, use_amp=use_amp)
         print("Maximum Memory Estimate MB", round(max_mem_est / (1024 ** 2), 2))
-        optimizer = optimizer_type(model.parameters(), lr=.001)
-        print("Beginning mem:", torch.cuda.memory_allocated(device),
-              "Note - this may be higher than 0, which is due to PyTorch caching. Don't worry too much about this number")
-        model.to(device)
-        print("After model to device:", torch.cuda.memory_allocated(device))
-        for i in range(3):
-            print("Iteration", i)
-            with torch.cuda.amp.autocast(enabled=use_amp):
-                a = torch.cuda.memory_allocated(device)
-                out = model(sample_input.to(device)).sum()  # Taking the sum here just to get a scalar output
-                b = torch.cuda.memory_allocated(device)
-            print("1 - After forward pass", torch.cuda.memory_allocated(device))
-            print("2 - Memory consumed by forward pass", b - a)
-            out.backward()
-            print("3 - After backward pass", torch.cuda.memory_allocated(device))
-            optimizer.step()
-            print("4 - After optimizer step", torch.cuda.memory_allocated(device))
+        if get_extra_info:
+            optimizer = optimizer_type(model.parameters(), lr=.001)
+            print("Beginning mem:", torch.cuda.memory_allocated(device),
+                  "Note - this may be higher than 0, which is due to PyTorch caching. Don't worry too much about this number")
+            model.to(device)
+            print("After model to device:", torch.cuda.memory_allocated(device))
+            for i in range(3):
+                print("Iteration", i)
+                with torch.cuda.amp.autocast(enabled=use_amp):
+                    a = torch.cuda.memory_allocated(device)
+                    out = model(sample_input.to(device)).sum()  # Taking the sum here just to get a scalar output
+                    b = torch.cuda.memory_allocated(device)
+                print("1 - After forward pass", torch.cuda.memory_allocated(device))
+                print("2 - Memory consumed by forward pass", b - a)
+                out.backward()
+                print("3 - After backward pass", torch.cuda.memory_allocated(device))
+                optimizer.step()
+                print("4 - After optimizer step", torch.cuda.memory_allocated(device))
