@@ -1,11 +1,6 @@
 import traceback
 from os.path import join
-
-import docx
-import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
-from pandas.plotting import table
 from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 
 
@@ -13,6 +8,8 @@ class TensorboardUtils:
 
     @staticmethod
     def save_image(df, path):
+        from pandas.plotting import table
+        import matplotlib.pyplot as plt
         ax = plt.subplot(111, frame_on=False)  # no visible frame
         ax.xaxis.set_visible(False)  # hide the x axis
         ax.yaxis.set_visible(False)  # hide the y axis
@@ -21,6 +18,7 @@ class TensorboardUtils:
 
     @staticmethod
     def get_docx(df, doc_path):
+        import docx
         # open an existing document
         doc = docx.Document(None)
 
@@ -42,6 +40,8 @@ class TensorboardUtils:
 
     @staticmethod
     def save_df(path, file_name=None):
+        import pandas as pd
+
         try:
             if file_name is not None:
                 event_acc = EventAccumulator(join(path, file_name))
