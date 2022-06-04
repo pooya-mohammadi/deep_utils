@@ -11,3 +11,4 @@ deep_utils.egg-info
 /.pytest_cache/
 *.pt
 *.pth
+dog.jpg
