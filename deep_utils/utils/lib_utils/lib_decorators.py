@@ -108,6 +108,8 @@ def rgb2bgr(in_):
 def lib_rgb2bgr(in_img, target_type, is_rgb):
     if not is_rgb and target_type == 'rgb':
         in_img = in_img[..., ::-1]
+    elif is_rgb and target_type == "rgb":
+        pass
     elif is_rgb and target_type == 'bgr':
         in_img = in_img[..., ::-1]
     elif is_rgb and target_type == 'gray':
