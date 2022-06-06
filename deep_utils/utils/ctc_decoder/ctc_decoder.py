@@ -8,6 +8,13 @@ class CTCDecoder:
 
     @staticmethod
     def merge_duplicates_remove_blanks(labels, blank_class=0):
+        if len(labels.shape) == 2:
+            return [CTCDecoder._merge_duplicates_remove_blanks(blank_class, label) for label in labels]
+        else:
+            return CTCDecoder._merge_duplicates_remove_blanks(blank_class, labels)
+
+    @staticmethod
+    def _merge_duplicates_remove_blanks(blank_class, labels):
         new_labels = []
         # merge duplicate labels
         previous = None
@@ -17,7 +24,6 @@ class CTCDecoder:
                 previous = label
         # remove blanks
         new_labels = [label for label in new_labels if label != blank_class]
-
         return new_labels
 
     @staticmethod
@@ -162,3 +168,10 @@ class CTCDecoder:
     @staticmethod
     def single_decode(prediction: list, label2char: dict):
         return [label2char[p] for p in prediction]
+
+    @staticmethod
+    def decode(predictions: list, label2char: dict):
+        if isinstance(predictions[0], list):
+            return [CTCDecoder.single_decode(prediction, label2char) for prediction in predictions]
+        else:
+            return CTCDecoder.single_decode(predictions, label2char)
