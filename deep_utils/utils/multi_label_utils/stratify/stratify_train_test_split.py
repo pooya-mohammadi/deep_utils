@@ -1,5 +1,4 @@
 from typing import Union
-import time
 from deep_utils.utils.algorithm_utils.main import subset_sum
 import numpy as np
 
@@ -7,14 +6,25 @@ import numpy as np
 def stratify_train_test_split_multi_label(x: Union[list, tuple, np.ndarray], y: np.ndarray, test_size=0.2,
                                           closest_ratio=False):
     """
-
-    :param x:
+    A handy function for splitting multi-label samples based on their number of classes. This is mainly useful for
+    object detection and ner-like tasks that each sample may contain several objects/tags from different classes! The
+    process of splitting starts from classes with the smallest number of samples to make sure their ratio is saved
+    because they have small number of samples and retaining the ratio for them is challenging compared to those classes
+    with more samples.
+    :param x: A list, Tuple or ndarray that contains the samples
     :param y: A 2D array that represents number of labels in each class. Each column is representative of a class.
     :param test_size:
     :param closest_ratio: For huge arrays extracting the closest ratio requires an intensive recursive function to work
      which could result in maximum recursion error. If set to True which choose samples from the smallest till passes
      the target number. Set this variable to True if you are sure. by default is set to False.
     :return:
+    >>> y = np.array([[1, 2, 0], [1, 0, 0], [1, 2, 0]])
+    >>> x = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3]])
+    >>> stratify_train_test_split_multi_label(x, y, test_size=0.3)
+    (array([[2, 2, 2],
+           [3, 3, 3]]), array([[1, 1, 1]]), array([[1, 0, 0],
+           [1, 2, 0]]), array([[1, 2, 0]]))
+
     """
     assert len(y.shape) == 2, "y should be 2D"
     assert test_size > 0.0, "test_size cannot be a zero or negative value!"
@@ -55,6 +65,6 @@ def stratify_train_test_split_multi_label(x: Union[list, tuple, np.ndarray], y: 
                 test_samples[update_index] = False
                 train_samples[update_index] = True
             available_samples[update_index] = False
-    # those that are not
-    train_samples = np.bitwise_or(train_samples, np.bitwise_not(test_samples))
+    # Allocating all the remaining samples to train because the code structure ensures the ratio of test
+    # samples to the whole dataset.
     return x[train_samples], x[test_samples], y[train_samples], y[test_samples]
