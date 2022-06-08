@@ -12,7 +12,9 @@ def stratify_train_test_split_multi_label(x: Union[list, tuple, np.ndarray], y: 
     because they have small number of samples and retaining the ratio for them is challenging compared to those classes
     with more samples.
     :param x: A list, Tuple or ndarray that contains the samples
-    :param y: A 2D array that represents number of labels in each class. Each column is representative of a class.
+    :param y: A 2D array that represents number of labels in each class. Each column is representative of a class. As an
+    example: y = np.array([[2, 3], [1, 1]]) says that sample one has
+    two objects/tags for class 0 and 3 objects/tags for class 1 and so on.
     :param test_size:
     :param closest_ratio: For huge arrays extracting the closest ratio requires an intensive recursive function to work
      which could result in maximum recursion error. If set to True which choose samples from the smallest till passes
@@ -28,7 +30,15 @@ def stratify_train_test_split_multi_label(x: Union[list, tuple, np.ndarray], y: 
     """
     assert len(y.shape) == 2, "y should be 2D"
     assert test_size > 0.0, "test_size cannot be a zero or negative value!"
+    from sklearn.model_selection import train_test_split
     x = np.array(x, dtype=np.object_) if not isinstance(x, np.ndarray) else x
+
+    # excluding samples with no objects/tags
+    y_no_objects = y[y.sum(1) == 0]
+    x_no_objects = x[y.sum(1) == 0]
+    x = x[y.sum(1) > 0]
+    y = y[y.sum(1) > 0]
+
     available_samples = np.ones((y.shape[0]), dtype=np.bool8)
     test_samples = np.zeros((y.shape[0]), dtype=np.bool8)
     train_samples = np.zeros((y.shape[0]), dtype=np.bool8)
@@ -67,4 +77,25 @@ def stratify_train_test_split_multi_label(x: Union[list, tuple, np.ndarray], y: 
             available_samples[update_index] = False
     # Allocating all the remaining samples to train because the code structure ensures the ratio of test
     # samples to the whole dataset.
-    return x[train_samples], x[test_samples], y[train_samples], y[test_samples]
+    train_samples = np.bitwise_or(train_samples, np.bitwise_not(test_samples))
+
+    # splitting samples with no objects
+    x_no_objects_train, x_no_objects_test, y_no_objects_train, y_no_objects_test = train_test_split(x_no_objects,
+                                                                                                    y_no_objects,
+                                                                                                    test_size=test_size)
+
+    return np.concatenate([x[train_samples], x_no_objects_train]), \
+           np.concatenate([x[test_samples], x_no_objects_test]), \
+           np.concatenate([y[train_samples], y_no_objects_train]), \
+           np.concatenate([y[test_samples], y_no_objects_test])
+
+
+if __name__ == '__main__':
+    X = np.array([[1, 2], [3, 4], [1, 2], [3, 4], [1, 2], [3, 4], [1, 2], [3, 4]])
+    y = np.array([[0, 0], [0, 0], [0, 1], [0, 1], [1, 1], [1, 1], [1, 0], [1, 0]])
+    x_train, x_test, y_train, y_test = stratify_train_test_split_multi_label(X, y, test_size=0.5, closest_ratio=False)
+    print("x_train", x_train)
+    print("x_test", x_test)
+    print("y_train", y_train)
+    print("y_test", y_test)
+    print("ratio:", y_test.sum(0) / y.sum(0))
