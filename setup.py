@@ -27,10 +27,18 @@ tf_requirements = [
                   ] + cv_requirements
 
 torch_requirements = [
-                         "torch>=1.8.0,<1.12.0",
-                         "torchvision>=0.10.0"
-                     ] + cv_requirements
+    "torch>=1.8.0,<1.12.0",
+    "torchvision>=0.10.0",
+    "torchaudio>=1.10.0"
+]
 
+torchvision_requirements = [
+                               "torch>=1.8.0,<1.12.0",
+                               "torchvision>=0.10.0"
+                           ] + cv_requirements
+torch_transformers_requirements = torch_requirements + [
+    "transformers>=4.18.0"
+]
 setuptools.setup(
     name="deep_utils",
     version=VERSION,
@@ -48,7 +56,11 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    extras_require={"cv": cv_requirements, "tf": tf_requirements, "torch": torch_requirements},
+    extras_require={"cv": cv_requirements,
+                    "tf": tf_requirements,
+                    "torch": torch_requirements,
+                    "torchvision": torchvision_requirements,
+                    "torch_transformers": torch_transformers_requirements},
     install_requires=requirements,
     dependency_links=dependency_links,
     python_requires='>=3.6',
