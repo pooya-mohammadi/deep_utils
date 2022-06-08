@@ -75,6 +75,23 @@ class TorchAudioUtils:
 
     @staticmethod
     def get_duration(wave, sr):
+        """
+        Computing the duration of a wav array
+        :param wave:
+        :param sr:
+        :return: duration in seconds
+        """
         if len(wave.shape) == 2:
             wave = wave.squeeze(0)
         return wave.shape[0] / sr
+
+    @staticmethod
+    def get_file_duration(wav_path: Union[Path, str]):
+        """
+        Computing the duration of a wav file
+        :param wav_path:
+        :return: duration in seconds
+        """
+        speech_array, sampling_rate = torchaudio.load(wav_path)
+        duration_in_seconds = speech_array.shape[1] / sampling_rate
+        return duration_in_seconds
