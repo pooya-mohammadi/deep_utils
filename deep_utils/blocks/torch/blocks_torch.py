@@ -153,6 +153,13 @@ class BlocksTorch:
         elif class_name.find('Linear') != -1:
             torch.nn.init.xavier_uniform(m.weight)
             m.bias.data.fill_(0.01)
+        elif class_name == "LSTM":
+            # setting bias to zero and weight with xavier
+            for name, param in m.named_parameters():
+                if 'bias' in name:
+                    nn.init.constant(param, 0.0)
+                elif 'weight' in name:
+                    nn.init.xavier_normal(param)
 
 
 if __name__ == '__main__':
