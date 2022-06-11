@@ -6,19 +6,18 @@ import numpy as np
 def stratify_train_test_split_multi_label(x: Union[list, tuple, np.ndarray], y: np.ndarray, test_size=0.2,
                                           closest_ratio=False):
     """
-    A handy function for splitting multi-label samples based on their number of classes. This is mainly useful for
+        A handy function for splitting multi-label samples based on their number of classes. This is mainly useful for
     object detection and ner-like tasks that each sample may contain several objects/tags from different classes! The
     process of splitting starts from classes with the smallest number of samples to make sure their ratio is saved
-    because they have small number of samples and retaining the ratio for them is challenging compared to those classes
-    with more samples.
+    because they have small numbers of samples, retaining the ratio for them is challenging compared to those classes
+    with more samples
     :param x: A list, Tuple or ndarray that contains the samples
-    :param y: A 2D array that represents number of labels in each class. Each column is representative of a class. As an
-    example: y = np.array([[2, 3], [1, 1]]) says that sample one has
-    two objects/tags for class 0 and 3 objects/tags for class 1 and so on.
-    :param test_size:
+    :param y: A 2D array that represents the number of labels in each class. Each column is representative of a class.
+    As an example: y = np.array([[2, 3], [1, 1]]) says that sample one has
+    two objects/tags for class 0 and 3 objects/tags for class 1 and so on
+    :param test_size: size of the test set
     :param closest_ratio: For huge arrays extracting the closest ratio requires an intensive recursive function to work
-     which could result in maximum recursion error. If set to True which choose samples from the smallest till passes
-     the target number. Set this variable to True if you are sure. by default is set to False.
+     which could result in maximum recursion error. Being set to True will choose samples from the those with the smallest difference to the target number to ensure the best ratio. Set this variable to True if you are sure. by default is set to False.
     :return:
     >>> y = np.array([[1, 2, 0], [1, 0, 0], [1, 2, 0]])
     >>> x = np.array([[1, 1, 1], [2, 2, 2], [3, 3, 3]])
