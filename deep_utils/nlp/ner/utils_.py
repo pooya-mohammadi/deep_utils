@@ -16,7 +16,7 @@ def check_bio_labels(input_labels: Union[str, List[str], Tuple[str]], query_labe
         input_labels = input_labels.replace("B-", "").replace("I-", "")
         if input_labels == query_label:
             return True
-    elif isinstance(input_labels, list):
+    elif isinstance(input_labels, list) or isinstance(input_labels, tuple):
         input_labels = [lbl.replace("B-", "").replace("I-", "") for lbl in input_labels]
         if len(set(input_labels)) == 1 and input_labels[0] == query_label:
             return True
