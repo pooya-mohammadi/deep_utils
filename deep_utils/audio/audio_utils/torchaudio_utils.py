@@ -5,7 +5,7 @@ import torchaudio
 from torchaudio import transforms as T
 import torch
 from deep_utils.utils.os_utils.os_path import split_extension
-from deep_utils.utils.utils.logging_ import log_print
+from deep_utils.utils.logging_utils import log_print
 
 
 class TorchAudioUtils:

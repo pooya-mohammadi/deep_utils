@@ -3,7 +3,7 @@ from pathlib import Path
 import shutil
 from os.path import join
 from typing import Tuple, List, Dict, Union
-from deep_utils.utils.utils.logging_ import value_error_log, log_print
+from deep_utils.utils.logging_utils import value_error_log, log_print
 from deep_utils.utils.os_utils.os_path import split_extension
 
 

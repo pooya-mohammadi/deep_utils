@@ -1,6 +1,6 @@
 import os
 from deep_utils.utils.os_utils.os_path import split_extension
-from deep_utils.utils.utils.logging_ import log_print
+from deep_utils.utils.logging_utils import log_print
 
 
 def vox2wav(file_path, in_audio_type="v3", overwrite=True, wav_path: str = None, logger=None, verbose=1):

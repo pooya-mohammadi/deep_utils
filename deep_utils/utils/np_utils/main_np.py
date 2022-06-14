@@ -1,5 +1,5 @@
 import numpy as np
-from deep_utils.utils.utils.logging_ import log_print, value_error_log
+from deep_utils.utils.logging_utils import log_print, value_error_log
 
 
 def repeat_dimension(input_array: np.ndarray, n=3, d=2, logger=None, verbose=0):

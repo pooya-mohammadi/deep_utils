@@ -14,7 +14,7 @@ from deep_utils.utils.dir_utils.main import dir_train_test_split, transfer_direc
 from deep_utils.utils.dir_utils.main import remove_create
 from deep_utils.utils.opencv.main import show_destroy_cv2
 from deep_utils.utils.utils import dictnamedtuple
-from deep_utils.utils.utils.logging_ import log_print
+from deep_utils.utils.logging_utils import log_print
 from .config import Config
 import torch
 from pathlib import Path

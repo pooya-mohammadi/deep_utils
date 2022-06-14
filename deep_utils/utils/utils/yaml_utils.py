@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Union
 
-from deep_utils.utils.utils.logging_ import log_print
+from deep_utils.utils.logging_utils import log_print
 
 
 def load_yaml(yaml_path: Union[Path, str], logger=None, verbose=1) -> dict:

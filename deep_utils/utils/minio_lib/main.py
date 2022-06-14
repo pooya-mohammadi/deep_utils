@@ -1,6 +1,6 @@
 from logging import Logger
 from typing import Union
-from deep_utils.utils.utils.logging_ import log_print, value_error_log
+from deep_utils.utils.logging_utils import log_print, value_error_log
 
 
 def minio_get(minio_client, bucket_name, object_name, logger: Union[None, Logger]):

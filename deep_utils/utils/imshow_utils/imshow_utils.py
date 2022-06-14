@@ -1,7 +1,7 @@
 import numpy as np
 from deep_utils.utils.resize_utils.main_resize import resize
 from deep_utils.utils.box_utils.boxes import Box
-from deep_utils.utils.utils.logging_ import log_print
+from deep_utils.utils.logging_utils import log_print
 
 
 def group_show(images, size=(128, 128), n_channels=3, texts=None, text_org=None, text_kwargs=None, title=None,

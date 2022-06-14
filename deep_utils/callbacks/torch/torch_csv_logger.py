@@ -2,7 +2,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Union
 import numpy as np
-from deep_utils.utils.utils.logging_ import log_print
+from deep_utils.utils.logging_utils import log_print
 
 
 class CSVLogger:

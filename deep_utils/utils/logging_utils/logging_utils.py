@@ -22,7 +22,8 @@ def get_logger(name: str, log_path: Union[str, Path, None] = None, remove_previo
 
     if log_path:
         log_dir, file_name = os.path.split(log_path)
-        os.makedirs(log_dir, exist_ok=True)
+        if log_dir:
+            os.makedirs(log_dir, exist_ok=True)
         file_handler = logging.FileHandler(log_path)
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
