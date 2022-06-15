@@ -5,21 +5,10 @@ from typing import Dict, Callable, List, Tuple, Union
 from deep_utils.nlp.ner.taggers import bio_tagger
 from deep_utils.nlp.ner.utils_ import check_bio_labels
 from deep_utils.utils.random_utils.random_utils import random_choice_group
+from deep_utils.nlp.ner.base_operations import NEROperation
 
 
-class NERAugmentation:
-    NER_TYPES = ["BIO"]
-
-    def __init__(self, ner_type="BIO"):
-        self.ner_type = ner_type
-        assert ner_type in self.NER_TYPES, f"[ERROR] ner_type: {self.ner_type} is not supported!"
-
-    def __call__(self, tokens_x: Union[Tuple[str], List[str]],
-                 labels_y: Union[Tuple[str], List[str]]):
-        assert len(tokens_x) == len(labels_y), f"[ERROR] number of tokens and labels is not equal"
-
-
-class NERAugRemove(NERAugmentation):
+class NERAugRemove(NEROperation):
     """
     This augmentation randomly removes tokens and their corresponding labels, This is not just for persian language.
     >>> remove_dict = { ("-", "o"): 0.5, (",", "o"): 0.5, ("استان", "province"): 0.5, ("شهر", "city"): 0.5}
@@ -94,7 +83,7 @@ class NERAugRemove(NERAugmentation):
         return tokens_x, labels_y
 
 
-class NERAugReplacement(NERAugmentation):
+class NERAugReplacement(NEROperation):
     """
     This class replaces a single token with a single token
     """
