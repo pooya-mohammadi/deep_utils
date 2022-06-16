@@ -406,7 +406,7 @@ be the closest ratio to the expected one. Link to code:
 
 https://github.com/pooya-mohammadi/deep_utils/blob/master/deep_utils/utils/multi_label_utils/stratify/stratify_train_test_split.py
 
-<!-- Tests -->
+<p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Tests
 
