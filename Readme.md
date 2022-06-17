@@ -351,9 +351,9 @@ lastname:  mohammadi
 
 While splitting a dataset for NER or Object detection tasks, you might have noticed that there is no way to split the
 dataset using
-stratify functionality of `train_test_split` of the `scikit-learn` library because each sample in these two tasks may
+stratify functionality of `train_test_split` of the `scikit-learn` library because not only does each sample in these two tasks may
 have
-more than one tag/object and each tag/object of each class may appear more than once. For example, an image/sample may
+more than one tag/object, but also each tag/object of each class may appear more than once. For example, an image/sample may
 contain two dogs and three cats, which means the label/y of that sample would be like [2, 3] in which the index zero
 corresponds
 to the dog class, and the index one corresponds to the cat class.
