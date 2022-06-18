@@ -12,3 +12,4 @@ deep_utils.egg-info
 *.pt
 *.pth
 dog.jpg
+*.log
