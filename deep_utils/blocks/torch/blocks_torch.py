@@ -161,6 +161,17 @@ class BlocksTorch:
                 elif 'weight' in name:
                     nn.init.xavier_normal(param)
 
+    @staticmethod
+    def set_parameter_requires_grad(model: nn.Module, feature_extracting):
+        if feature_extracting:
+            for param in model.parameters():
+                param.requires_grad = False
+
+    @staticmethod
+    def set_parameter_grad(model: nn.Module, num_layer):
+        for param in list(model.parameters())[::-1][:num_layer]:
+            param.requires_grad = True
+
 
 if __name__ == '__main__':
     a = BlocksTorch.conv_norm_act(32, 64, move_forward=2)
