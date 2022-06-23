@@ -79,7 +79,7 @@ def func_log(message, roll_back=1):
         code_f_back = code_f_back.f_back
     func = code_f_back.f_code
     # Dump the message + the name of this function to the log.
-    message = f"{func.co_filename} -- line: {func.co_firstlineno} -- func: {func.co_name} --> message: {message}"
+    message = f"message: {message} --> file: {func.co_filename} -- line: {func.co_firstlineno} -- func: {func.co_name}"
     return message
 
 
