@@ -6,4 +6,5 @@ from .callbacks import *
 from .nlp import *
 from .gis import *
 from .audio import *
+from .design_patterns import *
 from ._version import __version__
