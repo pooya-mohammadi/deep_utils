@@ -19,10 +19,15 @@ def is_available(lib_name: str):
 _is_tf_available = importlib.util.find_spec("tensorflow") is not None
 _is_torch_available = importlib.util.find_spec("torch") is not None
 _is_cv2_available = importlib.util.find_spec("cv2") is not None
+_is_torchvision_available = importlib.util.find_spec("torchvision") is not None
 
 
 def is_torch_available():
     return _is_torch_available
+
+
+def is_torchvision_available():
+    return _is_torchvision_available
 
 
 def is_tf_available():
@@ -78,12 +83,29 @@ or
 ```
 """
 
+TORCHVISION_IMPORT_ERROR = """
+{0} requires Torchvision library but it was not found in your environment. You can install it with the following instruction or check out the main webpage of pytorch.org:
+```
+pip install torchvision
+# or
+pip install deep-utils[torchvision]
+```
+In a notebook or a colab, you can install it by executing a cell with
+```
+!pip install torchvision
+or
+!pip install deep-utils[torchvision]
+```
+"""
+
 BACKENDS_MAPPING = OrderedDict(
     [
         ("cv2", (is_cv2_available, CV2_IMPORT_ERROR)),
         ("tf", (is_tf_available, TENSORFLOW_IMPORT_ERROR)),
         ("torch", (is_torch_available, PYTORCH_IMPORT_ERROR)),
+        ("torchvision", (is_torchvision_available, TORCHVISION_IMPORT_ERROR)),
         is_available("seaborn"),
-        is_available("pyaml")
+        is_available("pyaml"),
+        is_available("numpy")
     ]
 )
