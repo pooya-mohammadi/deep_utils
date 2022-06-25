@@ -5,7 +5,6 @@ def dictnamedtuple(typename, field_names, *, rename=False, defaults=None, module
     import sys as _sys
     from collections import OrderedDict
     from keyword import iskeyword as _iskeyword
-    from operator import eq as _eq
     from operator import itemgetter as _itemgetter
 
     if isinstance(field_names, str):
