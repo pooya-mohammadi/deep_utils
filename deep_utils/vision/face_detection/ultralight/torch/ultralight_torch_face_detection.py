@@ -1,8 +1,6 @@
 import sys
-
 import numpy as np
-
-from deep_utils.utils.box_utils.boxes import Box, Point
+from deep_utils.utils.box_utils.boxes import Box
 from deep_utils.utils.lib_utils.download_utils import download_decorator
 from deep_utils.utils.lib_utils.lib_decorators import (
     expand_input,
