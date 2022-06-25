@@ -113,6 +113,7 @@ BACKENDS_MAPPING = OrderedDict(
         is_available("seaborn"),
         is_available("pyaml"),
         is_available("numpy"),
-        is_available("albumentation")
+        is_available("albumentation"),
+        is_available("scikit-learn"),
     ]
 )
