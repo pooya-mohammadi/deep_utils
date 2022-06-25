@@ -1,4 +1,5 @@
 import os
+import numpy as np
 from abc import abstractmethod
 from deep_utils.utils.pickle_utils.pickles import dump_pickle
 from deep_utils.main_abs.main import MainClass
@@ -26,6 +27,7 @@ class FaceRecognition(MainClass):
             extensions=(".png", ".jpg", ".jpeg"),
             res_dir=None,
             remove_res_dir=False,
+            get_mean=False,
     ):
         import cv2
         results = dict()
@@ -38,9 +40,16 @@ class FaceRecognition(MainClass):
                 result = self.extract_faces(img, is_rgb=False, get_time=True, )
                 print(f'{img_path}: time= {result["elapsed_time"]}')
 
-                if res_dir:
+                if res_dir and not get_mean:
                     dump_pickle(os.path.join(res_dir, split_extension(item_name, extension=".pkl")), result.encodings)
                 results[img_path] = result['encodings']
+        if get_mean:
+            from sklearn.preprocessing import Normalizer
+            l2_normalizer = Normalizer('l2')
+            encode = np.sum(np.array(list(results.values())), axis=0)
+            encode = l2_normalizer.transform(np.expand_dims(encode, axis=0))[0]
+            results['mean-encoding'] = encode
+            dump_pickle(os.path.join(res_dir, "mean-encoding.pkl"), encode)
         return results
 
     def extract_dir_of_dir(
@@ -50,7 +59,9 @@ class FaceRecognition(MainClass):
             encoding_dir_name="encodings",
             extensions=(".png", ".jpg", ".jpeg"),
             remove_encoding=True,
+            get_mean=False,
     ):
+        results = dict()
         for directory_name in sorted(os.listdir(input_directory)):
             directory_path = os.path.join(input_directory, directory_name)
             images_dir = os.path.join(directory_path, image_dir_name)
@@ -58,4 +69,12 @@ class FaceRecognition(MainClass):
             if not os.path.isdir(directory_path) or not os.path.isdir(images_dir):
                 log_print(None, f"Skip {directory_path}...")
             remove_create(cropped_dir, remove=remove_encoding)
-            self.extract_dir(images_dir, extensions=extensions, res_dir=cropped_dir, remove_res_dir=remove_encoding)
+            dir_result = self.extract_dir(images_dir, extensions=extensions, res_dir=cropped_dir,
+                                          remove_res_dir=remove_encoding,
+                                          get_mean=get_mean)
+            results[directory_name] = dir_result
+        if get_mean:
+            results = {k: v['mean-encoding'] for k, v in results.items()}
+            encoding_name = os.path.split(input_directory)[-1]
+            dump_pickle(os.path.join(input_directory, encoding_name + ".pkl"), results)
+        return results
