@@ -19,4 +19,4 @@ class Config(MainConfig):
         self.onet_url = "https://github.com/pooya-mohammadi/deep_utils/releases/download/0.1.0/onet.npy"
         self.onet_cache = "weights/vision/face_detection/mtcnn/torch/onet.npy"
         self.onet = None
-        self.download_variables = ('pnet', 'onet', 'rnet')
+        self.download_variables = ("pnet", "onet", "rnet")

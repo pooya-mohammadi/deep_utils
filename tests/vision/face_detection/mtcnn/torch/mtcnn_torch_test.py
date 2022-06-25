@@ -1,5 +1,6 @@
 import cv2
 import pytest
+
 from deep_utils import Box, MTCNNTorchFaceDetector, download_file
 
 
