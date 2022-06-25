@@ -12,7 +12,9 @@ def get_from_config(func):
         config = self.config
         arguments = inspect.getfullargspec(func)
         if arguments.defaults is not None:
-            kwargs_ = {i: j for i, j in zip(arguments.args[::-1], arguments.defaults[::-1])}
+            kwargs_ = {
+                i: j for i, j in zip(arguments.args[::-1], arguments.defaults[::-1])
+            }
         else:
             kwargs_ = dict()
         if kwargs is not None:
@@ -37,15 +39,27 @@ def expand_input(dim):
                 in_ = np.expand_dims(in_, axis=0)
                 results = func(self, in_, *args, **kwargs)
                 if hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
-                    new_results = {key: val[0] if val is not None and len(val) == 1 else val for key, val in
-                                   results.items()}
+                    new_results = {
+                        key: val[0] if val is not None and len(
+                            val) == 1 else val
+                        for key, val in results.items()
+                    }
                     cls = type(results)
                     results = cls(**new_results)
                 elif isinstance(results, tuple):
-                    results = tuple([res[0] if res is not None and len(res) == 1 else res for res in results])
+                    results = tuple(
+                        [
+                            res[0] if res is not None and len(
+                                res) == 1 else res
+                            for res in results
+                        ]
+                    )
                 elif isinstance(results, dict):
-                    results = {key: val[0] if val is not None and len(val) == 1 else val for key, val in
-                               results.items()}
+                    results = {
+                        key: val[0] if val is not None and len(
+                            val) == 1 else val
+                        for key, val in results.items()
+                    }
                 else:
                     results = results[0]
                 return results
@@ -60,19 +74,22 @@ def expand_input(dim):
 def get_elapsed_time(func):
     @wraps(func)
     def wrapper(self, *args, **kwargs):
-        elapsed_time = kwargs.get('get_time', False)
+        elapsed_time = kwargs.get("get_time", False)
         if elapsed_time:
             tic = time.time()
             results = func(self, *args, **kwargs)
             toc = time.time()
             elapsed_time = round(toc - tic, 4)
             if isinstance(results, dict):
-                results['elapsed_time'] = elapsed_time
+                results["elapsed_time"] = elapsed_time
             elif hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
                 from deep_utils.utils.utils.main import dictnamedtuple
+
                 new_results = dict(results.items())
-                new_results['elapsed_time'] = elapsed_time
-                cls = dictnamedtuple(results.TypeName, list(results._fields) + ["elapsed_time"])
+                new_results["elapsed_time"] = elapsed_time
+                cls = dictnamedtuple(
+                    results.TypeName, list(results._fields) + ["elapsed_time"]
+                )
                 results = cls(**new_results)
             else:
                 results = tuple(list(results) + [elapsed_time])
@@ -86,7 +103,7 @@ def rgb2bgr(in_):
     def inner_decorator(func):
         @wraps(func)
         def wrapper(self, in_img, *args, **kwargs):
-            is_rgb = kwargs.get('is_rgb')
+            is_rgb = kwargs.get("is_rgb")
             # if not is_rgb and in_ == 'rgb':
             #     in_img = in_img[..., ::-1]
             # elif is_rgb and in_ == 'bgr':
@@ -106,20 +123,22 @@ def rgb2bgr(in_):
 
 
 def lib_rgb2bgr(in_img, target_type, is_rgb):
-    if not is_rgb and target_type == 'rgb':
+    if not is_rgb and target_type == "rgb":
         in_img = in_img[..., ::-1]
     elif is_rgb and target_type == "rgb":
         pass
-    elif is_rgb and target_type == 'bgr':
+    elif is_rgb and target_type == "bgr":
         in_img = in_img[..., ::-1]
-    elif is_rgb and target_type == 'gray':
+    elif is_rgb and target_type == "gray":
         in_img = np.dot(in_img[..., :3], [0.299, 0.587, 0.144])
         in_img = in_img.astype(np.uint8)
-    elif not is_rgb and target_type == 'gray':
+    elif not is_rgb and target_type == "gray":
         in_img = np.dot(in_img[..., :3][..., ::-1], [0.299, 0.587, 0.144])
         in_img = in_img.astype(np.uint8)
     else:
-        raise ValueError(f"[ERROR] The input target_type: {target_type} is not supported!")
+        raise ValueError(
+            f"[ERROR] The input target_type: {target_type} is not supported!"
+        )
     return in_img
 
 
@@ -134,17 +153,30 @@ def in_shape_fix(in_: np.ndarray, size=4):
 
 def out_shape_fix(results):
     if hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
-        new_results = {key: val[0] if val is not None and isinstance(val, Sequence) and len(val) == 1 else val for
-                       key, val in results.items()}
+        new_results = {
+            key: val[0]
+            if val is not None and isinstance(val, Sequence) and len(val) == 1
+            else val
+            for key, val in results.items()
+        }
         cls = type(results)
         results = cls(**new_results)
     elif isinstance(results, tuple):
         results = tuple(
-            [val[0] if val is not None and isinstance(val, Sequence) and len(val) == 1 else val for val in results])
+            [
+                val[0]
+                if val is not None and isinstance(val, Sequence) and len(val) == 1
+                else val
+                for val in results
+            ]
+        )
     elif isinstance(results, dict):
-        results = {key: val[0] if val is not None and isinstance(val, Sequence) and len(val) == 1 else val for key, val
-                   in
-                   results.items()}
+        results = {
+            key: val[0]
+            if val is not None and isinstance(val, Sequence) and len(val) == 1
+            else val
+            for key, val in results.items()
+        }
     else:
         results = results[0]
     return results
@@ -155,7 +187,7 @@ def cast_kwargs_dict(func):
     def wrapper(self, *args, **kwargs):
         arguments = inspect.getfullargspec(func)
         for kwarg in arguments.args:
-            if kwarg.endswith('_kwargs'):
+            if kwarg.endswith("_kwargs"):
                 _kwargs = kwargs.get(kwarg, None)
                 kwargs[kwarg] = dict() if _kwargs is None else _kwargs
         return func(self, *args, **kwargs)

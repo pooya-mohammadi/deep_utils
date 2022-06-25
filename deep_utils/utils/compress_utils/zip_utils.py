@@ -2,12 +2,13 @@ import os
 from os.path import join
 
 
-def unzip(zip_path, zip_dir='.'):
+def unzip(zip_path, zip_dir="."):
     from zipfile import ZipFile
-    with ZipFile(zip_path, 'r') as zip:
-        print(f'extracting {zip_path}')
+
+    with ZipFile(zip_path, "r") as zip:
+        print(f"extracting {zip_path}")
         zip.extractall(zip_dir)
-        print(f'extracting is done!')
+        print(f"extracting is done!")
 
 
 def unzip_dir_zip(dir_path, remove_zip_file=False):

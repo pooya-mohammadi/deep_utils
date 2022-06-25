@@ -1,12 +1,15 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Union, Any, Tuple, List
+from typing import Any, List, Tuple, Union
 
 from deep_utils import log_print
 
 
 class CoRError(Exception):
-    def __init__(self, message: str = "", code: int = 0, output: Union[None, dict] = None):
+    def __init__(
+        self, message: str = "", code: int = 0, output: Union[None, dict] = None
+    ):
         """
         This is a custom error used to break the responsibility chain that is running through the manger!
         It helps to increase codes' readability; when one sees this error realizes that the process is broke because
@@ -61,22 +64,29 @@ class CoRHandler(Handler):
         if self._next_handler:
             return self._next_handler.handle(request)
 
-        raise NotImplementedError("next_handler is missing, and the module is not implemented!")
+        raise NotImplementedError(
+            "next_handler is missing, and the module is not implemented!"
+        )
 
 
 class CoRManger:
-
-    def __init__(self, handlers: Union[Tuple[CoRHandler], List[CoRHandler]], internal_error_code=-1):
+    def __init__(
+        self,
+        handlers: Union[Tuple[CoRHandler], List[CoRHandler]],
+        internal_error_code=-1,
+    ):
         """
-            The default manger, which takes in a list of handlers and process it
-            :param handlers: input handlers
-            :param internal_error_code: This value is returned when handlers raise an unexpected error. Default of -1
-            is used for internal errors, don't use it as a code in the handlers to prevent confusion.
+        The default manger, which takes in a list of handlers and process it
+        :param handlers: input handlers
+        :param internal_error_code: This value is returned when handlers raise an unexpected error. Default of -1
+        is used for internal errors, don't use it as a code in the handlers to prevent confusion.
         """
         assert handlers, "handlers can not be None or empty"
         previous_handler: Union[CoRHandler, None] = None
         for handler in handlers:
-            assert isinstance(handler, CoRHandler), "Handlers should have CoRHandler type"
+            assert isinstance(
+                handler, CoRHandler
+            ), "Handlers should have CoRHandler type"
             if previous_handler is not None:
                 previous_handler.set_next(handler)
             previous_handler = handler
@@ -90,10 +100,14 @@ class CoRManger:
         except CoRError as e:
             output = dict(e.output)
             output["code"] = e.code
-            output['message'] = e.message
+            output["message"] = e.message
         except BaseException as e:
             output = dict()
-            output['code'] = self.internal_error_code
-            output['message'] = "Internal Error: " + str(e)
-        log_print(logger, f"Request code: {output['code']}, message: {output['message']}!", verbose=verbose)
+            output["code"] = self.internal_error_code
+            output["message"] = "Internal Error: " + str(e)
+        log_print(
+            logger,
+            f"Request code: {output['code']}, message: {output['message']}!",
+            verbose=verbose,
+        )
         return output

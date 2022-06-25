@@ -16,13 +16,16 @@ def load_yaml(yaml_path: Union[Path, str], logger=None, verbose=1) -> dict:
 
     """
     import yaml
+
     with open(yaml_path) as f:
         data_map = yaml.safe_load(f)
     log_print(logger, f"Successfully loaded {yaml_path}", verbose=verbose)
     return data_map
 
 
-def dump_yaml(yaml_dict: dict, yaml_path: Union[Path, str], logger=None, verbose=1) -> None:
+def dump_yaml(
+    yaml_dict: dict, yaml_path: Union[Path, str], logger=None, verbose=1
+) -> None:
     """
     Dumps a dict to yaml file
     Args:
@@ -36,9 +39,11 @@ def dump_yaml(yaml_dict: dict, yaml_path: Union[Path, str], logger=None, verbose
     """
     import yaml
 
-    with open(yaml_path, 'w') as outfile:
+    with open(yaml_path, "w") as outfile:
         yaml.dump(yaml_dict, outfile, default_flow_style=False)
-    log_print(logger, f"Successfully converted input dict to {yaml_path}", verbose=verbose)
+    log_print(
+        logger, f"Successfully converted input dict to {yaml_path}", verbose=verbose
+    )
 
 
 def yaml_post_process(yaml_dict: dict):

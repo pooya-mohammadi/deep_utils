@@ -1,7 +1,14 @@
 import sys
 
 
-def subset_sum(input_numbers, target_number, result=(None, None, sys.maxsize), partial=None, indices=None, index=0):
+def subset_sum(
+    input_numbers,
+    target_number,
+    result=(None, None, sys.maxsize),
+    partial=None,
+    indices=None,
+    index=0,
+):
     """
     Returns a subset of the inputs that has the closest value to the target_number input.
     Output: indices of chosen samples, values of chosen samples, difference from the input target_number.
@@ -44,7 +51,14 @@ def subset_sum(input_numbers, target_number, result=(None, None, sys.maxsize), p
         current_index = i + index
         n = input_numbers[i]
         remaining = input_numbers[i + 1:]
-        subset_sum(remaining, target_number, result, partial + [n], indices + [current_index], current_index + 1)
+        subset_sum(
+            remaining,
+            target_number,
+            result,
+            partial + [n],
+            indices + [current_index],
+            current_index + 1,
+        )
         if result[-1] == 0 or sum(partial) - target_number > result[-1]:
             break
     return result

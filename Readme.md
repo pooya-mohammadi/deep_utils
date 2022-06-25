@@ -68,13 +68,13 @@ and manipulating datasets that can come in handy in any programming project.
 ```bash
     # pip: recommended
     pip install -U deep-utils
-    
+
     # repository
     pip install git+https://github.com/pooya-mohammadi/deep_utils.git
-   
+
     # clone the repo
     git clone https://github.com/pooya-mohammadi/deep_utils.git deep_utils
-    pip install -U deep_utils 
+    pip install -U deep_utils
 ```
 
 ### Installation types:
@@ -115,7 +115,7 @@ model missing, feel free to open an issue or create a pull request.
 ```python
 from deep_utils import face_detector_loader, list_face_detection_models
 
-# This line will print all the available models 
+# This line will print all the available models
 print(list_face_detection_models())
 
 # Create a face detection model using MTCNN-Torch
@@ -198,7 +198,7 @@ base_image = cv2.imread("dog.jpg")
 # pil.Image is used for visualization
 Image.fromarray(base_image[..., ::-1])  # convert to rgb
 # visualize using oepncv
-# show_destroy_cv2(base_image) 
+# show_destroy_cv2(base_image)
 ```
 
 The result:
@@ -210,7 +210,7 @@ The result:
 
 ```python
 # Detect the objects
-# the image is opened by cv2 which results to a BGR image. Therefore the `is_rgb` is set to `False` 
+# the image is opened by cv2 which results to a BGR image. Therefore the `is_rgb` is set to `False`
 result = yolov5.detect_objects(base_image, is_rgb=False, confidence=0.5)
 
 # Draw detected boxes on the image.

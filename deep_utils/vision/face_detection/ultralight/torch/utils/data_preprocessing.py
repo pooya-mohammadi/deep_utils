@@ -10,17 +10,20 @@ class TrainAugmentation:
         """
         self.mean = mean
         self.size = size
-        self.augment = Compose([
-            ConvertFromInts(),
-            PhotometricDistort(),
-            RandomSampleCrop_v2(),
-            RandomMirror(),
-            ToPercentCoords(),
-            Resize(self.size),
-            SubtractMeans(self.mean),
-            lambda img, boxes=None, labels=None: (img / std, boxes, labels),
-            ToTensor(),
-        ])
+        self.augment = Compose(
+            [
+                ConvertFromInts(),
+                PhotometricDistort(),
+                RandomSampleCrop_v2(),
+                RandomMirror(),
+                ToPercentCoords(),
+                Resize(self.size),
+                SubtractMeans(self.mean),
+                lambda img, boxes=None, labels=None: (
+                    img / std, boxes, labels),
+                ToTensor(),
+            ]
+        )
 
     def __call__(self, img, boxes, labels):
         """
@@ -35,13 +38,16 @@ class TrainAugmentation:
 
 class TestTransform:
     def __init__(self, size, mean=0.0, std=1.0):
-        self.transform = Compose([
-            ToPercentCoords(),
-            Resize(size),
-            SubtractMeans(mean),
-            lambda img, boxes=None, labels=None: (img / std, boxes, labels),
-            ToTensor(),
-        ])
+        self.transform = Compose(
+            [
+                ToPercentCoords(),
+                Resize(size),
+                SubtractMeans(mean),
+                lambda img, boxes=None, labels=None: (
+                    img / std, boxes, labels),
+                ToTensor(),
+            ]
+        )
 
     def __call__(self, image, boxes, labels):
         return self.transform(image, boxes, labels)
@@ -49,12 +55,15 @@ class TestTransform:
 
 class PredictionTransform:
     def __init__(self, size, mean=0.0, std=1.0):
-        self.transform = Compose([
-            Resize(size),
-            SubtractMeans(mean),
-            lambda img, boxes=None, labels=None: (img / std, boxes, labels),
-            ToTensor()
-        ])
+        self.transform = Compose(
+            [
+                Resize(size),
+                SubtractMeans(mean),
+                lambda img, boxes=None, labels=None: (
+                    img / std, boxes, labels),
+                ToTensor(),
+            ]
+        )
 
     def __call__(self, image):
         image, _, _ = self.transform(image)

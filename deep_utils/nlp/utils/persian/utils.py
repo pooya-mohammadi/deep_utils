@@ -18,7 +18,8 @@ def persian_num2english(input_string: str, reverse: bool = False):
         "۷": "7",
         "۸": "8",
         "۹": "9",
-        "۰": "0"}
+        "۰": "0",
+    }
     if reverse:
         NUM_MAP = {v: k for k, v in NUM_MAP.items()}
     output_string = "".join([NUM_MAP.get(c, c) for c in input_string])

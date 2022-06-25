@@ -1,20 +1,43 @@
 import numpy as np
+
 from deep_utils.utils.box_utils.boxes import Point
 
 
 class VideoWriterCV:
-    def __init__(self, save_path, width, height, fourcc="XVID", fps=30, colorful=True, in_source='Numpy'):
+    def __init__(
+        self,
+        save_path,
+        width,
+        height,
+        fourcc="XVID",
+        fps=30,
+        colorful=True,
+        in_source="Numpy",
+    ):
         import cv2
-        point = Point.point2point((width, height), in_source=in_source, to_source=Point.PointSource.CV)
-        fourcc = cv2.VideoWriter_fourcc(*fourcc) if isinstance(fourcc, str) else fourcc
+
+        point = Point.point2point(
+            (width, height), in_source=in_source, to_source=Point.PointSource.CV
+        )
+        fourcc = cv2.VideoWriter_fourcc(
+            *fourcc) if isinstance(fourcc, str) else fourcc
         self.vw = cv2.VideoWriter(save_path, fourcc, fps, point, colorful)
 
     def write(self, frame):
         self.vw.write(frame)
 
 
-def rotate(img, rotation_degree, center_point=None, scale=1.0, dsize=None, bound=False, clockwise=True):
+def rotate(
+    img,
+    rotation_degree,
+    center_point=None,
+    scale=1.0,
+    dsize=None,
+    bound=False,
+    clockwise=True,
+):
     import cv2
+
     h, w = img.shape[:2]
     (w, h) = dsize = (w, h) if dsize is None else dsize
     center_point = (w // 2, h // 2) if center_point is None else center_point
@@ -37,17 +60,18 @@ def rotate(img, rotation_degree, center_point=None, scale=1.0, dsize=None, bound
 
 def translate(img, tx, ty, dsize=None):
     import cv2
+
     h, w = img.shape[:2][::-1]
     dsize = (w, h) if dsize is None else dsize
-    translation_matrix = np.array([
-        [1, 0, tx],
-        [0, 1, ty]], dtype=np.float32)
-    translated_image = cv2.warpAffine(src=img, M=translation_matrix, dsize=dsize)
+    translation_matrix = np.array([[1, 0, tx], [0, 1, ty]], dtype=np.float32)
+    translated_image = cv2.warpAffine(
+        src=img, M=translation_matrix, dsize=dsize)
     return translated_image
 
 
-def show_destroy_cv2(img, win_name=''):
+def show_destroy_cv2(img, win_name=""):
     import cv2
+
     try:
         cv2.imshow(win_name, img)
         cv2.waitKey(0)

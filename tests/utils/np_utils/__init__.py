@@ -1,1 +1,1 @@
-from .test_main_np import test_repeat_dimension
+from .np_utils_test import test_repeat_dimension

@@ -15,11 +15,15 @@ class REUtils:
 
     @staticmethod
     def split_char_number_sentence(input_address):
-        return " ".join(REUtils.split_char_number(var) for var in input_address.split(' '))
+        return " ".join(
+            REUtils.split_char_number(var) for var in input_address.split(" ")
+        )
 
     @staticmethod
     def split_word_punctuation_sentence(input_address):
-        return " ".join(REUtils.split_word_punctuation(var) for var in input_address.split(' '))
+        return " ".join(
+            REUtils.split_word_punctuation(var) for var in input_address.split(" ")
+        )
 
     @staticmethod
     def split_char_number(input_string, punctuations=",*!+-.،"):
@@ -38,7 +42,9 @@ class REUtils:
             plus = r"|\+"
         else:
             plus = ""
-        return " ".join(re.findall(rf"[^\W\d]+|\d+|[{punctuations}]+{plus}", input_string))
+        return " ".join(
+            re.findall(rf"[^\W\d]+|\d+|[{punctuations}]+{plus}", input_string)
+        )
 
     @staticmethod
     def split_word_punctuation(input_string, punctuations=",*!+-.،"):
@@ -76,10 +82,12 @@ class REUtils:
         return expression
 
     @staticmethod
-    def replace_single_char(input_string, replace_expression, result_expression, left="[\s,]+", right="\s+"):
+    def replace_single_char(
+        input_string, replace_expression, result_expression, left="[\s,]+", right="\s+"
+    ):
         """
         Replaces a single character with a complete word
-        :param input_string: 
+        :param input_string:
         :param replace_expression:
         :param result_expression:
         :param left:
@@ -87,13 +95,19 @@ class REUtils:
         :return:
         """
         input_string = " " + input_string  # for those starting at index zero
-        pattern = REUtils.get_left_right_linespaces(replace_expression, left=left, right=right)
-        input_string = REUtils.replace(input_string, pattern, " " + result_expression + " ")
-        input_string = REUtils.cleaning(input_string)  # This is done to clean up extra spaces and other characters!
+        pattern = REUtils.get_left_right_linespaces(
+            replace_expression, left=left, right=right
+        )
+        input_string = REUtils.replace(
+            input_string, pattern, " " + result_expression + " "
+        )
+        input_string = REUtils.cleaning(
+            input_string
+        )  # This is done to clean up extra spaces and other characters!
         return input_string
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     str_ = "s12"
     output = REUtils.split_char_number(str_)
     print(output)

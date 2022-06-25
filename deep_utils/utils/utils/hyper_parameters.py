@@ -1,7 +1,8 @@
 from pathlib import Path
 from typing import Union
+
 from deep_utils.utils.logging_utils import log_print
-from deep_utils.utils.utils.yaml_utils import load_yaml, dump_yaml, yaml_post_process
+from deep_utils.utils.utils.yaml_utils import dump_yaml, load_yaml, yaml_post_process
 
 
 class KeyValStruct:
@@ -47,7 +48,9 @@ def keyval_struct2dict(key_val_struct: KeyValStruct):
     return output
 
 
-def yaml_config2yaml_file(yaml_config: YamlConfig, yaml_path: Union[str, Path], logger=None, verbose=1):
+def yaml_config2yaml_file(
+    yaml_config: YamlConfig, yaml_path: Union[str, Path], logger=None, verbose=1
+):
     """
     Dumps aa yaml config object to a yaml file
     Args:
@@ -61,4 +64,5 @@ def yaml_config2yaml_file(yaml_config: YamlConfig, yaml_path: Union[str, Path], 
     """
     dict_obj = keyval_struct2dict(yaml_config)
     dump_yaml(dict_obj, yaml_path, logger=logger, verbose=verbose)
-    log_print(logger, f"Successfully saved yaml_config in {yaml_path}", verbose=verbose)
+    log_print(
+        logger, f"Successfully saved yaml_config in {yaml_path}", verbose=verbose)

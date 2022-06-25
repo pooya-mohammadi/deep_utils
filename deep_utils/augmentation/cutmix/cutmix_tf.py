@@ -1,9 +1,9 @@
 import numpy as np
+
 from deep_utils.utils.utils.shuffle_utils import shuffle_group
 
 
 class CutMixTF:
-
     @staticmethod
     def _get_bbox(size, lam):
         """
@@ -15,7 +15,7 @@ class CutMixTF:
         w = size[0]
         h = size[1]
 
-        cut_rat = np.sqrt(1. - lam)
+        cut_rat = np.sqrt(1.0 - lam)
 
         r_w = np.int(w * cut_rat)
         r_h = np.int(h * cut_rat)
@@ -42,7 +42,8 @@ class CutMixTF:
         """
         if len(sizes) == 3:
             b = sizes[0]
-            boxes = np.array([CutMixTF._get_bbox(sizes[1:], lam) for _ in range(b)])
+            boxes = np.array([CutMixTF._get_bbox(sizes[1:], lam)
+                             for _ in range(b)])
         elif len(sizes) == 2:
             boxes = np.array(CutMixTF._get_bbox(sizes, lam))
         else:
@@ -50,7 +51,9 @@ class CutMixTF:
         return boxes
 
     @staticmethod
-    def seg_cutmix_batch(a_images, a_masks, b_images=None, b_masks=None, beta=1, shuffle=True):
+    def seg_cutmix_batch(
+        a_images, a_masks, b_images=None, b_masks=None, beta=1, shuffle=True
+    ):
         """
         Cutmix operation for two batch of segmentation images with their corresponding masks! In case of None input
         for `b_images` and `b_masks`, `a_images` and `b_images` are used instead of them.
@@ -66,7 +69,12 @@ class CutMixTF:
             b_images = a_images
             b_masks = a_masks
 
-        a_images, a_masks, b_images, b_masks = a_images.copy(), a_masks.copy(), b_images.copy(), b_masks.copy()
+        a_images, a_masks, b_images, b_masks = (
+            a_images.copy(),
+            a_masks.copy(),
+            b_images.copy(),
+            b_masks.copy(),
+        )
 
         if shuffle:
             shuffle_group(a_images, a_masks)
@@ -97,14 +105,20 @@ class CutMixTF:
         mask = np.ones_like(a_img)
         mask[x1:x2, y1:y2, :] = 0
         # generate x
-        x = (np.multiply(a_img, mask) + np.multiply(b_img, (abs(1. - mask)))).astype(np.uint8)
+        x = (np.multiply(a_img, mask) + np.multiply(b_img, (abs(1.0 - mask)))).astype(
+            np.uint8
+        )
         # generate y
         mask = mask[:, :, 0]
-        y = (np.multiply(a_mask, mask) + np.multiply(b_mask, (abs(1. - mask)))).astype(np.uint8)
+        y = (np.multiply(a_mask, mask) + np.multiply(b_mask, (abs(1.0 - mask)))).astype(
+            np.uint8
+        )
         return x, y
 
     @staticmethod
-    def cls_cutmix_batch(a_images, a_labels, b_images=None, b_labels=None, beta=1, shuffle=True):
+    def cls_cutmix_batch(
+        a_images, a_labels, b_images=None, b_labels=None, beta=1, shuffle=True
+    ):
         """
 
         :param a_images:
@@ -121,15 +135,24 @@ class CutMixTF:
             b_images = a_images
             b_labels = a_labels
 
-        a_images, a_labels, b_images, b_labels = a_images.copy(), a_labels.copy(), b_images.copy(), b_labels.copy()
+        a_images, a_labels, b_images, b_labels = (
+            a_images.copy(),
+            a_labels.copy(),
+            b_images.copy(),
+            b_labels.copy(),
+        )
 
         if shuffle:
             shuffle_group(a_images)
             shuffle_group(b_images)
 
         x_cutmix, y_cutmix = [], []
-        for a_img, b_img, a_label, b_label in zip(a_images, b_images, a_labels, b_labels):
-            img_cutmix, label_cutmix = CutMixTF._cls_cutmix(a_images, a_img, a_label, b_images, b_label, beta)
+        for a_img, b_img, a_label, b_label in zip(
+            a_images, b_images, a_labels, b_labels
+        ):
+            img_cutmix, label_cutmix = CutMixTF._cls_cutmix(
+                a_images, a_img, a_label, b_images, b_label, beta
+            )
             x_cutmix.append(img_cutmix)
             y_cutmix.append(label_cutmix)
 
@@ -143,7 +166,8 @@ class CutMixTF:
         img_cutmix_mask = np.ones_like(a_img)
         img_cutmix_mask[x1:x2, y1:y2, :] = 0
         img_cutmix = (
-                np.multiply(a_images, img_cutmix_mask) + np.multiply(b_images, (abs(1. - img_cutmix_mask)))).astype(
-            np.uint8)
+            np.multiply(a_images, img_cutmix_mask)
+            + np.multiply(b_images, (abs(1.0 - img_cutmix_mask)))
+        ).astype(np.uint8)
         label_cutmix = lam * a_label + b_label * (1 - lam)
         return img_cutmix, label_cutmix

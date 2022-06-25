@@ -1,1 +1,1 @@
-from .test_main import test_resize_ratio
+from .resize_utils_test import test_resize_ratio

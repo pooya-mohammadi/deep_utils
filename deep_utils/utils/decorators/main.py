@@ -16,7 +16,9 @@ def get_method_time(method) -> Callable:
         results = method(self, *args, **kwargs)
         toc = time.time()
         elapsed_time = round(toc - tic, 4)
-        print(f"elapsed time for {self.__class__.__name__}.{method.__name__}: {elapsed_time}")
+        print(
+            f"elapsed time for {self.__class__.__name__}.{method.__name__}: {elapsed_time}"
+        )
         return results
 
     return wrapper
@@ -24,9 +26,9 @@ def get_method_time(method) -> Callable:
 
 def get_func_time(func) -> Callable:
     """
-        Gets the elapsed time of a class
-        :param func: The func that will be measured
-        :return:
+    Gets the elapsed time of a class
+    :param func: The func that will be measured
+    :return:
     """
 
     @wraps(func)

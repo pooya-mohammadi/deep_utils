@@ -33,6 +33,7 @@ def shuffle_group_torch(array_a, array_b=None, copy=False):
     returns the shuffle format of array a and b if the latter one exists.
     """
     import torch
+
     if copy:
         array_a = torch.clone(array_a)
     if array_b is not None:

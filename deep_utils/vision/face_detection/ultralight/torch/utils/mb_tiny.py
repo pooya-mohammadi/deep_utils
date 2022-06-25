@@ -1,12 +1,12 @@
-import torch.nn as nn
-import torch
-import torch.nn.functional as F
-from .predictor import Predictor
 import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+from .predictor import Predictor
 
 
 class Mb_Tiny(nn.Module):
-
     def __init__(self, num_classes=2):
         super(Mb_Tiny, self).__init__()
         self.base_channel = 8 * 2
@@ -15,7 +15,7 @@ class Mb_Tiny(nn.Module):
             return nn.Sequential(
                 nn.Conv2d(inp, oup, 3, stride, 1, bias=False),
                 nn.BatchNorm2d(oup),
-                nn.ReLU(inplace=True)
+                nn.ReLU(inplace=True),
             )
 
         def conv_dw(inp, oup, stride):
@@ -23,7 +23,6 @@ class Mb_Tiny(nn.Module):
                 nn.Conv2d(inp, inp, 3, stride, 1, groups=inp, bias=False),
                 nn.BatchNorm2d(inp),
                 nn.ReLU(inplace=True),
-
                 nn.Conv2d(inp, oup, 1, 1, 0, bias=False),
                 nn.BatchNorm2d(oup),
                 nn.ReLU(inplace=True),
@@ -42,7 +41,7 @@ class Mb_Tiny(nn.Module):
             conv_dw(self.base_channel * 8, self.base_channel * 8, 1),
             conv_dw(self.base_channel * 8, self.base_channel * 8, 1),
             conv_dw(self.base_channel * 8, self.base_channel * 16, 2),  # 10*8
-            conv_dw(self.base_channel * 16, self.base_channel * 16, 1)
+            conv_dw(self.base_channel * 16, self.base_channel * 16, 1),
         )
         self.fc = nn.Linear(1024, num_classes)
 
@@ -54,18 +53,26 @@ class Mb_Tiny(nn.Module):
         return x
 
     def load(self, model):
-        self.load_state_dict(torch.load(model, map_location=lambda storage, loc: storage))
+        self.load_state_dict(
+            torch.load(model, map_location=lambda storage, loc: storage)
+        )
 
     def save(self, model_path):
         torch.save(self.state_dict(), model_path)
 
 
-def create_mb_tiny_fd_predictor(net, candidate_size=200, iou_threshold=0.3, nms_method=None, sigma=0.5, device=None):
-    predictor = Predictor(net, (320, 240), np.array([127, 127, 127]),
-                          128.0,
-                          nms_method=nms_method,
-                          iou_threshold=iou_threshold,
-                          candidate_size=candidate_size,
-                          sigma=sigma,
-                          device=device)
+def create_mb_tiny_fd_predictor(
+    net, candidate_size=200, iou_threshold=0.3, nms_method=None, sigma=0.5, device=None
+):
+    predictor = Predictor(
+        net,
+        (320, 240),
+        np.array([127, 127, 127]),
+        128.0,
+        nms_method=nms_method,
+        iou_threshold=iou_threshold,
+        candidate_size=candidate_size,
+        sigma=sigma,
+        device=device,
+    )
     return predictor

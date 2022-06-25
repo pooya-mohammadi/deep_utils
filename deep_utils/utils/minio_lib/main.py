@@ -1,5 +1,6 @@
 from logging import Logger
 from typing import Union
+
 from deep_utils.utils.logging_utils import log_print, value_error_log
 
 
@@ -13,11 +14,16 @@ def minio_get(minio_client, bucket_name, object_name, logger: Union[None, Logger
     :return:
     """
     obj = minio_client.get_object(bucket_name, object_name)
-    log_print(logger=logger, message=f"Successfully got object: {object_name} from bucket: {bucket_name}")
+    log_print(
+        logger=logger,
+        message=f"Successfully got object: {object_name} from bucket: {bucket_name}",
+    )
     return obj
 
 
-def minio_fget(minio_client, bucket_name, object_name, file_path, logger: Union[None, Logger]):
+def minio_fget(
+    minio_client, bucket_name, object_name, file_path, logger: Union[None, Logger]
+):
     """
     Get file object from minio_client. This function is created for compatibility otherwise no extra functionality provided compared to the main module.
     :param minio_client:
@@ -28,11 +34,21 @@ def minio_fget(minio_client, bucket_name, object_name, file_path, logger: Union[
     :return:
     """
     obj = minio_client.fget_object(bucket_name, object_name, file_path)
-    log_print(logger=logger, message=f"Successfully got object: {object_name} from bucket: {bucket_name}")
+    log_print(
+        logger=logger,
+        message=f"Successfully got object: {object_name} from bucket: {bucket_name}",
+    )
     return obj
 
 
-def minio_put(minio_client, bucket_name, object_name, data, create=True, logger: Union[Logger, None] = None):
+def minio_put(
+    minio_client,
+    bucket_name,
+    object_name,
+    data,
+    create=True,
+    logger: Union[Logger, None] = None,
+):
     """
     put an object inside a bucket
     :param minio_client:
@@ -45,12 +61,15 @@ def minio_put(minio_client, bucket_name, object_name, data, create=True, logger:
     """
     found = minio_client.bucket_exists(bucket_name)
     if found:
-        log_print(logger=logger, message=f"Bucket {bucket_name} already exists")
+        log_print(logger=logger,
+                  message=f"Bucket {bucket_name} already exists")
     elif not found and create:
         minio_client.make_bucket(bucket_name)
-        log_print(logger=logger, message=f"Successfully Created bucket: {bucket_name}")
+        log_print(logger=logger,
+                  message=f"Successfully Created bucket: {bucket_name}")
     else:
-        value_error_log(logger=logger, message='f"Error in creating minio bucket"')
+        value_error_log(
+            logger=logger, message='f"Error in creating minio bucket"')
 
     length = len(data.read())
     data.seek(0)
@@ -61,11 +80,21 @@ def minio_put(minio_client, bucket_name, object_name, data, create=True, logger:
         data,
         length,
     )
-    log_print(logger=logger, message=f"Successfully put object: {object_name} into bucket: {bucket_name}")
+    log_print(
+        logger=logger,
+        message=f"Successfully put object: {object_name} into bucket: {bucket_name}",
+    )
     return result
 
 
-def minio_fput(minio_client, bucket_name, object_name, file_path, create=True, logger: Union[Logger, None] = None):
+def minio_fput(
+    minio_client,
+    bucket_name,
+    object_name,
+    file_path,
+    create=True,
+    logger: Union[Logger, None] = None,
+):
     """
     put a file inside a bucket
     :param minio_client:
@@ -78,17 +107,23 @@ def minio_fput(minio_client, bucket_name, object_name, file_path, create=True, l
     """
     found = minio_client.bucket_exists(bucket_name)
     if found:
-        log_print(logger=logger, message=f"Bucket {bucket_name} already exists")
+        log_print(logger=logger,
+                  message=f"Bucket {bucket_name} already exists")
     elif not found and create:
         minio_client.make_bucket(bucket_name)
-        log_print(logger=logger, message=f"Successfully Created bucket: {bucket_name}")
+        log_print(logger=logger,
+                  message=f"Successfully Created bucket: {bucket_name}")
     else:
-        value_error_log(logger=logger, message='f"Error in creating minio bucket"')
+        value_error_log(
+            logger=logger, message='f"Error in creating minio bucket"')
 
     result = minio_client.fput_object(
         bucket_name,
         object_name,
         file_path,
     )
-    log_print(logger=logger, message=f"Successfully put file: {object_name} into bucket: {bucket_name}")
+    log_print(
+        logger=logger,
+        message=f"Successfully put file: {object_name} into bucket: {bucket_name}",
+    )
     return result

@@ -1,25 +1,36 @@
+import sys
+
+import cv2
 import numpy as np
-from deep_utils.vision.face_detection.main.main_face_detection import FaceDetector
-from deep_utils.utils.lib_utils.lib_decorators import get_from_config, expand_input, get_elapsed_time, rgb2bgr
-from deep_utils.utils.lib_utils.download_utils import download_decorator
+
 from deep_utils.utils.box_utils.boxes import Box, Point
+from deep_utils.utils.lib_utils.download_utils import download_decorator
+from deep_utils.utils.lib_utils.lib_decorators import (
+    expand_input,
+    get_elapsed_time,
+    get_from_config,
+    rgb2bgr,
+)
+from deep_utils.vision.face_detection.main.main_face_detection import FaceDetector
+
 from .config import Config
 from .utils.rfb_320 import create_rfb_net
 from .utils.slim_320 import create_slim_net
-import sys
-import cv2
 
 
 class UltralightTFFaceDetector(FaceDetector):
     def __init__(self, **kwargs):
-        super().__init__(name=self.__class__.__name__,
-                         file_path=__file__,
-                         download_variables=("RBF", "slim"),
-                         **kwargs)
+        super().__init__(
+            name=self.__class__.__name__,
+            file_path=__file__,
+            download_variables=("RBF", "slim"),
+            **kwargs
+        )
         self.config: Config
         import tensorflow as tf
+
         self.tf = tf
-        physical_devices = tf.config.experimental.list_physical_devices('GPU')
+        physical_devices = tf.config.experimental.list_physical_devices("GPU")
         if len(physical_devices) < 0:
             tf.config.experimental.set_memory_growth(physical_devices[0], True)
 
@@ -31,18 +42,20 @@ class UltralightTFFaceDetector(FaceDetector):
 
     @get_from_config
     @get_elapsed_time
-    @rgb2bgr('rgb')
+    @rgb2bgr("rgb")
     @expand_input(3)
-    def detect_faces(self,
-                     images,
-                     is_rgb,
-                     net_type,
-                     resize_size=None,
-                     img_scale_factor=None,
-                     img_mean=None,
-                     resize_mode=None,
-                     confidence=None,
-                     get_time=False):
+    def detect_faces(
+        self,
+        images,
+        is_rgb,
+        net_type,
+        resize_size=None,
+        img_scale_factor=None,
+        img_mean=None,
+        resize_mode=None,
+        confidence=None,
+        get_time=False,
+    ):
         net_type = str.lower(net_type)
         if net_type == "slim":
             model_path = self.config.slim
@@ -64,7 +77,8 @@ class UltralightTFFaceDetector(FaceDetector):
             img_resize = img_resize / 128.0
             img_resize = np.expand_dims(img_resize, axis=0)
 
-            results = model.predict(img_resize)  # result=[background,face,x1,y1,x2,y2]
+            # result=[background,face,x1,y1,x2,y2]
+            results = model.predict(img_resize)
             conf, box = [], []
             for result in results:
                 start_x = int(result[2] * w)
@@ -72,7 +86,9 @@ class UltralightTFFaceDetector(FaceDetector):
                 end_x = int(result[4] * w)
                 end_y = int(result[5] * h)
                 boxes = [start_x, start_y, end_x, end_y]
-                boxes = Box.box2box(boxes, in_source=Box.BoxSource.CV, to_source=Box.BoxSource.Numpy)
+                boxes = Box.box2box(
+                    boxes, in_source=Box.BoxSource.CV, to_source=Box.BoxSource.Numpy
+                )
                 confidence_ = result[1]
                 if confidence_ >= confidence:
                     conf.append(confidence_)

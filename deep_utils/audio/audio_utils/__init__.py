@@ -1,6 +1,6 @@
 try:
-    from deep_utils.dummy_objects.audio.utils_ import TorchAudioUtils
     from deep_utils.audio.audio_utils.torchaudio_utils import TorchAudioUtils
+    from deep_utils.dummy_objects.audio.utils_ import TorchAudioUtils
 except:
     pass
 

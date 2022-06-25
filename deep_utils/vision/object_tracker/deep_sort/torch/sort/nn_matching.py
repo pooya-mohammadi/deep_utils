@@ -20,8 +20,8 @@ def _pdist(a, b):
     if len(a) == 0 or len(b) == 0:
         return np.zeros((len(a), len(b)))
     a2, b2 = np.square(a).sum(axis=1), np.square(b).sum(axis=1)
-    r2 = -2. * np.dot(a, b.T) + a2[:, None] + b2[None, :]
-    r2 = np.clip(r2, 0., float(np.inf))
+    r2 = -2.0 * np.dot(a, b.T) + a2[:, None] + b2[None, :]
+    r2 = np.clip(r2, 0.0, float(np.inf))
     return r2
 
 
@@ -45,11 +45,11 @@ def _cosine_distance(a, b, data_is_normalized=False):
     if not data_is_normalized:
         a = np.asarray(a) / np.linalg.norm(a, axis=1, keepdims=True)
         b = np.asarray(b) / np.linalg.norm(b, axis=1, keepdims=True)
-    return 1. - np.dot(a, b.T)
+    return 1.0 - np.dot(a, b.T)
 
 
 def _nn_euclidean_distance(x, y):
-    """ Helper function for nearest neighbor distance metric (Euclidean).
+    """Helper function for nearest neighbor distance metric (Euclidean).
     Parameters
     ----------
     x : ndarray
@@ -67,7 +67,7 @@ def _nn_euclidean_distance(x, y):
 
 
 def _nn_cosine_distance(x, y):
-    """ Helper function for nearest neighbor distance metric (cosine).
+    """Helper function for nearest neighbor distance metric (cosine).
     Parameters
     ----------
     x : ndarray

@@ -6,7 +6,9 @@ def cosine_reduce(x, total_steps):
     return math.cos((x / total_steps) * (math.pi / 2))
 
 
-def warmup_cosine(warmup_steps, max_lr, total_steps, optimizer_lr=None, initial_lr=1e-6, min_lr=0) -> Callable:
+def warmup_cosine(
+    warmup_steps, max_lr, total_steps, optimizer_lr=None, initial_lr=1e-6, min_lr=0
+) -> Callable:
     """
 
     How to use it:
@@ -58,10 +60,14 @@ def warmup_cosine(warmup_steps, max_lr, total_steps, optimizer_lr=None, initial_
 
     def lambda_func(x):
         if x <= warmup_steps:
-            lr = initial_lr + (1 - cosine_reduce(x, warmup_steps)) * (max_lr - initial_lr)
+            lr = initial_lr + (1 - cosine_reduce(x, warmup_steps)) * (
+                max_lr - initial_lr
+            )
         else:
             x = x - warmup_steps
-            lr = min_lr + cosine_reduce(x, total_steps - warmup_steps) * (max_lr - min_lr)
+            lr = min_lr + cosine_reduce(x, total_steps - warmup_steps) * (
+                max_lr - min_lr
+            )
             lr = max(min_lr, lr)
         if optimizer_lr is not None and isinstance(optimizer_lr, float):
             return lr / optimizer_lr

@@ -1,10 +1,12 @@
 import os
-from time import time
 from pathlib import Path
+from time import time
 from typing import Union
-import numpy as np
+
 import cv2
+import numpy as np
 import torch
+
 from deep_utils.utils.logging_utils.logging_utils import log_print
 from deep_utils.vision.torch_vision.torch_vision_models import TorchVisionModel
 
@@ -21,18 +23,27 @@ class TorchVisionInference:
         self.logger = logger
         self.verbose = verbose
         save_params = torch.load(model_path, map_location=device)
-        self.model = TorchVisionModel(model_name=save_params['model_name'], num_classes=save_params['n_classes'],
-                                      last_layer_nodes=save_params['last_layer_nodes'], use_pretrained=False,
-                                      feature_extract=True)
+        self.model = TorchVisionModel(
+            model_name=save_params["model_name"],
+            num_classes=save_params["n_classes"],
+            last_layer_nodes=save_params["last_layer_nodes"],
+            use_pretrained=False,
+            feature_extract=True,
+        )
         try:
-            self.model.load_state_dict(save_params['state_dict'])
+            self.model.load_state_dict(save_params["state_dict"])
         except:
-            self.model.load_state_dict({".".join(k.split(".")[1:]): v for k, v in save_params['state_dict'].items()})
+            self.model.load_state_dict(
+                {
+                    ".".join(k.split(".")[1:]): v
+                    for k, v in save_params["state_dict"].items()
+                }
+            )
 
         self.device = device
-        self.label_map = save_params['id_to_class']
+        self.label_map = save_params["id_to_class"]
         self.model.eval()
-        self.transform = save_params['val_transform']
+        self.transform = save_params["val_transform"]
 
     def infer(self, img: Union[str, Path, np.ndarray], return_confidence=False):
         """
@@ -62,7 +73,9 @@ class TorchVisionInference:
         :param return_confidence: If True, return confidence alongside the prediction class
         :return:
         """
-        images_tensor = torch.cat([self.transform(image=img)["image"].unsqueeze(0) for img in images]).to(self.device)
+        images_tensor = torch.cat(
+            [self.transform(image=img)["image"].unsqueeze(0) for img in images]
+        ).to(self.device)
         with torch.no_grad():
             logits = self.model(images_tensor)
         confidence, prediction = torch.max(torch.softmax(logits, dim=1), dim=1)
@@ -84,7 +97,14 @@ class TorchVisionInference:
                 tic = time()
                 prediction = self.infer(image_path)
                 toc = time()
-                log_print(self.logger, f"predicted class for {image_path} is {prediction}\ninference time: {toc - tic}",
-                          verbose=self.verbose)
+                log_print(
+                    self.logger,
+                    f"predicted class for {image_path} is {prediction}\ninference time: {toc - tic}",
+                    verbose=self.verbose,
+                )
             except BaseException as e:
-                log_print(self.logger, f"img: {image_path} is invalid -> {e}", verbose=self.verbose)
+                log_print(
+                    self.logger,
+                    f"img: {image_path} is invalid -> {e}",
+                    verbose=self.verbose,
+                )

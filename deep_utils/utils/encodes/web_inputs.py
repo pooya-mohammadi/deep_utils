@@ -9,6 +9,7 @@ def read_img_form(contents, ret_rgb: bool = False):
     :return: cv2 - img
     """
     import cv2
+
     image = np.array(bytearray(contents.read()), dtype=np.uint8)
     image = cv2.imdecode(image, cv2.IMREAD_COLOR)
     if ret_rgb:

@@ -10,7 +10,8 @@ def get_y_pred_true(model, test_gen, return_numpy=True):
 
     """
     import numpy as np
-    print('[INFO] Making  prediction ')
+
+    print("[INFO] Making  prediction ")
     y_pred, y_true = [], []
     for x, y in test_gen:
         predictions = model.predict(x, batch_size=1)

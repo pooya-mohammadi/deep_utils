@@ -1,2 +1,2 @@
-from .torch import MTCNNTorchFaceDetector
 from .tf import MTCNNTFFaceDetector
+from .torch import MTCNNTorchFaceDetector

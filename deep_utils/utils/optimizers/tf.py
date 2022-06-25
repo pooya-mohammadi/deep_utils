@@ -9,15 +9,13 @@ def load_tf_opt(opt_name: str, lr: float, **args):
     Returns:
 
     """
-    from tensorflow.keras.optimizers import Adam, RMSprop, SGD, Adadelta
-    opt_dict = {
-        'adam': Adam,
-        'rmsprop': RMSprop,
-        'sgd': SGD,
-        'adadelta': Adadelta
-    }
+    from tensorflow.keras.optimizers import SGD, Adadelta, Adam, RMSprop
+
+    opt_dict = {"adam": Adam, "rmsprop": RMSprop,
+                "sgd": SGD, "adadelta": Adadelta}
     opt = opt_dict.get(opt_name.lower(), None)
     if opt is None:
         raise ValueError(
-            f'[ERROR] optimization: {opt_name} is not supported, supported optimization are {opt_dict.keys()}')
+            f"[ERROR] optimization: {opt_name} is not supported, supported optimization are {opt_dict.keys()}"
+        )
     return opt(learning_rate=lr, **args)

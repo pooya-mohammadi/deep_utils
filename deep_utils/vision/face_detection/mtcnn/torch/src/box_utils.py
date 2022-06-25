@@ -1,8 +1,9 @@
 import numpy as np
+
 from deep_utils.utils.resize_utils.main_resize import resize
 
 
-def nms(boxes, overlap_threshold=0.5, mode='union'):
+def nms(boxes, overlap_threshold=0.5, mode="union"):
     """Non-maximum suppression.
 
     Arguments:
@@ -53,16 +54,16 @@ def nms(boxes, overlap_threshold=0.5, mode='union'):
 
         # intersections' areas
         inter = w * h
-        if mode == 'min':
+        if mode == "min":
             overlap = inter / np.minimum(area[i], area[ids[:last]])
-        elif mode == 'union':
+        elif mode == "union":
             # intersection over union (IoU)
             overlap = inter / (area[i] + area[ids[:last]] - inter)
 
         # delete all boxes where overlap is too big
         ids = np.delete(
-            ids,
-            np.concatenate([[last], np.where(overlap > overlap_threshold)[0]])
+            ids, np.concatenate(
+                [[last], np.where(overlap > overlap_threshold)[0]])
         )
 
     return pick
@@ -139,19 +140,23 @@ def get_image_boxes(bounding_boxes, img, size=24):
     num_boxes = len(bounding_boxes)
     height, width = img.shape[:2]
 
-    [dy, edy, dx, edx, y, ey, x, ex, w, h] = correct_bboxes(bounding_boxes, width, height)
-    img_boxes = np.zeros((num_boxes, 3, size, size), 'float32')
+    [dy, edy, dx, edx, y, ey, x, ex, w, h] = correct_bboxes(
+        bounding_boxes, width, height
+    )
+    img_boxes = np.zeros((num_boxes, 3, size, size), "float32")
 
     for i in range(num_boxes):
-        img_box = np.zeros((h[i], w[i], 3), 'uint8')
+        img_box = np.zeros((h[i], w[i], 3), "uint8")
 
-        img_array = np.asarray(img, 'uint8')
-        img_box[dy[i]:(edy[i] + 1), dx[i]:(edx[i] + 1), :] = img_array[y[i]:(ey[i] + 1), x[i]:(ex[i] + 1), :]
+        img_array = np.asarray(img, "uint8")
+        img_box[dy[i]: (edy[i] + 1), dx[i]: (edx[i] + 1), :] = img_array[
+            y[i]: (ey[i] + 1), x[i]: (ex[i] + 1), :
+        ]
 
         # resize
         # img_box = Image.fromarray(img_box)
         img_box = resize(img_box, (size, size))
-        img_box = np.asarray(img_box, 'float32')
+        img_box = np.asarray(img_box, "float32")
 
         img_boxes[i, :, :, :] = _preprocess(img_box)
 
@@ -217,7 +222,7 @@ def correct_bboxes(bboxes, width, height):
     y[ind] = 0.0
 
     return_list = [dy, edy, dx, edx, y, ey, x, ex, w, h]
-    return_list = [i.astype('int32') for i in return_list]
+    return_list = [i.astype("int32") for i in return_list]
 
     return return_list
 

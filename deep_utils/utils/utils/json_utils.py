@@ -5,12 +5,15 @@ def load_json(json_path: str, encoding="utf-8") -> dict:
     :return: returns a json file
     """
     import json
+
     with open(json_path, encoding=encoding) as f:
         json_data = json.load(f)
     return json_data
 
 
-def dump_json(json_path, dict_object: dict, encoding="utf-8", ensure_ascii=True) -> None:
+def dump_json(
+    json_path, dict_object: dict, encoding="utf-8", ensure_ascii=True
+) -> None:
     """
     dumps a json file
     Args:
@@ -23,5 +26,6 @@ def dump_json(json_path, dict_object: dict, encoding="utf-8", ensure_ascii=True)
 
     """
     import json
-    with open(json_path, mode='w', encoding=encoding) as f:
+
+    with open(json_path, mode="w", encoding=encoding) as f:
         json.dump(dict_object, f, ensure_ascii=ensure_ascii)

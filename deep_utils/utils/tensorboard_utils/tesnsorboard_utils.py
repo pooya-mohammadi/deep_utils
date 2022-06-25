@@ -1,14 +1,15 @@
 import traceback
 from os.path import join
+
 import numpy as np
 
 
 class TensorboardUtils:
-
     @staticmethod
     def save_image(df, path):
-        from pandas.plotting import table
         import matplotlib.pyplot as plt
+        from pandas.plotting import table
+
         ax = plt.subplot(111, frame_on=False)  # no visible frame
         ax.xaxis.set_visible(False)  # hide the x axis
         ax.yaxis.set_visible(False)  # hide the y axis
@@ -18,6 +19,7 @@ class TensorboardUtils:
     @staticmethod
     def get_docx(df, doc_path):
         import docx
+
         # open an existing document
         doc = docx.Document(None)
 
@@ -39,8 +41,10 @@ class TensorboardUtils:
 
     @staticmethod
     def save_df(path, file_name=None):
-        from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
         import pandas as pd
+        from tensorboard.backend.event_processing.event_accumulator import (
+            EventAccumulator,
+        )
 
         try:
             if file_name is not None:
@@ -57,7 +61,9 @@ class TensorboardUtils:
                 values = list(map(lambda x: x.value, event_list))
                 if "elapsed_time" not in columns:
                     wall_time = list(map(lambda x: x.wall_time, event_list))
-                    wall_time = (np.array(wall_time[1:]) - np.array(wall_time[:-1])).tolist()
+                    wall_time = (
+                        np.array(wall_time[1:]) - np.array(wall_time[:-1])
+                    ).tolist()
                     wall_time = [np.mean(wall_time)] + wall_time
                     values_df.extend([values, wall_time])
                     columns.extend([f"{tag}", f"elapsed_time"])
@@ -73,18 +79,29 @@ class TensorboardUtils:
         values = np.round(np.array(values_df).T, 3)
         df = pd.DataFrame(values, columns=columns)
         df = df[
-            ["epoch", "elapsed_time", "train_f1_score", "train_loss", "train_acc", "val_f1_score", "val_loss",
-             "val_acc"]]
+            [
+                "epoch",
+                "elapsed_time",
+                "train_f1_score",
+                "train_loss",
+                "train_acc",
+                "val_f1_score",
+                "val_loss",
+                "val_acc",
+            ]
+        ]
         df_path = join(path, "csv_log.csv")
         df.to_csv(df_path, index=False)
         if "elapsed_time" in df:
-            print("mean time:", df['elapsed_time'].mean(axis=0))
-            print("sum time:", df['elapsed_time'].sum(axis=0))
+            print("mean time:", df["elapsed_time"].mean(axis=0))
+            print("sum time:", df["elapsed_time"].sum(axis=0))
 
         print(f"[INFO] Successfully saved results to {df_path}")
         return df
 
 
-if __name__ == '__main__':
-    path = "/home/ai/projects/car_recognition/output/exp_1/train/lightning_logs/version_0"
+if __name__ == "__main__":
+    path = (
+        "/home/ai/projects/car_recognition/output/exp_1/train/lightning_logs/version_0"
+    )
     TensorboardUtils.save_df(path)

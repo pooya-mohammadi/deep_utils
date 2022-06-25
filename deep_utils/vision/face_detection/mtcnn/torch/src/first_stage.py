@@ -1,7 +1,10 @@
 import math
+
 import numpy as np
-from .box_utils import nms, _preprocess
+
 from deep_utils.utils.resize_utils.main_resize import resize
+
+from .box_utils import _preprocess, nms
 
 
 def run_first_stage(image, net, scale, threshold, device):
@@ -21,11 +24,12 @@ def run_first_stage(image, net, scale, threshold, device):
             bounding boxes with scores and offsets (4 + 1 + 4).
     """
     import torch
+
     # scale the image and convert it to a float array
     width, height = image.shape[1:3]
     sw, sh = math.ceil(width * scale), math.ceil(height * scale)
     img = resize(image, (sw, sh))
-    img = np.asarray(img, 'float32')
+    img = np.asarray(img, "float32")
 
     img = torch.FloatTensor(_preprocess(img)).to(device)
     output = net(img)
@@ -85,11 +89,14 @@ def _generate_bboxes(probs, offsets, scale, threshold):
 
     # P-Net is applied to scaled images
     # so we need to rescale bounding boxes back
-    bounding_boxes = np.vstack([
-        np.round((stride * inds[1] + 1.0) / scale),
-        np.round((stride * inds[0] + 1.0) / scale),
-        np.round((stride * inds[1] + 1.0 + cell_size) / scale),
-        np.round((stride * inds[0] + 1.0 + cell_size) / scale),
-        score, offsets
-    ])
+    bounding_boxes = np.vstack(
+        [
+            np.round((stride * inds[1] + 1.0) / scale),
+            np.round((stride * inds[0] + 1.0) / scale),
+            np.round((stride * inds[1] + 1.0 + cell_size) / scale),
+            np.round((stride * inds[0] + 1.0 + cell_size) / scale),
+            score,
+            offsets,
+        ]
+    )
     return bounding_boxes.T

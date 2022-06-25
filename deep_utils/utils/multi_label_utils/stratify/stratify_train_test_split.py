@@ -1,10 +1,13 @@
 from typing import Union
-from deep_utils.utils.algorithm_utils.main import subset_sum
+
 import numpy as np
 
+from deep_utils.utils.algorithm_utils.main import subset_sum
 
-def stratify_train_test_split_multi_label(x: Union[list, tuple, np.ndarray], y: np.ndarray, test_size=0.2,
-                                          closest_ratio=False):
+
+def stratify_train_test_split_multi_label(
+    x: Union[list, tuple, np.ndarray], y: np.ndarray, test_size=0.2, closest_ratio=False
+):
     """
         A handy function for splitting multi-label samples based on their number of classes. This is mainly useful for
     object detection and ner-like tasks that each sample may contain several objects/tags from different classes! The
@@ -82,7 +85,9 @@ def stratify_train_test_split_multi_label(x: Union[list, tuple, np.ndarray], y: 
         if n_test == 0 or len(input_labels) == 0:
             continue
         if closest_ratio:
-            chosen_indices, *_ = subset_sum(input_numbers=input_labels, target_number=n_test)
+            chosen_indices, *_ = subset_sum(
+                input_numbers=input_labels, target_number=n_test
+            )
         else:
             sorted_indices = np.argsort(input_labels)
             cum_sum_values = np.cumsum(input_labels[sorted_indices])
@@ -112,12 +117,20 @@ def stratify_train_test_split_multi_label(x: Union[list, tuple, np.ndarray], y: 
         indices = np.arange(len(y_no_objects))
         np.random.shuffle(indices)
 
-        x_no_objects_train, y_no_objects_train = x_no_objects[:train_left], y_no_objects[:train_left]
-        x_no_objects_test, y_no_objects_test = x_no_objects[train_left:], y_no_objects[train_left:]
+        x_no_objects_train, y_no_objects_train = (
+            x_no_objects[:train_left],
+            y_no_objects[:train_left],
+        )
+        x_no_objects_test, y_no_objects_test = (
+            x_no_objects[train_left:],
+            y_no_objects[train_left:],
+        )
 
-        return np.concatenate([x[train_samples], x_no_objects_train]), \
-               np.concatenate([x[test_samples], x_no_objects_test]), \
-               np.concatenate([y[train_samples], y_no_objects_train]), \
-               np.concatenate([y[test_samples], y_no_objects_test])
+        return (
+            np.concatenate([x[train_samples], x_no_objects_train]),
+            np.concatenate([x[test_samples], x_no_objects_test]),
+            np.concatenate([y[train_samples], y_no_objects_train]),
+            np.concatenate([y[test_samples], y_no_objects_test]),
+        )
     else:
         return x[train_samples], x[test_samples], y[train_samples], y[test_samples]

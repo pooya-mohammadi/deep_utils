@@ -1,26 +1,29 @@
 import math
 from collections import defaultdict
+
 import numpy as np
-from .box_utils import nms, _preprocess
+
 from deep_utils.utils.resize_utils.main_resize import resize
+
+from .box_utils import _preprocess, nms
 
 
 def run_first_stage(image, net, scale, threshold, device):
     """Run P-Net, generate bounding boxes, and do NMS.
-from deep_utils.utils
+    from deep_utils.utils
 
-    Arguments:
-        image: an instance of PIL.Image.
-        net: an instance of pytorch's nn.Module, P-Net.
-        scale: a float number,
-            scale width and height of the image by this number.
-        threshold: a float number,
-            threshold on the probability of a face when generating
-            bounding boxes from predictions of the net.
+        Arguments:
+            image: an instance of PIL.Image.
+            net: an instance of pytorch's nn.Module, P-Net.
+            scale: a float number,
+                scale width and height of the image by this number.
+            threshold: a float number,
+                threshold on the probability of a face when generating
+                bounding boxes from predictions of the net.
 
-    Returns:
-        a float numpy array of shape [n_boxes, 9],
-            bounding boxes with scores and offsets (4 + 1 + 4).
+        Returns:
+            a float numpy array of shape [n_boxes, 9],
+                bounding boxes with scores and offsets (4 + 1 + 4).
     """
 
     # scale the image and convert it to a float array
@@ -88,11 +91,14 @@ def _generate_bboxes(probs, offsets, scale, threshold):
 
     # P-Net is applied to scaled images
     # so we need to rescale bounding boxes back
-    bounding_boxes = np.vstack([
-        np.round((stride * inds[1] + 1.0) / scale),
-        np.round((stride * inds[0] + 1.0) / scale),
-        np.round((stride * inds[1] + 1.0 + cell_size) / scale),
-        np.round((stride * inds[0] + 1.0 + cell_size) / scale),
-        score, offsets
-    ])
+    bounding_boxes = np.vstack(
+        [
+            np.round((stride * inds[1] + 1.0) / scale),
+            np.round((stride * inds[0] + 1.0) / scale),
+            np.round((stride * inds[1] + 1.0 + cell_size) / scale),
+            np.round((stride * inds[0] + 1.0 + cell_size) / scale),
+            score,
+            offsets,
+        ]
+    )
     return bounding_boxes.T

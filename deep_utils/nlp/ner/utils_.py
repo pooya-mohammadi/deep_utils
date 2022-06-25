@@ -1,4 +1,4 @@
-from typing import Union, List, Tuple
+from typing import List, Tuple, Union
 
 
 def check_bio_labels(input_labels: Union[str, List[str], Tuple[str]], query_label: str):
@@ -17,7 +17,8 @@ def check_bio_labels(input_labels: Union[str, List[str], Tuple[str]], query_labe
         if input_labels == query_label:
             return True
     elif isinstance(input_labels, list) or isinstance(input_labels, tuple):
-        input_labels = [lbl.replace("B-", "").replace("I-", "") for lbl in input_labels]
+        input_labels = [lbl.replace("B-", "").replace("I-", "")
+                        for lbl in input_labels]
         if len(set(input_labels)) == 1 and input_labels[0] == query_label:
             return True
     else:
@@ -40,7 +41,9 @@ def post_process_words_with_hashtag(input_words: List[str], input_labels: List[s
     >>> post_process_words_with_hashtag(words, labels)
     (['تلفن', '982155871442', ',', 'تلفن', '982155871442'], ['B-phone', 'I-phone', 'o', 'B-phone', 'I-phone'])
     """
-    assert len(input_words) == len(input_labels), "[Error] Number of input_words and input_labels is not equal"
+    assert len(input_words) == len(
+        input_labels
+    ), "[Error] Number of input_words and input_labels is not equal"
     res_words, res_labels = [], []
     sub_word = ""
     sub_label = None

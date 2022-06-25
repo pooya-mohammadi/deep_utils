@@ -1,8 +1,17 @@
 import os
 
 IMG_EXTENSIONS = [
-    '.jpg', '.JPG', '.jpeg', '.JPEG',
-    '.png', '.PNG', '.ppm', '.PPM', '.bmp', '.BMP', '.tiff'
+    ".jpg",
+    ".JPG",
+    ".jpeg",
+    ".JPEG",
+    ".png",
+    ".PNG",
+    ".ppm",
+    ".PPM",
+    ".bmp",
+    ".BMP",
+    ".tiff",
 ]
 
 
@@ -35,6 +44,3 @@ def split_all(path):
             path = parts[0]
             all_parts.insert(0, parts[1])
     return all_parts
-
-
-

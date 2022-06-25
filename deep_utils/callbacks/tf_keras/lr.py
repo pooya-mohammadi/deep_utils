@@ -12,6 +12,9 @@ class LRScalar(Callback):
         try:
             lr = round(self.model.optimizer.lr.numpy(), self.round_n)
         except AttributeError:
-            lr = round(float(self.model.optimizer.lr(self.global_step).numpy()), self.round_n)
-        tf.summary.scalar(name='learning_rate', data=lr, step=self.global_step)
+            lr = round(
+                float(self.model.optimizer.lr(
+                    self.global_step).numpy()), self.round_n
+            )
+        tf.summary.scalar(name="learning_rate", data=lr, step=self.global_step)
         self.global_step += 1

@@ -1,8 +1,10 @@
 from abc import abstractmethod
+
 from deep_utils.main_abs.main import MainClass
 from deep_utils.utils.utils.main import dictnamedtuple
 
-OUTPUT_CLASS = dictnamedtuple("FaceDetector", ["boxes", "landmarks", "confidences"])
+OUTPUT_CLASS = dictnamedtuple(
+    "FaceDetector", ["boxes", "landmarks", "confidences"])
 
 
 class FaceDetector(MainClass):
@@ -11,5 +13,7 @@ class FaceDetector(MainClass):
         self.output_class = OUTPUT_CLASS
 
     @abstractmethod
-    def detect_faces(self, img, is_rgb, confidence=None, get_time=False) -> OUTPUT_CLASS:
+    def detect_faces(
+        self, img, is_rgb, confidence=None, get_time=False
+    ) -> OUTPUT_CLASS:
         pass
