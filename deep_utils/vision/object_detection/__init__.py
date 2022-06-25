@@ -12,8 +12,7 @@ try:
 except:
     pass
 
-Object_Detection_Models = {
-    "YOLOV5TorchObjectDetector": YOLOV5TorchObjectDetector}
+Object_Detection_Models = {"YOLOV5TorchObjectDetector": YOLOV5TorchObjectDetector}
 
 list_object_detection_models = list_utils(Object_Detection_Models)
 

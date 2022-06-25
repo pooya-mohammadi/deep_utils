@@ -52,8 +52,7 @@ def attempt_download(
 
     if not file.exists():
         # URL specified
-        # decode '%2F' to '/' etc.
-        name = Path(urllib.parse.unquote(str(file))).name
+        name = Path(urllib.parse.unquote(str(file))).name  # decode '%2F' to '/' etc.
         if str(file).startswith(("http:/", "https:/")):  # download
             url = str(file).replace(":/", "://")  # Pathlib turns :// -> :/
             name = name.split("?")[
@@ -63,8 +62,7 @@ def attempt_download(
             return name
 
         # GitHub assets
-        # make parent dir (if required)
-        file.parent.mkdir(parents=True, exist_ok=True)
+        file.parent.mkdir(parents=True, exist_ok=True)  # make parent dir (if required)
         try:
             response = requests.get(
                 f"https://api.github.com/repos/{repo}/releases/latest"

@@ -13,6 +13,13 @@ import sys
 from copy import deepcopy
 from pathlib import Path
 
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[1]  # YOLOv5 root directory
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  # add ROOT to PATH
+if platform.system() != "Windows":
+    ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
+
 from models.common import *
 from models.experimental import *
 from utils_.autoanchor import check_anchor_order
@@ -27,14 +34,6 @@ from utils_.torch_utils import (
     select_device,
     time_sync,
 )
-
-FILE = Path(__file__).resolve()
-ROOT = FILE.parents[1]  # YOLOv5 root directory
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))  # add ROOT to PATH
-if platform.system() != "Windows":
-    ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
-
 
 try:
     import thop  # for FLOPs computation
@@ -77,16 +76,14 @@ class Detect(nn.Module):
 
             if not self.training:  # inference
                 if self.onnx_dynamic or self.grid[i].shape[2:4] != x[i].shape[2:4]:
-                    self.grid[i], self.anchor_grid[i] = self._make_grid(
-                        nx, ny, i)
+                    self.grid[i], self.anchor_grid[i] = self._make_grid(nx, ny, i)
 
                 y = x[i].sigmoid()
                 if self.inplace:
                     y[..., 0:2] = (y[..., 0:2] * 2 + self.grid[i]) * self.stride[
                         i
                     ]  # xy
-                    y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * \
-                        self.anchor_grid[i]  # wh
+                    y[..., 2:4] = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i]  # wh
                 else:  # for YOLOv5 on AWS Inferentia https://github.com/ultralytics/yolov5/pull/2953
                     xy, wh, conf = y.split(
                         (2, 2, self.nc + 1), 4
@@ -108,8 +105,7 @@ class Detect(nn.Module):
         d = self.anchors[i].device
         t = self.anchors[i].dtype
         shape = 1, self.na, ny, nx, 2  # grid shape
-        y, x = torch.arange(ny, device=d, dtype=t), torch.arange(
-            nx, device=d, dtype=t)
+        y, x = torch.arange(ny, device=d, dtype=t), torch.arange(nx, device=d, dtype=t)
         if check_version(
             torch.__version__, "1.10.0"
         ):  # torch>=1.10.0 meshgrid workaround for torch>=0.7 compatibility
@@ -120,8 +116,7 @@ class Detect(nn.Module):
             torch.stack((xv, yv), 2).expand(shape) - 0.5
         )  # add grid offset, i.e. y = 2.0 * x - 0.5
         anchor_grid = (
-            (self.anchors[i] * self.stride[i]
-             ).view((1, self.na, 1, 1, 2)).expand(shape)
+            (self.anchors[i] * self.stride[i]).view((1, self.na, 1, 1, 2)).expand(shape)
         )
         return grid, anchor_grid
 
@@ -144,12 +139,10 @@ class Model(nn.Module):
         # Define model
         ch = self.yaml["ch"] = self.yaml.get("ch", ch)  # input channels
         if nc and nc != self.yaml["nc"]:
-            LOGGER.info(
-                f"Overriding model.yaml nc={self.yaml['nc']} with nc={nc}")
+            LOGGER.info(f"Overriding model.yaml nc={self.yaml['nc']} with nc={nc}")
             self.yaml["nc"] = nc  # override yaml value
         if anchors:
-            LOGGER.info(
-                f"Overriding model.yaml anchors with anchors={anchors}")
+            LOGGER.info(f"Overriding model.yaml anchors with anchors={anchors}")
             self.yaml["anchors"] = round(anchors)  # override yaml value
         self.model, self.save = parse_model(
             deepcopy(self.yaml), ch=[ch]
@@ -163,8 +156,7 @@ class Model(nn.Module):
             s = 256  # 2x min stride
             m.inplace = self.inplace
             m.stride = torch.tensor(
-                [s / x.shape[-2]
-                    for x in self.forward(torch.zeros(1, ch, s, s))]
+                [s / x.shape[-2] for x in self.forward(torch.zeros(1, ch, s, s))]
             )  # forward
             check_anchor_order(m)  # must be in pixel-space (not grid-space)
             m.anchors /= m.stride.view(-1, 1, 1)
@@ -189,8 +181,7 @@ class Model(nn.Module):
         f = [None, 3, None]  # flips (2-ud, 3-lr)
         y = []  # outputs
         for si, fi in zip(s, f):
-            xi = scale_img(x.flip(fi) if fi else x, si,
-                           gs=int(self.stride.max()))
+            xi = scale_img(x.flip(fi) if fi else x, si, gs=int(self.stride.max()))
             yi = self._forward_once(xi)[0]  # forward
             # cv2.imwrite(f'img_{si}.jpg', 255 * xi[0].cpu().numpy().transpose((1, 2, 0))[:, :, ::-1])  # save
             yi = self._descale_pred(yi, fi, si, img_size)
@@ -243,16 +234,14 @@ class Model(nn.Module):
         e = 1  # exclude layer count
         i = (y[0].shape[1] // g) * sum(4**x for x in range(e))  # indices
         y[0] = y[0][:, :-i]  # large
-        i = (y[-1].shape[1] // g) * sum(4 ** (nl - 1 - x)
-                                        for x in range(e))  # indices
+        i = (y[-1].shape[1] // g) * sum(4 ** (nl - 1 - x) for x in range(e))  # indices
         y[-1] = y[-1][:, i:]  # small
         return y
 
     def _profile_one_layer(self, m, x, dt):
         c = isinstance(m, Detect)  # is final layer, copy input as inplace fix
         o = (
-            thop.profile(m, inputs=(x.copy() if c else x,),
-                         verbose=False)[0] / 1e9 * 2
+            thop.profile(m, inputs=(x.copy() if c else x,), verbose=False)[0] / 1e9 * 2
             if thop
             else 0
         )  # FLOPs
@@ -418,21 +407,18 @@ def parse_model(d, ch):  # model_dict, input_channels(3)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cfg", type=str,
-                        default="yolov5s.yaml", help="model.yaml")
+    parser.add_argument("--cfg", type=str, default="yolov5s.yaml", help="model.yaml")
     parser.add_argument(
         "--batch-size", type=int, default=1, help="total batch size for all GPUs"
     )
     parser.add_argument(
         "--device", default="", help="cuda device, i.e. 0 or 0,1,2,3 or cpu"
     )
-    parser.add_argument("--profile", action="store_true",
-                        help="profile model speed")
+    parser.add_argument("--profile", action="store_true", help="profile model speed")
     parser.add_argument(
         "--line-profile", action="store_true", help="profile model speed layer by layer"
     )
-    parser.add_argument("--test", action="store_true",
-                        help="test all yolo*.yaml")
+    parser.add_argument("--test", action="store_true", help="test all yolo*.yaml")
     opt = parser.parse_args()
     opt.cfg = check_yaml(opt.cfg)  # check YAML
     print_args(vars(opt))

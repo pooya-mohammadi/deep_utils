@@ -56,8 +56,7 @@ def git_describe(path=Path(__file__).parent):  # path must be a directory
 
 def select_device(device="", batch_size=0, newline=True):
     # device = 'cpu' or '0' or '0,1,2,3'
-    # string
-    s = f"YOLOv5 🚀 {git_describe() or date_modified()} torch {torch.__version__} "
+    s = f"YOLOv5 🚀 {git_describe() or date_modified()} torch {torch.__version__} "  # string
     device = (
         str(device).strip().lower().replace("cuda:", "")
     )  # to string, 'cuda:0' to '0'
@@ -85,8 +84,7 @@ def select_device(device="", batch_size=0, newline=True):
         space = " " * (len(s) + 1)
         for i, d in enumerate(devices):
             p = torch.cuda.get_device_properties(i)
-            # bytes to MB
-            s += f"{'' if i == 0 else space}CUDA:{d} ({p.name}, {p.total_memory / 1024 ** 2:.0f}MiB)\n"
+            s += f"{'' if i == 0 else space}CUDA:{d} ({p.name}, {p.total_memory / 1024 ** 2:.0f}MiB)\n"  # bytes to MB
     else:
         s += "CPU\n"
 
@@ -148,8 +146,7 @@ def profile(input, ops, n=10, device=None):
                     t[1] = time_sync()
                     try:
                         _ = (
-                            (sum(yi.sum()
-                             for yi in y) if isinstance(y, list) else y)
+                            (sum(yi.sum() for yi in y) if isinstance(y, list) else y)
                             .sum()
                             .backward()
                         )
@@ -164,10 +161,8 @@ def profile(input, ops, n=10, device=None):
                     if torch.cuda.is_available()
                     else 0
                 )  # (GB)
-                s_in = tuple(x.shape) if isinstance(
-                    x, torch.Tensor) else "list"
-                s_out = tuple(y.shape) if isinstance(
-                    y, torch.Tensor) else "list"
+                s_in = tuple(x.shape) if isinstance(x, torch.Tensor) else "list"
+                s_out = tuple(y.shape) if isinstance(y, torch.Tensor) else "list"
                 p = (
                     sum(list(x.numel() for x in m.parameters()))
                     if isinstance(m, nn.Module)
@@ -201,8 +196,7 @@ def initialize_weights(model):
     for m in model.modules():
         t = type(m)
         if t is nn.Conv2d:
-            # nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-            pass
+            pass  # nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
         elif t is nn.BatchNorm2d:
             m.eps = 1e-3
             m.momentum = 0.03
@@ -266,8 +260,7 @@ def fuse_conv_and_bn(conv, bn):
     b_bn = bn.bias - bn.weight.mul(bn.running_mean).div(
         torch.sqrt(bn.running_var + bn.eps)
     )
-    fusedconv.bias.copy_(
-        torch.mm(w_bn, b_conv.reshape(-1, 1)).reshape(-1) + b_bn)
+    fusedconv.bias.copy_(torch.mm(w_bn, b_conv.reshape(-1, 1)).reshape(-1) + b_bn)
 
     return fusedconv
 
@@ -300,8 +293,7 @@ def model_info(model, verbose=False, img_size=640):
     try:  # FLOPs
         from thop import profile
 
-        stride = max(int(model.stride.max()), 32) if hasattr(
-            model, "stride") else 32
+        stride = max(int(model.stride.max()), 32) if hasattr(model, "stride") else 32
         img = torch.zeros(
             (1, model.yaml.get("ch", 3), stride, stride),
             device=next(model.parameters()).device,
@@ -330,8 +322,7 @@ def scale_img(img, ratio=1.0, same_shape=False, gs=32):  # img(16,3,256,416)
     else:
         h, w = img.shape[2:]
         s = (int(h * ratio), int(w * ratio))  # new size
-        img = F.interpolate(img, size=s, mode="bilinear",
-                            align_corners=False)  # resize
+        img = F.interpolate(img, size=s, mode="bilinear", align_corners=False)  # resize
         if not same_shape:  # pad/crop img
             h, w = (math.ceil(x * ratio / gs) * gs for x in (h, w))
         return F.pad(

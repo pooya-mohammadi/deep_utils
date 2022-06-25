@@ -29,18 +29,17 @@ from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.utils import dictnamedtuple
 
 from .config import Config
-from .models.experimental import attempt_load
-from .utils_.datasets import letterbox
-from .utils_.general import non_max_suppression, scale_coords
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
+from .models.experimental import attempt_load
+from .utils_.datasets import letterbox
+from .utils_.general import non_max_suppression, scale_coords
 
 OUTPUT_CLASS = dictnamedtuple(
-    "Object", ["class_indices", "boxes",
-               "confidences", "class_names", "elapsed_time"]
+    "Object", ["class_indices", "boxes", "confidences", "class_names", "elapsed_time"]
 )
 
 
@@ -102,8 +101,7 @@ class YOLOV5TorchObjectDetector(MainClass):
         )
         self.model.to(self.config.device)
         self.model.eval()
-        img = torch.zeros((1, 3, *self.config.img_size),
-                          device=self.config.device)
+        img = torch.zeros((1, 3, *self.config.img_size), device=self.config.device)
         self.model(img)
         print(f"{self.name}: weights are loaded")
 
@@ -142,8 +140,7 @@ class YOLOV5TorchObjectDetector(MainClass):
 
         im0 = img
         img = np.array(
-            [self.yolo_resize(im, new_shape=self.config.img_size)[0]
-             for im in im0]
+            [self.yolo_resize(im, new_shape=self.config.img_size)[0] for im in im0]
         )
         img = img.transpose((0, 3, 1, 2))
         img = np.ascontiguousarray(img)
@@ -245,8 +242,7 @@ class YOLOV5TorchObjectDetector(MainClass):
         img_train_labels = [
             os.path.splitext(name)[0] + ".txt" for name in img_train_names
         ]
-        img_val_labels = [os.path.splitext(
-            name)[0] + ".txt" for name in img_val_names]
+        img_val_labels = [os.path.splitext(name)[0] + ".txt" for name in img_val_names]
 
         transfer_directory_items(
             join(base_dir, "labels"),
@@ -433,8 +429,7 @@ class YOLOV5TorchObjectDetector(MainClass):
             else:
                 print(f"[INFO] {images_path} or {labels_path} do not exit!")
             # to make sure it's not replicated
-            img_index = len(os.listdir(final_images)) + \
-                len(os.listdir(final_labels))
+            img_index = len(os.listdir(final_images)) + len(os.listdir(final_labels))
             img_dict = dict()
             for img_name in tqdm(
                 os.listdir(images_path),
@@ -452,8 +447,7 @@ class YOLOV5TorchObjectDetector(MainClass):
                 desc=f"copying {labels_path} to {final_labels}",
             ):
                 lbl_path = os.path.join(labels_path, lbl_name)
-                lbl_index = img_dict.get(
-                    os.path.splitext(lbl_name)[0], img_index)
+                lbl_index = img_dict.get(os.path.splitext(lbl_name)[0], img_index)
                 new_name = split_extension(lbl_name, suffix=f"_{lbl_index}")
                 shutil.copy(lbl_path, os.path.join(final_labels, new_name))
                 img_index += 1

@@ -42,8 +42,7 @@ def ap_per_class(tp, conf, pred_cls, target_cls, plot=False, save_dir=".", names
 
     # Create Precision-Recall curve and compute AP for each class
     px, py = np.linspace(0, 1, 1000), []  # for plotting
-    ap, p, r = np.zeros((nc, tp.shape[1])), np.zeros(
-        (nc, 1000)), np.zeros((nc, 1000))
+    ap, p, r = np.zeros((nc, tp.shape[1])), np.zeros((nc, 1000)), np.zeros((nc, 1000))
     for ci, c in enumerate(unique_classes):
         i = pred_cls == c
         n_l = (target_cls == c).sum()  # number of labels
@@ -64,16 +63,13 @@ def ap_per_class(tp, conf, pred_cls, target_cls, plot=False, save_dir=".", names
 
             # Precision
             precision = tpc / (tpc + fpc)  # precision curve
-            p[ci] = np.interp(-px, -conf[i], precision[:, 0],
-                              left=1)  # p at pr_score
+            p[ci] = np.interp(-px, -conf[i], precision[:, 0], left=1)  # p at pr_score
 
             # AP from recall-precision curve
             for j in range(tp.shape[1]):
-                ap[ci, j], mpre, mrec = compute_ap(
-                    recall[:, j], precision[:, j])
+                ap[ci, j], mpre, mrec = compute_ap(recall[:, j], precision[:, j])
                 if plot and j == 0:
-                    # precision at mAP@0.5
-                    py.append(np.interp(px, mrec, mpre))
+                    py.append(np.interp(px, mrec, mpre))  # precision at mAP@0.5
 
     # Compute F1 (harmonic mean of precision and recall)
     f1 = 2 * p * r / (p + r + 1e-16)
@@ -83,12 +79,9 @@ def ap_per_class(tp, conf, pred_cls, target_cls, plot=False, save_dir=".", names
     names = {i: v for i, v in enumerate(names)}  # to dict
     if plot:
         plot_pr_curve(px, py, ap, Path(save_dir) / "PR_curve.png", names)
-        plot_mc_curve(px, f1, Path(save_dir) /
-                      "F1_curve.png", names, ylabel="F1")
-        plot_mc_curve(px, p, Path(save_dir) / "P_curve.png",
-                      names, ylabel="Precision")
-        plot_mc_curve(px, r, Path(save_dir) /
-                      "R_curve.png", names, ylabel="Recall")
+        plot_mc_curve(px, f1, Path(save_dir) / "F1_curve.png", names, ylabel="F1")
+        plot_mc_curve(px, p, Path(save_dir) / "P_curve.png", names, ylabel="Precision")
+        plot_mc_curve(px, r, Path(save_dir) / "R_curve.png", names, ylabel="Recall")
 
     i = f1.mean(0).argmax()  # max F1 index
     return p[:, i], r[:, i], ap, f1[:, i], unique_classes.astype("int32")
@@ -116,8 +109,7 @@ def compute_ap(recall, precision):
         x = np.linspace(0, 1, 101)  # 101-point interp (COCO)
         ap = np.trapz(np.interp(x, mrec, mpre), x)  # integrate
     else:  # 'continuous'
-        # points where x axis (recall) changes
-        i = np.where(mrec[1:] != mrec[:-1])[0]
+        i = np.where(mrec[1:] != mrec[:-1])[0]  # points where x axis (recall) changes
         ap = np.sum((mrec[i + 1] - mrec[i]) * mpre[i + 1])  # area under curve
 
     return ap, mpre, mrec
@@ -155,11 +147,9 @@ class ConfusionMatrix:
             )
             if x[0].shape[0] > 1:
                 matches = matches[matches[:, 2].argsort()[::-1]]
-                matches = matches[np.unique(
-                    matches[:, 1], return_index=True)[1]]
+                matches = matches[np.unique(matches[:, 1], return_index=True)[1]]
                 matches = matches[matches[:, 2].argsort()[::-1]]
-                matches = matches[np.unique(
-                    matches[:, 0], return_index=True)[1]]
+                matches = matches[np.unique(matches[:, 0], return_index=True)[1]]
         else:
             matches = np.zeros((0, 3))
 
@@ -187,8 +177,7 @@ class ConfusionMatrix:
             array = self.matrix / (
                 (self.matrix.sum(0).reshape(1, -1) + 1e-6) if normalize else 1
             )  # normalize columns
-            # don't annotate (would appear as 0.00)
-            array[array < 0.005] = np.nan
+            array[array < 0.005] = np.nan  # don't annotate (would appear as 0.00)
 
             fig = plt.figure(figsize=(12, 9), tight_layout=True)
             sn.set(font_scale=1.0 if self.nc < 50 else 0.8)  # for label size
@@ -206,10 +195,8 @@ class ConfusionMatrix:
                     cmap="Blues",
                     fmt=".2f",
                     square=True,
-                    xticklabels=names +
-                        ["background FP"] if labels else "auto",
-                    yticklabels=names +
-                        ["background FN"] if labels else "auto",
+                    xticklabels=names + ["background FP"] if labels else "auto",
+                    yticklabels=names + ["background FN"] if labels else "auto",
                 ).set_facecolor((1, 1, 1))
             fig.axes[0].set_xlabel("True")
             fig.axes[0].set_ylabel("Predicted")
@@ -386,11 +373,9 @@ def plot_mc_curve(
 
     if 0 < len(names) < 21:  # display per-class legend if < 21 classes
         for i, y in enumerate(py):
-            # plot(confidence, metric)
-            ax.plot(px, y, linewidth=1, label=f"{names[i]}")
+            ax.plot(px, y, linewidth=1, label=f"{names[i]}")  # plot(confidence, metric)
     else:
-        # plot(confidence, metric)
-        ax.plot(px, py.T, linewidth=1, color="grey")
+        ax.plot(px, py.T, linewidth=1, color="grey")  # plot(confidence, metric)
 
     y = py.mean(0)
     ax.plot(

@@ -25,11 +25,9 @@ def check_anchors(dataset, model, thr=4.0, imgsz=640):
         model.module.model[-1] if hasattr(model, "module") else model.model[-1]
     )  # Detect()
     shapes = imgsz * dataset.shapes / dataset.shapes.max(1, keepdims=True)
-    scale = np.random.uniform(0.9, 1.1, size=(
-        shapes.shape[0], 1))  # augment scale
+    scale = np.random.uniform(0.9, 1.1, size=(shapes.shape[0], 1))  # augment scale
     wh = torch.tensor(
-        np.concatenate(
-            [l[:, 3:5] * s for s, l in zip(shapes * scale, dataset.labels)])
+        np.concatenate([l[:, 3:5] * s for s, l in zip(shapes * scale, dataset.labels)])
     ).float()  # wh
 
     def metric(k):  # compute metric
@@ -132,23 +130,20 @@ def kmean_anchors(
             data_dict = yaml.load(f, Loader=yaml.FullLoader)  # model dict
         from utils_.datasets import LoadImagesAndLabels
 
-        dataset = LoadImagesAndLabels(
-            data_dict["train"], augment=True, rect=True)
+        dataset = LoadImagesAndLabels(data_dict["train"], augment=True, rect=True)
     else:
         dataset = path  # dataset
 
     # Get label wh
     shapes = img_size * dataset.shapes / dataset.shapes.max(1, keepdims=True)
-    wh0 = np.concatenate(
-        [l[:, 3:5] * s for s, l in zip(shapes, dataset.labels)])  # wh
+    wh0 = np.concatenate([l[:, 3:5] * s for s, l in zip(shapes, dataset.labels)])  # wh
 
     # Filter
     i = (wh0 < 3.0).any(1).sum()
     if i:
         print(
             "WARNING: Extremely small objects found. "
-            "%g of %g labels are < 3 pixels in width or height." % (
-                i, len(wh0))
+            "%g of %g labels are < 3 pixels in width or height." % (i, len(wh0))
         )
     wh = wh0[(wh0 >= 2.0).any(1)]  # filter > 2 pixels
 

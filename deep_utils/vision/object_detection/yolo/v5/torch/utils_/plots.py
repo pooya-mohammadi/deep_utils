@@ -73,7 +73,7 @@ class Colors:
 
     @staticmethod
     def hex2rgb(h):  # rgb order (PIL)
-        return tuple(int(h[1 + i: 1 + i + 2], 16) for i in (0, 2, 4))
+        return tuple(int(h[1 + i : 1 + i + 2], 16) for i in (0, 2, 4))
 
 
 colors = Colors()  # create instance for 'from utils_.plots import colors'
@@ -116,18 +116,15 @@ class Annotator:
         ), "Image not contiguous. Apply np.ascontiguousarray(im) to Annotator() input images."
         self.pil = pil or not is_ascii(example) or is_chinese(example)
         if self.pil:  # use PIL
-            self.im = im if isinstance(
-                im, Image.Image) else Image.fromarray(im)
+            self.im = im if isinstance(im, Image.Image) else Image.fromarray(im)
             self.draw = ImageDraw.Draw(self.im)
             self.font = check_font(
                 font="Arial.Unicode.ttf" if is_chinese(example) else font,
-                size=font_size or max(
-                    round(sum(self.im.size) / 2 * 0.035), 12),
+                size=font_size or max(round(sum(self.im.size) / 2 * 0.035), 12),
             )
         else:  # use cv2
             self.im = im
-        self.lw = line_width or max(
-            round(sum(im.shape) / 2 * 0.003), 2)  # line width
+        self.lw = line_width or max(round(sum(im.shape) / 2 * 0.003), 2)  # line width
 
     def box_label(
         self, box, label="", color=(128, 128, 128), txt_color=(255, 255, 255)
@@ -166,8 +163,7 @@ class Annotator:
                 ]  # text width, height
                 outside = p1[1] - h - 3 >= 0  # label fits outside box
                 p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
-                cv2.rectangle(self.im, p1, p2, color, -
-                              1, cv2.LINE_AA)  # filled
+                cv2.rectangle(self.im, p1, p2, color, -1, cv2.LINE_AA)  # filled
                 cv2.putText(
                     self.im,
                     label,
@@ -186,8 +182,7 @@ class Annotator:
     def text(self, xy, text, txt_color=(255, 255, 255)):
         # Add text to image (PIL-only)
         w, h = self.font.getsize(text)  # text width, height
-        self.draw.text((xy[0], xy[1] - h + 1), text,
-                       fill=txt_color, font=self.font)
+        self.draw.text((xy[0], xy[1] - h + 1), text, fill=txt_color, font=self.font)
 
     def result(self):
         # Return annotated image as array
@@ -208,8 +203,7 @@ def feature_visualization(
         batch, channels, height, width = x.shape  # batch, channels, height, width
         if height > 1 and width > 1:
             f = (
-                save_dir /
-                f"stage{stage}_{module_type.split('.')[-1]}_features.png"
+                save_dir / f"stage{stage}_{module_type.split('.')[-1]}_features.png"
             )  # filename
 
             blocks = torch.chunk(
@@ -233,8 +227,7 @@ def feature_visualization(
 
 def hist2d(x, y, n=100):
     # 2d histogram used in labels.png and evolve.png
-    xedges, yedges = np.linspace(
-        x.min(), x.max(), n), np.linspace(y.min(), y.max(), n)
+    xedges, yedges = np.linspace(x.min(), x.max(), n), np.linspace(y.min(), y.max(), n)
     hist, xedges, yedges = np.histogram2d(x, y, (xedges, yedges))
     xidx = np.clip(np.digitize(x, xedges) - 1, 0, hist.shape[0] - 1)
     yidx = np.clip(np.digitize(y, yedges) - 1, 0, hist.shape[1] - 1)
@@ -259,8 +252,7 @@ def output_to_target(output):
     targets = []
     for i, o in enumerate(output):
         for *box, conf, cls in o.cpu().numpy():
-            targets.append(
-                [i, cls, *list(*xyxy2xywh(np.array(box)[None])), conf])
+            targets.append([i, cls, *list(*xyxy2xywh(np.array(box)[None])), conf])
     return np.array(targets)
 
 
@@ -285,14 +277,13 @@ def plot_images(
     ns = np.ceil(bs**0.5)  # number of subplots (square)
 
     # Build Image
-    mosaic = np.full((int(ns * h), int(ns * w), 3),
-                     255, dtype=np.uint8)  # init
+    mosaic = np.full((int(ns * h), int(ns * w), 3), 255, dtype=np.uint8)  # init
     for i, im in enumerate(images):
         if i == max_subplots:  # if last batch has fewer images than we expect
             break
         x, y = int(w * (i // ns)), int(h * (i % ns))  # block origin
         im = im.transpose(1, 2, 0)
-        mosaic[y: y + h, x: x + w, :] = im
+        mosaic[y : y + h, x : x + w, :] = im
 
     # Resize (optional)
     scale = max_size / ns / max(h, w)
@@ -303,8 +294,7 @@ def plot_images(
 
     # Annotate
     fs = int((h + w) * ns * 0.01)  # font size
-    annotator = Annotator(mosaic, line_width=round(
-        fs / 10), font_size=fs, pil=True)
+    annotator = Annotator(mosaic, line_width=round(fs / 10), font_size=fs, pil=True)
     for i in range(i + 1):
         x, y = int(w * (i // ns)), int(h * (i % ns))  # block origin
         annotator.rectangle(
@@ -345,8 +335,7 @@ def plot_images(
 
 def plot_lr_scheduler(optimizer, scheduler, epochs=300, save_dir=""):
     # Plot LR simulating training for full epochs
-    optimizer, scheduler = copy(optimizer), copy(
-        scheduler)  # do not modify originals
+    optimizer, scheduler = copy(optimizer), copy(scheduler)  # do not modify originals
     y = []
     for _ in range(epochs):
         scheduler.step()
@@ -385,8 +374,7 @@ def plot_targets_txt():  # from utils_.plots import *; plot_targets_txt()
     fig, ax = plt.subplots(2, 2, figsize=(8, 8), tight_layout=True)
     ax = ax.ravel()
     for i in range(4):
-        ax[i].hist(x[i], bins=100,
-                   label=f"{x[i].mean():.3g} +/- {x[i].std():.3g}")
+        ax[i].hist(x[i], bins=100, label=f"{x[i].mean():.3g} +/- {x[i].std():.3g}")
         ax[i].legend()
         ax[i].set_title(s[i])
     plt.savefig("targets.jpg", dpi=200)
@@ -404,8 +392,7 @@ def plot_val_study(
     fig2, ax2 = plt.subplots(1, 1, figsize=(8, 4), tight_layout=True)
     # for f in [save_dir / f'study_coco_{x}.txt' for x in ['yolov5n6', 'yolov5s6', 'yolov5m6', 'yolov5l6', 'yolov5x6']]:
     for f in sorted(save_dir.glob("study*.txt")):
-        y = np.loadtxt(f, dtype=np.float32, usecols=[
-                       0, 1, 2, 3, 7, 8, 9], ndmin=2).T
+        y = np.loadtxt(f, dtype=np.float32, usecols=[0, 1, 2, 3, 7, 8, 9], ndmin=2).T
         x = np.arange(y.shape[1]) if x is None else np.array(x)
         if plot2:
             s = [
@@ -493,8 +480,7 @@ def plot_labels(labels, names=(), save_dir=Path("")):
     labels[:, 1:] = xywh2xyxy(labels[:, 1:]) * 2000
     img = Image.fromarray(np.ones((2000, 2000, 3), dtype=np.uint8) * 255)
     for cls, *box in labels[:1000]:
-        ImageDraw.Draw(img).rectangle(
-            box, width=1, outline=colors(cls))  # plot
+        ImageDraw.Draw(img).rectangle(box, width=1, outline=colors(cls))  # plot
     ax[1].imshow(img)
     ax[1].axis("off")
 
@@ -527,8 +513,7 @@ def plot_evolve(
             v, f, c=hist2d(v, f, 20), cmap="viridis", alpha=0.8, edgecolors="none"
         )
         plt.plot(mu, f.max(), "k+", markersize=15)
-        # limit to 40 characters
-        plt.title(f"{k} = {mu:.3g}", fontdict={"size": 9})
+        plt.title(f"{k} = {mu:.3g}", fontdict={"size": 9})  # limit to 40 characters
         if i % 5 != 0:
             plt.yticks([])
         print(f"{k:>15}: {mu:.3g}")
@@ -555,8 +540,7 @@ def plot_results(file="path/to/results.csv", dir=""):
             for i, j in enumerate([1, 2, 3, 4, 5, 8, 9, 10, 6, 7]):
                 y = data.values[:, j]
                 # y[y == 0] = np.nan  # don't show zero values
-                ax[i].plot(x, y, marker=".", label=f.stem,
-                           linewidth=2, markersize=8)
+                ax[i].plot(x, y, marker=".", label=f.stem, linewidth=2, markersize=8)
                 ax[i].set_title(s[j], fontsize=12)
                 # if j in [8, 9, 10]:  # share train and val loss y axes
                 #     ax[i].get_shared_y_axes().join(ax[i], ax[i - 5])
@@ -582,8 +566,7 @@ def profile_idetection(start=0, stop=0, labels=(), save_dir=""):
     files = list(Path(save_dir).glob("frames*.txt"))
     for fi, f in enumerate(files):
         try:
-            # clip first and last rows
-            results = np.loadtxt(f, ndmin=2).T[:, 90:-30]
+            results = np.loadtxt(f, ndmin=2).T[:, 90:-30]  # clip first and last rows
             n = results.shape[1]  # number of rows
             x = np.arange(start, min(stop, n) if stop else n)
             results = results[:, x]
@@ -591,8 +574,7 @@ def profile_idetection(start=0, stop=0, labels=(), save_dir=""):
             results[0] = x
             for i, a in enumerate(ax):
                 if i < len(results):
-                    label = labels[fi] if len(
-                        labels) else f.stem.replace("frames_", "")
+                    label = labels[fi] if len(labels) else f.stem.replace("frames_", "")
                     a.plot(
                         t,
                         results[i],
@@ -622,14 +604,13 @@ def save_one_box(
     xyxy = torch.tensor(xyxy).view(-1, 4)
     b = xyxy2xywh(xyxy)  # boxes
     if square:
-        b[:, 2:] = b[:, 2:].max(1)[0].unsqueeze(
-            1)  # attempt rectangle to square
+        b[:, 2:] = b[:, 2:].max(1)[0].unsqueeze(1)  # attempt rectangle to square
     b[:, 2:] = b[:, 2:] * gain + pad  # box wh * gain + pad
     xyxy = xywh2xyxy(b).long()
     clip_coords(xyxy, im.shape)
     crop = im[
-        int(xyxy[0, 1]): int(xyxy[0, 3]),
-        int(xyxy[0, 0]): int(xyxy[0, 2]),
+        int(xyxy[0, 1]) : int(xyxy[0, 3]),
+        int(xyxy[0, 0]) : int(xyxy[0, 2]),
         :: (1 if BGR else -1),
     ]
     if save:

@@ -74,10 +74,8 @@ def compute_loss(p, targets, model):  # predictions, targets, model
     h = model.hyp  # hyperparameters
 
     # Define criteria
-    BCEcls = nn.BCEWithLogitsLoss(
-        pos_weight=torch.Tensor([h["cls_pw"]])).to(device)
-    BCEobj = nn.BCEWithLogitsLoss(
-        pos_weight=torch.Tensor([h["obj_pw"]])).to(device)
+    BCEcls = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([h["cls_pw"]])).to(device)
+    BCEobj = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([h["obj_pw"]])).to(device)
 
     # Class label smoothing https://arxiv.org/pdf/1902.04103.pdf eqn 3
     cp, cn = smooth_BCE(eps=0.0)
@@ -90,8 +88,7 @@ def compute_loss(p, targets, model):  # predictions, targets, model
     # Losses
     nt = 0  # number of targets
     no = len(p)  # number of outputs
-    balance = [4.0, 1.0, 0.4] if no == 3 else [
-        4.0, 1.0, 0.4, 0.1]  # P3-5 or P3-6
+    balance = [4.0, 1.0, 0.4] if no == 3 else [4.0, 1.0, 0.4, 0.1]  # P3-5 or P3-6
     for i, pi in enumerate(p):  # layer index, layer predictions
         b, a, gj, gi = indices[i]  # image, anchor, gridy, gridx
         tobj = torch.zeros_like(pi[..., 0], device=device)  # target obj
@@ -148,8 +145,7 @@ def build_targets(p, targets, model):
     tcls, tbox, indices, anch = [], [], [], []
     gain = torch.ones(7, device=targets.device)  # normalized to gridspace gain
     ai = (
-        torch.arange(na, device=targets.device).float().view(
-            na, 1).repeat(1, nt)
+        torch.arange(na, device=targets.device).float().view(na, 1).repeat(1, nt)
     )  # same as .repeat_interleave(nt)
     targets = torch.cat(
         (targets.repeat(na, 1, 1), ai[:, :, None]), 2
@@ -180,8 +176,7 @@ def build_targets(p, targets, model):
         if nt:
             # Matches
             r = t[:, :, 4:6] / anchors[:, None]  # wh ratio
-            j = torch.max(
-                r, 1.0 / r).max(2)[0] < model.hyp["anchor_t"]  # compare
+            j = torch.max(r, 1.0 / r).max(2)[0] < model.hyp["anchor_t"]  # compare
             # j = wh_iou(anchors, t[:, 4:6]) > model.hyp['iou_t']  # iou(3,n)=wh_iou(anchors(3,2), gwh(n,2))
             t = t[j]  # filter
 

@@ -58,8 +58,7 @@ def set_logging(name=None, verbose=True):
     rank = int(os.getenv("RANK", -1))  # rank in world for Multi-GPU trainings
     logging.basicConfig(
         format="%(message)s",
-        level=logging.INFO if (
-            verbose and rank in (-1, 0)) else logging.WARNING,
+        level=logging.INFO if (verbose and rank in (-1, 0)) else logging.WARNING,
     )
     return logging.getLogger(name)
 
@@ -89,8 +88,7 @@ class Timeout(contextlib.ContextDecorator):
         raise TimeoutError(self.timeout_message)
 
     def __enter__(self):
-        # Set handler for SIGALRM
-        signal.signal(signal.SIGALRM, self._timeout_handler)
+        signal.signal(signal.SIGALRM, self._timeout_handler)  # Set handler for SIGALRM
         signal.alarm(self.seconds)  # start countdown for SIGALRM to be raised
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -135,8 +133,7 @@ def methods(instance):
 def print_args(name, opt):
     # Print argparser arguments
     LOGGER.info(
-        colorstr(f"{name}: ") +
-        ", ".join(f"{k}={v}" for k, v in vars(opt).items())
+        colorstr(f"{name}: ") + ", ".join(f"{k}={v}" for k, v in vars(opt).items())
     )
 
 
@@ -148,8 +145,7 @@ def init_seeds(seed=0):
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
-    cudnn.benchmark, cudnn.deterministic = (
-        False, True) if seed == 0 else (True, False)
+    cudnn.benchmark, cudnn.deterministic = (False, True) if seed == 0 else (True, False)
 
 
 def intersect_dicts(da, db, exclude=()):
@@ -257,8 +253,7 @@ def check_online():
     import socket
 
     try:
-        # check host accessibility
-        socket.create_connection(("1.1.1.1", 443), 5)
+        socket.create_connection(("1.1.1.1", 443), 5)  # check host accessibility
         return True
     except OSError:
         return False
@@ -276,16 +271,13 @@ def check_git_status():
 
     cmd = "git fetch && git config --get remote.origin.url"
     url = (
-        check_output(cmd, shell=True, timeout=5).decode(
-        ).strip().rstrip(".git")
+        check_output(cmd, shell=True, timeout=5).decode().strip().rstrip(".git")
     )  # git fetch
     branch = (
-        check_output("git rev-parse --abbrev-ref HEAD",
-                     shell=True).decode().strip()
+        check_output("git rev-parse --abbrev-ref HEAD", shell=True).decode().strip()
     )  # checked out
     n = int(
-        check_output(
-            f"git rev-list {branch}..origin/master --count", shell=True)
+        check_output(f"git rev-list {branch}..origin/master --count", shell=True)
     )  # commits behind
     if n > 0:
         s = f"⚠️ YOLOv5 is out of date by {n} commit{'s' * (n > 1)}. Use `git pull` or `git clone {url}` to update."
@@ -296,8 +288,7 @@ def check_git_status():
 
 def check_python(minimum="3.6.2"):
     # Check current python version vs. required python version
-    check_version(platform.python_version(),
-                  minimum, name="Python ", hard=True)
+    check_version(platform.python_version(), minimum, name="Python ", hard=True)
 
 
 def check_version(
@@ -311,8 +302,7 @@ def check_version(
     # Check version vs. required version
     current, minimum = (pkg.parse_version(x) for x in (current, minimum))
     result = (current == minimum) if pinned else (current >= minimum)  # bool
-    # string
-    s = f"{name}{minimum} required by YOLOv5, but {name}{current} is currently installed"
+    s = f"{name}{minimum} required by YOLOv5, but {name}{current} is currently installed"  # string
     if hard:
         assert result, s  # assert min requirements met
     if verbose and not result:
@@ -329,8 +319,7 @@ def check_requirements(
     check_python()  # check python version
     if isinstance(requirements, (str, Path)):  # requirements.txt file
         file = Path(requirements)
-        assert file.exists(
-        ), f"{prefix} {file.resolve()} not found, check failed."
+        assert file.exists(), f"{prefix} {file.resolve()} not found, check failed."
         with file.open() as f:
             requirements = [
                 f"{x.name}{x.specifier}"
@@ -349,10 +338,8 @@ def check_requirements(
             if install:
                 print(f"{s}, attempting auto-update...")
                 try:
-                    assert check_online(
-                    ), f"'pip install {r}' skipped (offline)"
-                    print(check_output(
-                        f"pip install '{r}'", shell=True).decode())
+                    assert check_online(), f"'pip install {r}' skipped (offline)"
+                    print(check_output(f"pip install '{r}'", shell=True).decode())
                     n += 1
                 except Exception as e:
                     print(f"{prefix} {e}")
@@ -468,8 +455,7 @@ def check_dataset(data, autodownload=True):
             data = yaml.safe_load(f)  # dictionary
 
     # Parse yaml
-    # optional 'path' default to '.'
-    path = extract_dir or Path(data.get("path") or "")
+    path = extract_dir or Path(data.get("path") or "")  # optional 'path' default to '.'
     for k in "train", "val", "test":
         if data.get(k):  # prepend path
             data[k] = (
@@ -483,8 +469,7 @@ def check_dataset(data, autodownload=True):
         data["names"] = [
             f"class{i}" for i in range(data["nc"])
         ]  # assign class names if missing
-    train, val, test, s = (data.get(x)
-                           for x in ("train", "val", "test", "download"))
+    train, val, test, s = (data.get(x) for x in ("train", "val", "test", "download"))
     if val:
         val = [
             Path(x).resolve() for x in (val if isinstance(val, list) else [val])
@@ -543,8 +528,7 @@ def download(url, dir=".", unzip=True, delete=True, curl=False, threads=1):
                     f"curl -L '{url}' -o '{f}' --retry 9 -C -"
                 )  # curl download, retry and resume on fail
             else:
-                torch.hub.download_url_to_file(
-                    url, f, progress=True)  # torch download
+                torch.hub.download_url_to_file(url, f, progress=True)  # torch download
         if unzip and f.suffix in (".zip", ".gz"):
             print(f"Unzipping {f}...")
             if f.suffix == ".zip":
@@ -558,8 +542,7 @@ def download(url, dir=".", unzip=True, delete=True, curl=False, threads=1):
     dir.mkdir(parents=True, exist_ok=True)  # make directory
     if threads > 1:
         pool = ThreadPool(threads)
-        pool.imap(lambda x: download_one(*x),
-                  zip(url, repeat(dir)))  # multi-threaded
+        pool.imap(lambda x: download_one(*x), zip(url, repeat(dir)))  # multi-threaded
         pool.close()
         pool.join()
     else:
@@ -792,8 +775,7 @@ def segment2box(segment, width=640, height=640):
         y[inside],
     )
     return (
-        np.array([x.min(), y.min(), x.max(), y.max()]
-                 ) if any(x) else np.zeros((1, 4))
+        np.array([x.min(), y.min(), x.max(), y.max()]) if any(x) else np.zeros((1, 4))
     )  # xyxy
 
 
@@ -879,8 +861,7 @@ def non_max_suppression(
     ), f"Invalid IoU {iou_thres}, valid values are between 0.0 and 1.0"
 
     # Settings
-    # (pixels) minimum and maximum box width and height
-    min_wh, max_wh = 2, 4096
+    min_wh, max_wh = 2, 4096  # (pixels) minimum and maximum box width and height
     max_nms = 30000  # maximum number of boxes into torchvision.ops.nms()
     time_limit = 10.0  # seconds to quit after
     redundant = True  # require redundant detections
@@ -888,8 +869,7 @@ def non_max_suppression(
     merge = False  # use merge-NMS
 
     t = time.time()
-    output = [torch.zeros((0, 6), device=prediction.device)
-              ] * prediction.shape[0]
+    output = [torch.zeros((0, 6), device=prediction.device)] * prediction.shape[0]
     for xi, x in enumerate(prediction):  # image index, image inference
         # Apply constraints
         # x[((x[..., 2:4] < min_wh) | (x[..., 2:4] > max_wh)).any(1), 4] = 0  # width-height
@@ -920,8 +900,7 @@ def non_max_suppression(
             x = torch.cat((box[i], x[i, j + 5, None], j[:, None].float()), 1)
         else:  # best class only
             conf, j = x[:, 5:].max(1, keepdim=True)
-            x = torch.cat((box, conf, j.float()), 1)[
-                conf.view(-1) > conf_thres]
+            x = torch.cat((box, conf, j.float()), 1)[conf.view(-1) > conf_thres]
 
         # Filter by class
         if classes is not None:
@@ -936,13 +915,11 @@ def non_max_suppression(
         if not n:  # no boxes
             continue
         elif n > max_nms:  # excess boxes
-            # sort by confidence
-            x = x[x[:, 4].argsort(descending=True)[:max_nms]]
+            x = x[x[:, 4].argsort(descending=True)[:max_nms]]  # sort by confidence
 
         # Batched NMS
         c = x[:, 5:6] * (0 if agnostic else max_wh)  # classes
-        # boxes (offset by class), scores
-        boxes, scores = x[:, :4] + c, x[:, 4]
+        boxes, scores = x[:, :4] + c, x[:, 4]  # boxes (offset by class), scores
         i = torchvision.ops.nms(boxes, scores, iou_thres)  # NMS
         if i.shape[0] > max_det:  # limit detections
             i = i[:max_det]
@@ -1024,8 +1001,7 @@ def print_mutation(results, hyp, save_dir, bucket):
 
     # Print to screen
     print(colorstr("evolve: ") + ", ".join(f"{x.strip():>20s}" for x in keys))
-    print(colorstr("evolve: ") +
-          ", ".join(f"{x:20.5g}" for x in vals), end="\n\n\n")
+    print(colorstr("evolve: ") + ", ".join(f"{x:20.5g}" for x in vals), end="\n\n\n")
 
     # Save yaml
     with open(evolve_yaml, "w") as f:
@@ -1046,8 +1022,7 @@ def print_mutation(results, hyp, save_dir, bucket):
         yaml.safe_dump(hyp, f, sort_keys=False)
 
     if bucket:
-        # upload
-        os.system(f"gsutil cp {evolve_csv} {evolve_yaml} gs://{bucket}")
+        os.system(f"gsutil cp {evolve_csv} {evolve_yaml} gs://{bucket}")  # upload
 
 
 def apply_classifier(x, model, img, im0):
@@ -1071,22 +1046,19 @@ def apply_classifier(x, model, img, im0):
             pred_cls1 = d[:, 5].long()
             ims = []
             for j, a in enumerate(d):  # per item
-                cutout = im0[i][int(a[1]): int(a[3]), int(a[0]): int(a[2])]
+                cutout = im0[i][int(a[1]) : int(a[3]), int(a[0]) : int(a[2])]
                 im = cv2.resize(cutout, (224, 224))  # BGR
                 # cv2.imwrite('example%i.jpg' % j, cutout)
 
-                # BGR to RGB, to 3x416x416
-                im = im[:, :, ::-1].transpose(2, 0, 1)
-                im = np.ascontiguousarray(
-                    im, dtype=np.float32)  # uint8 to float32
+                im = im[:, :, ::-1].transpose(2, 0, 1)  # BGR to RGB, to 3x416x416
+                im = np.ascontiguousarray(im, dtype=np.float32)  # uint8 to float32
                 im /= 255  # 0 - 255 to 0.0 - 1.0
                 ims.append(im)
 
             pred_cls2 = model(torch.Tensor(ims).to(d.device)).argmax(
                 1
             )  # classifier prediction
-            # retain matching class detections
-            x[i] = x[i][pred_cls1 == pred_cls2]
+            x[i] = x[i][pred_cls1 == pred_cls2]  # retain matching class detections
 
     return x
 

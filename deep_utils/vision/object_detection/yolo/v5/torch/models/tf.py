@@ -15,6 +15,12 @@ import sys
 from copy import deepcopy
 from pathlib import Path
 
+FILE = Path(__file__).resolve()
+ROOT = FILE.parents[1]  # YOLOv5 root directory
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))  # add ROOT to PATH
+# ROOT = ROOT.relative_to(Path.cwd())  # relative
+
 import numpy as np
 import tensorflow as tf
 import torch
@@ -37,12 +43,6 @@ from tensorflow import keras
 from utils_.activations import SiLU
 from utils_.general import LOGGER, make_divisible, print_args
 
-FILE = Path(__file__).resolve()
-ROOT = FILE.parents[1]  # YOLOv5 root directory
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))  # add ROOT to PATH
-# ROOT = ROOT.relative_to(Path.cwd())  # relative
-
 
 class TFBN(keras.layers.Layer):
     # TensorFlow BatchNormalization wrapper
@@ -51,8 +51,7 @@ class TFBN(keras.layers.Layer):
         self.bn = keras.layers.BatchNormalization(
             beta_initializer=keras.initializers.Constant(w.bias.numpy()),
             gamma_initializer=keras.initializers.Constant(w.weight.numpy()),
-            moving_mean_initializer=keras.initializers.Constant(
-                w.running_mean.numpy()),
+            moving_mean_initializer=keras.initializers.Constant(w.running_mean.numpy()),
             moving_variance_initializer=keras.initializers.Constant(
                 w.running_var.numpy()
             ),
@@ -78,8 +77,7 @@ class TFConv(keras.layers.Layer):
         # ch_in, ch_out, weights, kernel, stride, padding, groups
         super().__init__()
         assert g == 1, "TF v2.2 Conv2D does not support 'groups' argument"
-        assert isinstance(
-            k, int), "Convolution with multiple kernels are not allowed."
+        assert isinstance(k, int), "Convolution with multiple kernels are not allowed."
         # TensorFlow convolution padding is inconsistent with PyTorch (e.g. k=3 s=2 'SAME' padding)
         # see https://stackoverflow.com/questions/52975843/comparing-conv2d-with-padding-between-tensorflow-and-pytorch
 
@@ -96,27 +94,22 @@ class TFConv(keras.layers.Layer):
             if hasattr(w, "bn")
             else keras.initializers.Constant(w.conv.bias.numpy()),
         )
-        self.conv = conv if s == 1 else keras.Sequential(
-            [TFPad(autopad(k, p)), conv])
+        self.conv = conv if s == 1 else keras.Sequential([TFPad(autopad(k, p)), conv])
         self.bn = TFBN(w.bn) if hasattr(w, "bn") else tf.identity
 
         # YOLOv5 activations
         if isinstance(w.act, nn.LeakyReLU):
             self.act = (
-                (lambda x: keras.activations.relu(
-                    x, alpha=0.1)) if act else tf.identity
+                (lambda x: keras.activations.relu(x, alpha=0.1)) if act else tf.identity
             )
         elif isinstance(w.act, nn.Hardswish):
             self.act = (
-                (lambda x: x * tf.nn.relu6(x + 3) *
-                 0.166666667) if act else tf.identity
+                (lambda x: x * tf.nn.relu6(x + 3) * 0.166666667) if act else tf.identity
             )
         elif isinstance(w.act, (nn.SiLU, SiLU)):
-            self.act = (lambda x: keras.activations.swish(x)
-                        ) if act else tf.identity
+            self.act = (lambda x: keras.activations.swish(x)) if act else tf.identity
         else:
-            raise Exception(
-                f"no matching TensorFlow activation found for {w.act}")
+            raise Exception(f"no matching TensorFlow activation found for {w.act}")
 
     def call(self, inputs):
         return self.act(self.bn(self.conv(inputs)))
@@ -199,8 +192,7 @@ class TFBottleneckCSP(keras.layers.Layer):
         self.bn = TFBN(w.bn)
         self.act = lambda x: keras.activations.swish(x)
         self.m = keras.Sequential(
-            [TFBottleneck(c_, c_, shortcut, g, e=1.0, w=w.m[j])
-             for j in range(n)]
+            [TFBottleneck(c_, c_, shortcut, g, e=1.0, w=w.m[j]) for j in range(n)]
         )
 
     def call(self, inputs):
@@ -219,8 +211,7 @@ class TFC3(keras.layers.Layer):
         self.cv2 = TFConv(c1, c_, 1, 1, w=w.cv2)
         self.cv3 = TFConv(2 * c_, c2, 1, 1, w=w.cv3)
         self.m = keras.Sequential(
-            [TFBottleneck(c_, c_, shortcut, g, e=1.0, w=w.m[j])
-             for j in range(n)]
+            [TFBottleneck(c_, c_, shortcut, g, e=1.0, w=w.m[j]) for j in range(n)]
         )
 
     def call(self, inputs):
@@ -271,14 +262,12 @@ class TFDetect(keras.layers.Layer):
         self.nl = len(anchors)  # number of detection layers
         self.na = len(anchors[0]) // 2  # number of anchors
         self.grid = [tf.zeros(1)] * self.nl  # init grid
-        self.anchors = tf.convert_to_tensor(
-            w.anchors.numpy(), dtype=tf.float32)
+        self.anchors = tf.convert_to_tensor(w.anchors.numpy(), dtype=tf.float32)
         self.anchor_grid = tf.reshape(
             self.anchors * tf.reshape(self.stride, [self.nl, 1, 1]),
             [self.nl, 1, -1, 1, 2],
         )
-        self.m = [TFConv2d(x, self.no * self.na, 1, w=w.m[i])
-                  for i, x in enumerate(ch)]
+        self.m = [TFConv2d(x, self.no * self.na, 1, w=w.m[i]) for i, x in enumerate(ch)]
         self.training = False  # set to False after building model
         self.imgsz = imgsz
         for i in range(self.nl):
@@ -297,15 +286,12 @@ class TFDetect(keras.layers.Layer):
             if not self.training:  # inference
                 y = tf.sigmoid(x[i])
                 grid = tf.transpose(self.grid[i], [0, 2, 1, 3]) - 0.5
-                anchor_grid = tf.transpose(
-                    self.anchor_grid[i], [0, 2, 1, 3]) * 4
+                anchor_grid = tf.transpose(self.anchor_grid[i], [0, 2, 1, 3]) * 4
                 xy = (y[..., 0:2] * 2 + grid) * self.stride[i]  # xy
                 wh = y[..., 2:4] ** 2 * anchor_grid
                 # Normalize xywh to 0-1 to reduce calibration error
-                xy /= tf.constant([[self.imgsz[1], self.imgsz[0]]],
-                                  dtype=tf.float32)
-                wh /= tf.constant([[self.imgsz[1], self.imgsz[0]]],
-                                  dtype=tf.float32)
+                xy /= tf.constant([[self.imgsz[1], self.imgsz[0]]], dtype=tf.float32)
+                wh /= tf.constant([[self.imgsz[1], self.imgsz[0]]], dtype=tf.float32)
                 y = tf.concat([xy, wh, y[..., 4:]], -1)
                 z.append(tf.reshape(y, [-1, self.na * ny * nx, self.no]))
 
@@ -413,8 +399,7 @@ def parse_model(d, ch, model, imgsz):  # model_dict, input_channels(3)
 
         tf_m = eval("TF" + m_str.replace("nn.", ""))
         m_ = (
-            keras.Sequential([tf_m(*args, w=model.model[i][j])
-                             for j in range(n)])
+            keras.Sequential([tf_m(*args, w=model.model[i][j]) for j in range(n)])
             if n > 1
             else tf_m(*args, w=model.model[i])
         )  # module
@@ -606,8 +591,7 @@ def run(
     _ = tf_model.predict(im)  # inference
 
     # Keras model
-    im = keras.Input(shape=(*imgsz, 3),
-                     batch_size=None if dynamic else batch_size)
+    im = keras.Input(shape=(*imgsz, 3), batch_size=None if dynamic else batch_size)
     keras_model = keras.Model(inputs=im, outputs=tf_model.predict(im))
     keras_model.summary()
 
@@ -631,8 +615,7 @@ def parse_opt():
         help="inference size h,w",
     )
     parser.add_argument("--batch-size", type=int, default=1, help="batch size")
-    parser.add_argument("--dynamic", action="store_true",
-                        help="dynamic batch size")
+    parser.add_argument("--dynamic", action="store_true", help="dynamic batch size")
     opt = parser.parse_args()
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
     print_args(vars(opt))
