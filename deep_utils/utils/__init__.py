@@ -18,6 +18,7 @@ from .np_utils import *
 from .opencv import *
 from .optimizers import *
 from .os_utils import *
+from .pickle_utils import *
 from .random_utils import *
 from .re_utils import *
 from .resize_utils import *

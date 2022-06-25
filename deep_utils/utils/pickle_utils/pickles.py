@@ -5,8 +5,8 @@ def dump_pickle(file_path: str, file, mode: str = "wb"):
         pickle.dump(file, f)
 
 
-def load_pickle(file_path: str, mode: str = "rb"):
+def load_pickle(file_path: str, mode: str = "rb", encoding=None):
     import pickle
 
     with open(file_path, mode=mode) as f:
-        return pickle.load(f)
+        return pickle.load(f, encoding=encoding)
