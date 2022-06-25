@@ -4,8 +4,8 @@ from collections import OrderedDict
 
 def is_available(lib_name: str):
     import_error = (
-        "{0} "
-        + f"""
+            "{0} "
+            + f"""
     requires {lib_name} library but it was not found in your environment. You can install it with the following instructions:
     ```
     pip install {lib_name}
@@ -113,5 +113,6 @@ BACKENDS_MAPPING = OrderedDict(
         is_available("seaborn"),
         is_available("pyaml"),
         is_available("numpy"),
+        is_available("albumentation")
     ]
 )
