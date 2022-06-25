@@ -12,9 +12,7 @@ class MainClass(ABC):
         self.config = None
         self.model = None
         self.name = name
-        self.download_variables: Union[tuple, None] = kwargs.get(
-            "download_variables", None
-        )
+        self.download_variables: Union[tuple, None] = kwargs.get("download_variables", None)
         self.load_config(file_path, **kwargs)
         self.load_model()
 

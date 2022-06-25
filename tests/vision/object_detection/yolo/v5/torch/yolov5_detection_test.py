@@ -4,7 +4,7 @@ import pytest
 from deep_utils import Box, YOLOV5TorchObjectDetector, download_file
 
 
-@pytest.mark.torch
+@pytest.mark.torchvision
 def test_detection():
     model = YOLOV5TorchObjectDetector(model_weight="yolov5s.pt", device="cpu")
     file_path = download_file(
