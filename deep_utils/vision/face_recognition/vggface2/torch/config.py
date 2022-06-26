@@ -5,6 +5,7 @@ from albumentations.pytorch import ToTensorV2
 
 class Config(MainConfig):
     def __init__(self):
+        self.normalizer = "l2_normalizer"
         self.img_w = 224
         self.img_h = 224
         self.device = "cpu"
@@ -14,7 +15,7 @@ class Config(MainConfig):
             "senet50": "https://github.com/pooya-mohammadi/deep_utils/releases/download/0.9.5/senet50_ft_weight.pkl"
         }
         self.model_caches = {
-            "senet50": "weights/vision/face_detection/vggface2/torch/senet50/senet50_ft_weight.pkl"
+            "senet50": "weights/vision/face_recognition/vggface2/torch/senet50/senet50_ft_weight.pkl"
         }
         self.download_variables = ("model",)
 
@@ -39,7 +40,7 @@ class Config(MainConfig):
 
     @property
     def model_cache(self):
-        return self.model_urls[self.model_name]
+        return self.model_caches[self.model_name]
 
     @property
     def model_mean(self):

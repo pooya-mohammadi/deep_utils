@@ -1,5 +1,4 @@
 import os
-import shutil
 import sys
 from functools import wraps
 
@@ -15,7 +14,7 @@ def get_file(fname, origin, cache_dir=None):
         if "DEEP_UTILS_HOME" in os.environ:
             cache_dir = os.environ.get("DEEP_UTILS_HOME")
         else:
-            cache_dir = os.path.join(os.path.expanduser("~"), ".deep_utils")
+            cache_dir = os.path.join(os.path.expanduser("~"), ".cache/deep_utils")
 
     datadir_base = os.path.expanduser(cache_dir)
     datadir = os.path.join(datadir_base, base_dir)
@@ -42,7 +41,7 @@ def get_file(fname, origin, cache_dir=None):
                     downloaded = 0
                     total = int(total)
                     for data in response.iter_content(
-                        chunk_size=max(int(total / 1000), 1024 * 1024)
+                            chunk_size=max(int(total / 1000), 1024 * 1024)
                     ):
                         downloaded += len(data)
                         f.write(data)
@@ -74,13 +73,13 @@ def get_file(fname, origin, cache_dir=None):
 
 
 def download_file(
-    url,
-    download_dir=".",
-    unzip=False,
-    remove_zip=False,
-    file_name=None,
-    logger=None,
-    remove_download=False,
+        url,
+        download_dir=".",
+        unzip=False,
+        remove_zip=False,
+        file_name=None,
+        logger=None,
+        remove_download=False,
 ):
     if url is None:
         value_error_log(logger, message="url is None. Exiting the function")
@@ -113,7 +112,7 @@ def download_file(
                 downloaded = 0
                 total = int(total)
                 for data in response.iter_content(
-                    chunk_size=max(int(total / 1000), 1024 * 1024)
+                        chunk_size=max(int(total / 1000), 1024 * 1024)
                 ):
                     downloaded += len(data)
                     f.write(data)
@@ -124,9 +123,9 @@ def download_file(
         sys.stdout.write("\n")
     except (Exception, KeyboardInterrupt):
         if (
-            download_des is not None
-            and os.path.isfile(download_des)
-            and remove_download
+                download_des is not None
+                and os.path.isfile(download_des)
+                and remove_download
         ):
             log_print(logger, f"ًRemoving {download_des} due to error")
             os.remove(download_des)
