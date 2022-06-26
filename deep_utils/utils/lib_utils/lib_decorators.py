@@ -125,7 +125,7 @@ def rgb2bgr(in_):
 def lib_rgb2bgr(in_img, target_type, is_rgb):
     if not is_rgb and target_type == "rgb":
         in_img = in_img[..., ::-1]
-    elif is_rgb and target_type == "rgb":
+    elif (is_rgb and target_type == "rgb") or (not is_rgb and target_type == 'bgr'):
         pass
     elif is_rgb and target_type == "bgr":
         in_img = in_img[..., ::-1]
@@ -137,7 +137,7 @@ def lib_rgb2bgr(in_img, target_type, is_rgb):
         in_img = in_img.astype(np.uint8)
     else:
         raise ValueError(
-            f"[ERROR] The input target_type: {target_type} is not supported!"
+            f"[ERROR] The input target_type: {target_type} and is_rgb: {is_rgb} are not supported!"
         )
     return in_img
 
