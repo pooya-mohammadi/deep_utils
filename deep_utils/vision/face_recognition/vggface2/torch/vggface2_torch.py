@@ -1,4 +1,8 @@
+from typing import Union, List
+import numpy as np
 import torch
+
+from deep_utils import lib_rgb2bgr
 from deep_utils.utils.lib_utils.download_utils import download_decorator
 from deep_utils.utils.lib_utils.lib_decorators import (
     expand_input,
@@ -30,15 +34,16 @@ class VggFace2TorchFaceRecognition(FaceRecognition):
         model = model.eval()
         self.model = model
 
-    @rgb2bgr("rgb")
     @get_elapsed_time
-    @expand_input(3)
     @get_from_config
-    def extract_faces(self, img, is_rgb, get_time=False) -> OUTPUT_CLASS:
-        img = torch.cat([self.config.transform(image=img_)["image"].unsqueeze(0) for img_ in img], dim=0)
+    def extract_faces(self, img: Union[List[np.ndarray], np.ndarray], is_rgb, get_time=False) -> OUTPUT_CLASS:
+        img = torch.cat(
+            [self.config.transform(image=lib_rgb2bgr(img_, target_type="bgr", is_rgb=False))["image"].unsqueeze(0) for
+             img_ in img], dim=0)
         with torch.no_grad():
             img = img.to(self.config.device)
             output = self.model(img).cpu().numpy()
+            output = self.normalizer.transform(output)
         output = OUTPUT_CLASS(encodings=output, )
         return output
 

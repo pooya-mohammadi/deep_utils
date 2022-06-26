@@ -16,6 +16,7 @@ class FaceRecognition(MainClass):
     def __init__(self, name, file_path, **kwargs):
         super().__init__(name, file_path=file_path, **kwargs)
         self.output_class = OUTPUT_CLASS
+        self.normalizer = self.load_normalizer(self.config.normalizer)
 
     @abstractmethod
     def extract_faces(self, img, is_rgb, get_time=False) -> OUTPUT_CLASS:
@@ -44,10 +45,9 @@ class FaceRecognition(MainClass):
                     dump_pickle(os.path.join(res_dir, split_extension(item_name, extension=".pkl")), result.encodings)
                 results[img_path] = result['encodings']
         if get_mean:
-            from sklearn.preprocessing import Normalizer
-            l2_normalizer = Normalizer('l2')
+
             encode = np.sum(np.array(list(results.values())), axis=0)
-            encode = l2_normalizer.transform(np.expand_dims(encode, axis=0))[0]
+            encode = self.normalizer.transform(np.expand_dims(encode, axis=0))[0]
             results['mean-encoding'] = encode
             dump_pickle(os.path.join(res_dir, "mean-encoding.pkl"), encode)
         return results
@@ -79,3 +79,12 @@ class FaceRecognition(MainClass):
             encoding_name = os.path.split(input_directory)[-1]
             dump_pickle(os.path.join(input_directory, encoding_name + ".pkl"), results)
         return results
+
+    @staticmethod
+    def load_normalizer(normalizer_name):
+
+        if normalizer_name == "l2_normalizer":
+            from sklearn.preprocessing import Normalizer
+            l2_normalizer = Normalizer('l2')
+            return l2_normalizer
+        return lambda x: x
