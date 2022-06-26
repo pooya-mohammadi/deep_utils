@@ -69,11 +69,13 @@ class FaceDetector(MainClass):
             get_biggest=False
     ):
         for directory_name in sorted(os.listdir(input_directory)):
+
             directory_path = os.path.join(input_directory, directory_name)
             images_dir = os.path.join(directory_path, image_dir_name)
             cropped_dir = os.path.join(directory_path, cropped_dir_name)
             if not os.path.isdir(directory_path) or not os.path.isdir(images_dir):
                 log_print(None, f"Skip {directory_path}...")
+                continue
             remove_create(cropped_dir, remove=remove_cropped)
             self.detect_crop_dir(images_dir, confidence=confidence, extensions=extensions, res_dir=cropped_dir,
                                  remove_res_dir=remove_cropped, get_biggest=get_biggest)

@@ -68,6 +68,7 @@ class FaceRecognition(MainClass):
             cropped_dir = os.path.join(directory_path, encoding_dir_name)
             if not os.path.isdir(directory_path) or not os.path.isdir(images_dir):
                 log_print(None, f"Skip {directory_path}...")
+                continue
             remove_create(cropped_dir, remove=remove_encoding)
             dir_result = self.extract_dir(images_dir, extensions=extensions, res_dir=cropped_dir,
                                           remove_res_dir=remove_encoding,
