@@ -23,7 +23,7 @@ class UltralightTorchFaceDetector(FaceDetector):
         super().__init__(
             name=self.__class__.__name__,
             file_path=__file__,
-            download_variables=("RBF", "slim"),
+            download_variables=("model",),
             **kwargs
         )
         self.config: Config
@@ -31,49 +31,38 @@ class UltralightTorchFaceDetector(FaceDetector):
     @download_decorator
     def load_model(self):
         # LOAD MODELS
-        RBF = create_Mb_Tiny_RFB_fd(is_test=True, device=self.config.device)
-        slim = create_mb_tiny_fd(is_test=True, device=self.config.device)
-        return dict(RBF=RBF, slim=slim)
+        model_path = self.config.model
+        if self.config.model_name == "slim":
+            net = create_mb_tiny_fd(is_test=True, device=self.config.device)
+            net.load(model_path)
+            predictor = create_mb_tiny_fd_predictor(net, device=self.config.device)
+        elif self.config.model == "rbf":
+            net = create_Mb_Tiny_RFB_fd(is_test=True, device=self.config.device)
+            net.load(model_path)
+            predictor = create_Mb_Tiny_RFB_fd_predictor(net, device=self.config.device)
+        else:
+            print("The net type is wrong!")
+            sys.exit(1)
+        self.model = predictor
 
     @get_from_config
     @get_elapsed_time
     @rgb2bgr("rgb")
     @expand_input(3)
     def detect_faces(
-        self,
-        images,
-        is_rgb,
-        net_type,
-        resize_size=None,
-        img_scale_factor=None,
-        img_mean=None,
-        resize_mode=None,
-        confidence=None,
-        get_time=False,
+            self,
+            images,
+            is_rgb,
+            confidence=None,
+            get_time=False,
     ):
-        net_type = str.lower(net_type)
-        if net_type == "slim":
-            model_path = self.config.slim
-            net = self.load_model()["slim"]
-            predictor = create_mb_tiny_fd_predictor(
-                net, device=self.config.device)
-        elif net_type == "rbf":
-            model_path = self.config.RBF
-            net = self.load_model()["RBF"]
-            predictor = create_Mb_Tiny_RFB_fd_predictor(
-                net, device=self.config.device)
-        else:
-            print("The net type is wrong!")
-            sys.exit(1)
 
-        net.load(model_path)
         if images.ndim < 4:
             images = np.array([images])
 
         boxes_, confidences_, landmarks_ = [], [], []
         for img_n in range(images.shape[0]):
-            bboxes, labels, probs = predictor.predict(
-                images[img_n], 500, confidence)
+            bboxes, labels, probs = self.model.predict(images[img_n], 500, self.config.confidence)
             conf, box = [], []
             for i in range(bboxes.size(0)):
                 box_tensor = bboxes[i, :]
@@ -87,7 +76,7 @@ class UltralightTorchFaceDetector(FaceDetector):
                     boxes, in_source=Box.BoxSource.Torch, to_source=Box.BoxSource.Numpy
                 )
                 confidence_ = probs[i]
-                if confidence_ >= confidence:
+                if confidence_ >= self.config.confidence:
                     conf.append(confidence_.item())
                     box.append(boxes)
             confidences_.append(conf)
