@@ -36,7 +36,7 @@ class UltralightTorchFaceDetector(FaceDetector):
             net = create_mb_tiny_fd(is_test=True, device=self.config.device)
             net.load(model_path)
             predictor = create_mb_tiny_fd_predictor(net, device=self.config.device)
-        elif self.config.model == "rbf":
+        elif self.config.model_name == "rbf":
             net = create_Mb_Tiny_RFB_fd(is_test=True, device=self.config.device)
             net.load(model_path)
             predictor = create_Mb_Tiny_RFB_fd_predictor(net, device=self.config.device)

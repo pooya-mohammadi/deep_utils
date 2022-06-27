@@ -5,7 +5,7 @@ class Config(MainConfig):
     def __init__(self):
         self.device = "cpu"
         self.confidence = 0.9
-        self.model_name = "slim"
+        self._model_name = "slim"
         self.model = None
         self.model_urls = {
             "rbf": "https://github.com/pooya-mohammadi/deep_utils/releases/download/0.2.0/version-RFB-320.pth",
@@ -24,3 +24,11 @@ class Config(MainConfig):
     @property
     def model_cache(self):
         return self.model_caches[self.model_name]
+
+    @property
+    def model_name(self):
+        return self._model_name.lower()
+
+    @model_name.setter
+    def model_name(self, model_name):
+        self._model_name = model_name
