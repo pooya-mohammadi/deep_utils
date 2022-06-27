@@ -34,12 +34,14 @@ class VggFace2TorchFaceRecognition(FaceRecognition):
         model = model.eval()
         self.model = model
 
+    @expand_input(3)
     @get_elapsed_time
     @get_from_config
     def extract_faces(self, img: Union[List[np.ndarray], np.ndarray], is_rgb, get_time=False) -> OUTPUT_CLASS:
         img = torch.cat(
             [self.config.transform(image=lib_rgb2bgr(img_, target_type="bgr", is_rgb=False))["image"].unsqueeze(0) for
              img_ in img], dim=0)
+
         with torch.no_grad():
             img = img.to(self.config.device)
             output = self.model(img).cpu().numpy()
