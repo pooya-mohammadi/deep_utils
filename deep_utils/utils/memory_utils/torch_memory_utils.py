@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Union
 
 import torch
 
@@ -6,7 +6,7 @@ import torch
 class MemoryUtilsTorch:
     @staticmethod
     def estimate_memory(
-        model, sample_input, optimizer_type=torch.optim.Adam, use_amp=False, device=0
+            model, sample_input, optimizer_type=torch.optim.Adam, use_amp=False, device: Union[str, int] = 0
     ):
         """Predict the maximum memory usage of the model.
         Args:
@@ -18,7 +18,7 @@ class MemoryUtilsTorch:
             device (torch.device): the device to use
         """
         # Reset model and optimizer
-        model.cpu()
+        model = model.cpu()
         optimizer = optimizer_type(model.parameters(), lr=0.001)
         a = torch.cuda.memory_allocated(device)
         model.to(device)
@@ -46,31 +46,32 @@ class MemoryUtilsTorch:
             )
         gradient_moment_memory = o * gradient_memory
         total_memory = (
-            model_memory
-            + forward_pass_memory
-            + gradient_memory
-            + gradient_moment_memory
+                model_memory
+                + forward_pass_memory
+                + gradient_memory
+                + gradient_moment_memory
         )
 
         return total_memory
 
     @staticmethod
     def memory_test(
-        model,
-        optimizer_type=torch.optim.Adam,
-        input_size: Tuple[int, int, int, int] = (1, 3, 224, 224),
-        use_amp=False,
-        device=0,
-        get_extra_info=True,
+            model,
+            optimizer_type=torch.optim.Adam,
+            input_size: Tuple[int, int, int, int] = (1, 3, 224, 224),
+            use_amp=False,
+            device=0,
+            get_extra_info=True,
     ):
+        assert device != "cpu", "Only works for cpu"
         sample_input = torch.randn(
             input_size,
             dtype=torch.float32,
-        )
+        ).to(device)
         max_mem_est = MemoryUtilsTorch.estimate_memory(
-            model, sample_input, optimizer_type=optimizer_type, use_amp=use_amp
+            model, sample_input, optimizer_type=optimizer_type, use_amp=use_amp, device=device
         )
-        print("Maximum Memory Estimate MB", round(max_mem_est / (1024**2), 2))
+        print("Maximum Memory Estimate MB", round(max_mem_est / (1024 ** 2), 2))
         if get_extra_info:
             optimizer = optimizer_type(model.parameters(), lr=0.001)
             print(
