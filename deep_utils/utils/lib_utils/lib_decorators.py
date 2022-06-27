@@ -1,7 +1,7 @@
 import inspect
 import time
 from functools import wraps
-from typing import Sequence
+from typing import Sequence, Iterable
 
 import numpy as np
 
@@ -33,6 +33,9 @@ def expand_input(dim):
     def inner_decorator(func):
         @wraps(func)
         def wrapper(self, in_, *args, **kwargs):
+            if isinstance(in_, list) and np.all([len(input_obj.shape) == dim for input_obj in in_]):
+                # if there is a list of inputs and each input is a ndarray with the shape of dim...
+                return func(self, in_, *args, **kwargs)
             if len(in_.shape) == dim + 1:
                 return func(self, in_, *args, **kwargs)
             elif len(in_.shape) == dim:
@@ -40,8 +43,7 @@ def expand_input(dim):
                 results = func(self, in_, *args, **kwargs)
                 if hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
                     new_results = {
-                        key: val[0] if val is not None and len(
-                            val) == 1 else val
+                        key: val[0] if val is not None and isinstance(val, Iterable) and len(val) == 1 else val
                         for key, val in results.items()
                     }
                     cls = type(results)
