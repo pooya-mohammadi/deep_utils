@@ -46,9 +46,9 @@ class Predictor:
         images = images.to(self.device)
         with torch.no_grad():
             for i in range(1):
-                self.timer.start()
+                # self.timer.start()
                 scores, boxes = self.net.forward(images)
-                print("TorchVisionInference time: ", self.timer.end())
+                # print("TorchVisionInference time: ", self.timer.end())
         boxes = boxes[0]
         scores = scores[0]
         if not prob_threshold:
