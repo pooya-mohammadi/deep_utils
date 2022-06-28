@@ -24,4 +24,5 @@ from .re_utils import *
 from .resize_utils import *
 from .tensorboard_utils import *
 from .tf_utils import *
+from .color_utils import *
 from .utils import *
