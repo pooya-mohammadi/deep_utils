@@ -40,12 +40,12 @@ def b64_to_img(image_string: str) -> np.ndarray:
 
 
 def ndarray_to_b64(
-    array: np.ndarray,
-    dtype: Union[None, str, type] = None,
-    append_shape=False,
-    append_dtype=False,
-    decode=None,
-    logger: Union[None, logging.Logger] = None,
+        array: np.ndarray,
+        dtype: Union[None, str, type] = None,
+        append_shape=False,
+        append_dtype=False,
+        decode=None,
+        logger: Union[None, logging.Logger] = None,
 ):
     """
     Converting a ndarray to base64. For images use "img_to_b64"
@@ -97,7 +97,7 @@ def ndarray_to_b64(
 
 
 def b64_to_ndarray(
-    byte_array, dtype, shape, logger: Union[None, logging.Logger] = None, encode=None
+        byte_array, dtype, shape, logger: Union[None, logging.Logger] = None, encode=None
 ):
     """
     Converting a base64 to ndarray. For images use "b64_to_img"
@@ -113,6 +113,8 @@ def b64_to_ndarray(
 
     if encode:
         byte_array = byte_array.encode(encode)
+    elif not encode and isinstance(byte_array, str):
+        byte_array = byte_array.encode()
 
     if dtype is None and byte_array[:6].decode("utf-8") == "dtype:":
         dtype_len = struct.unpack(">I", byte_array[6:10])[0]
@@ -150,9 +152,4 @@ def b64_to_ndarray(
     return ndarray
 
 
-if __name__ == "__main__":
-    array = np.random.random((20, 5)).astype(np.float32)
-    res = ndarray_to_b64(array, decode="utf-8")
-    new_array = b64_to_ndarray(
-        res, dtype="float32", shape=(20, 5), encode="utf-8")
-    print(np.all(array == new_array))
+
