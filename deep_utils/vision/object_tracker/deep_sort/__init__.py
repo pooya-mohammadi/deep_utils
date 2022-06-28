@@ -1,6 +1,6 @@
-from .torch.deep_sort import DeepSortTorch
+from .torch.deep_sort import DeepSortTorch, DeepSortTorchFeatureExtractor, DeepSortTorchTracker
 
-__all__ = ["DeepSortTorch", "build_tracker"]
+__all__ = ["DeepSortTorch", "build_tracker", "DeepSortTorchFeatureExtractor", "DeepSortTorchTracker"]
 
 
 def build_tracker(cfg, use_cuda):
