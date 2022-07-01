@@ -13,13 +13,13 @@ class Point:
 
     @staticmethod
     def point2point(
-        point,
-        in_source,
-        to_source,
-        in_relative=None,
-        to_relative=None,
-        shape=None,
-        shape_source=None,
+            point,
+            in_source,
+            to_source,
+            in_relative=None,
+            to_relative=None,
+            shape=None,
+            shape_source=None,
     ):
         if point is None or len(point) == 0:
             pass
@@ -50,13 +50,13 @@ class Point:
 
     @staticmethod
     def _point2point(
-        point,
-        in_source,
-        to_source,
-        in_relative=None,
-        to_relative=None,
-        shape=None,
-        shape_source=None,
+            point,
+            in_source,
+            to_source,
+            in_relative=None,
+            to_relative=None,
+            shape=None,
+            shape_source=None,
     ):
         if isinstance(in_source, Point.PointSource):
             in_source = in_source.value
@@ -64,30 +64,30 @@ class Point:
             to_source = to_source.value
 
         if (
-            in_source in [Point.PointSource.Torch.value,
-                          Point.PointSource.CV.value]
-            and to_source in [Point.PointSource.TF.value, Point.PointSource.Numpy.value]
+                in_source in [Point.PointSource.Torch.value,
+                              Point.PointSource.CV.value]
+                and to_source in [Point.PointSource.TF.value, Point.PointSource.Numpy.value]
         ) or (
-            in_source in [Point.PointSource.TF.value,
-                          Point.PointSource.Numpy.value]
-            and to_source in [Point.PointSource.Torch.value, Point.PointSource.CV.value]
+                in_source in [Point.PointSource.TF.value,
+                              Point.PointSource.Numpy.value]
+                and to_source in [Point.PointSource.Torch.value, Point.PointSource.CV.value]
         ):
             point = (point[1], point[0])
         elif (
-            (in_source is None and to_source is None)
-            or in_source == to_source
-            or (
-                in_source in [Point.PointSource.Torch.value,
-                              Point.PointSource.CV.value]
-                and to_source
-                in [Point.PointSource.CV.value, Point.PointSource.Torch.value]
-            )
-            or (
-                in_source in [Point.PointSource.TF.value,
-                              Point.PointSource.Numpy.value]
-                and to_source
-                in [Point.PointSource.TF.value, Point.PointSource.Numpy.value]
-            )
+                (in_source is None and to_source is None)
+                or in_source == to_source
+                or (
+                        in_source in [Point.PointSource.Torch.value,
+                                      Point.PointSource.CV.value]
+                        and to_source
+                        in [Point.PointSource.CV.value, Point.PointSource.Torch.value]
+                )
+                or (
+                        in_source in [Point.PointSource.TF.value,
+                                      Point.PointSource.Numpy.value]
+                        and to_source
+                        in [Point.PointSource.TF.value, Point.PointSource.Numpy.value]
+                )
         ):
             pass
         else:
@@ -109,14 +109,14 @@ class Point:
 
     @staticmethod
     def _put_point(
-        img,
-        point,
-        radius,
-        color=(0, 255, 0),
-        thickness=None,
-        lineType=None,
-        shift=None,
-        in_source="Numpy",
+            img,
+            point,
+            radius,
+            color=(0, 255, 0),
+            thickness=None,
+            lineType=None,
+            shift=None,
+            in_source="Numpy",
     ):
         import cv2
 
@@ -127,14 +127,14 @@ class Point:
 
     @staticmethod
     def put_point(
-        img,
-        point,
-        radius,
-        color=(0, 255, 0),
-        thickness=None,
-        lineType=None,
-        shift=None,
-        in_source="Numpy",
+            img,
+            point,
+            radius,
+            color=(0, 255, 0),
+            thickness=None,
+            lineType=None,
+            shift=None,
+            in_source="Numpy",
     ):
         if point is None or len(point) == 0:
             pass
@@ -185,17 +185,17 @@ class Box:
 
     @staticmethod
     def box2box(
-        box,
-        in_format=None,
-        to_format=None,
-        in_source=BoxSource.Numpy,
-        to_source=BoxSource.Numpy,
-        in_relative=None,
-        to_relative=None,
-        shape=None,
-        shape_source=None,
-        out_type=None,
-        return_int=None,
+            box,
+            in_format=None,
+            to_format=None,
+            in_source=BoxSource.Numpy,
+            to_source=BoxSource.Numpy,
+            in_relative=None,
+            to_relative=None,
+            shape=None,
+            shape_source=None,
+            out_type=None,
+            return_int=None,
     ):
         if box is None or len(box) == 0:
             pass
@@ -235,17 +235,17 @@ class Box:
 
     @staticmethod
     def _box2box(
-        box,
-        in_format=None,
-        to_format=None,
-        in_source=None,
-        to_source=None,
-        in_relative=None,
-        to_relative=None,
-        shape=None,
-        shape_source=None,
-        out_type=None,
-        return_int=None,
+            box,
+            in_format=None,
+            to_format=None,
+            in_source=None,
+            to_source=None,
+            in_relative=None,
+            to_relative=None,
+            shape=None,
+            shape_source=None,
+            out_type=None,
+            return_int=None,
     ):
         """
 
@@ -271,45 +271,45 @@ class Box:
             to_source = to_source.value
 
         if (
-            in_format == Box.BoxFormat.XYWH.value
-            and to_format == Box.BoxFormat.XYXY.value
+                in_format == Box.BoxFormat.XYWH.value
+                and to_format == Box.BoxFormat.XYXY.value
         ):
             x1, y1, w, h = box
             x2, y2 = x1 + w, y1 + h
             box = [x1, y1, x2, y2]
         elif (
-            in_format == Box.BoxFormat.XYXY.value
-            and to_format == Box.BoxFormat.XYWH.value
+                in_format == Box.BoxFormat.XYXY.value
+                and to_format == Box.BoxFormat.XYWH.value
         ):
             x1, y1, x2, y2 = box
             w, h = x2 - x1, y2 - y1
             box = [x1, y1, w, h]
         elif (
-            in_format == Box.BoxFormat.XYXY.value
-            and to_format == Box.BoxFormat.XCYC.value
+                in_format == Box.BoxFormat.XYXY.value
+                and to_format == Box.BoxFormat.XCYC.value
         ):
             x1, y1, x2, y2 = box
             w, h = x2 - x1, y2 - y1
             xc, yc = (x1 + x2) / 2, (y1 + y2) / 2
             box = [xc, yc, w, h]
         elif (
-            in_format == Box.BoxFormat.XCYC.value
-            and to_format == Box.BoxFormat.XYXY.value
+                in_format == Box.BoxFormat.XCYC.value
+                and to_format == Box.BoxFormat.XYXY.value
         ):
             xc, yc, w, h = box
             x1, y1, x2, y2 = xc - w / 2, yc - h / 2, xc + w / 2, yc + h / 2
             box = [x1, y1, x2, y2]
         elif (
-            in_format == Box.BoxFormat.XYWH.value
-            and to_format == Box.BoxFormat.XCYC.value
+                in_format == Box.BoxFormat.XYWH.value
+                and to_format == Box.BoxFormat.XCYC.value
         ):
             x1, y1, w, h = box
             x2, y2 = x1 + w, y1 + h
             xc, yc = (x1 + x2) / 2, (y1 + y2) / 2
             box = [xc, yc, w, h]
         elif (
-            in_format == Box.BoxFormat.XCYC.value
-            and to_format == Box.BoxFormat.XYWH.value
+                in_format == Box.BoxFormat.XCYC.value
+                and to_format == Box.BoxFormat.XYWH.value
         ):
             xc, yc, w, h = box
             x1, y1 = xc - w // 2, yc - h // 2
@@ -324,26 +324,26 @@ class Box:
             )
 
         if (
-            in_source in [Box.BoxSource.Torch.value, Box.BoxSource.CV.value]
-            and to_source in [Box.BoxSource.TF.value, Box.BoxSource.Numpy.value]
+                in_source in [Box.BoxSource.Torch.value, Box.BoxSource.CV.value]
+                and to_source in [Box.BoxSource.TF.value, Box.BoxSource.Numpy.value]
         ) or (
-            in_source in [Box.BoxSource.TF.value, Box.BoxSource.Numpy.value]
-            and to_source in [Box.BoxSource.Torch.value, Box.BoxSource.CV.value]
+                in_source in [Box.BoxSource.TF.value, Box.BoxSource.Numpy.value]
+                and to_source in [Box.BoxSource.Torch.value, Box.BoxSource.CV.value]
         ):
             box = [box[1], box[0], box[3], box[2]]
         elif (
-            (in_source is None and to_source is None)
-            or in_source == to_source
-            or (
-                in_source in [Box.BoxSource.Torch.value,
-                              Box.BoxSource.CV.value]
-                and to_source in [Box.BoxSource.CV.value, Box.BoxSource.Torch.value]
-            )
-            or (
-                in_source in [Box.BoxSource.TF.value,
-                              Box.BoxSource.Numpy.value]
-                and to_source in [Box.BoxSource.TF.value, Box.BoxSource.Numpy.value]
-            )
+                (in_source is None and to_source is None)
+                or in_source == to_source
+                or (
+                        in_source in [Box.BoxSource.Torch.value,
+                                      Box.BoxSource.CV.value]
+                        and to_source in [Box.BoxSource.CV.value, Box.BoxSource.Torch.value]
+                )
+                or (
+                        in_source in [Box.BoxSource.TF.value,
+                                      Box.BoxSource.Numpy.value]
+                        and to_source in [Box.BoxSource.TF.value, Box.BoxSource.Numpy.value]
+                )
         ):
             pass
         else:
@@ -384,16 +384,16 @@ class Box:
 
     @staticmethod
     def _put_box(
-        img,
-        box,
-        copy=False,
-        color=(0, 255, 0),
-        thickness=1,
-        lineType=None,
-        shift=None,
-        in_relative=False,
-        in_format="XYXY",
-        in_source="Numpy",
+            img,
+            box,
+            copy=False,
+            color=(0, 255, 0),
+            thickness=1,
+            lineType=None,
+            shift=None,
+            in_relative=False,
+            in_format="XYXY",
+            in_source="Numpy",
     ):
         import cv2
 
@@ -429,16 +429,16 @@ class Box:
 
     @staticmethod
     def put_box(
-        img,
-        box,
-        copy=False,
-        color=(0, 255, 0),
-        thickness=1,
-        lineType=None,
-        shift=None,
-        in_relative=False,
-        in_format=BoxFormat.XYXY,
-        in_source=BoxSource.Numpy,
+            img,
+            box,
+            copy=False,
+            color=(0, 255, 0),
+            thickness=1,
+            lineType=None,
+            shift=None,
+            in_relative=False,
+            in_format=BoxFormat.XYXY,
+            in_source=BoxSource.Numpy,
     ):
         if box is None or len(box) == 0:
             pass
@@ -501,17 +501,51 @@ class Box:
         return img_part
 
     @staticmethod
+    def _put_text_pil(img, text, org, color=(0, 255, 0), font=None, font_size=32, return_np=True):
+        from PIL import Image, ImageFont, ImageDraw
+
+        if isinstance(img, np.ndarray):
+            img = Image.fromarray(img)
+        if font:
+            font = ImageFont.truetype(font, font_size)
+        draw = ImageDraw.Draw(img)
+        draw.text(org, text, color, font=font)
+        if return_np:
+            img = np.array(img)
+        return img
+
+    @staticmethod
+    def put_text_pil(
+            img,
+            text,
+            org,
+            color=(0, 255, 0),
+            font=None,
+            font_size=32,
+            return_np=True
+    ):
+        if text is None or len(text) == 0 or org is None or len(org) == 0:
+            pass
+        elif isinstance(text, (tuple, list, np.ndarray)):
+            for t, o in zip(text, org):
+                img = Box._put_text_pil(img, t, o, color,font, font_size,return_np)
+        else:
+            img = Box._put_text_pil(img, text, org, color,font, font_size,return_np)
+        return img
+
+
+    @staticmethod
     def _put_text(
-        img,
-        text,
-        org,
-        fontFace=None,
-        fontScale=1,
-        color=(0, 255, 0),
-        thickness=1,
-        lineType=None,
-        bottomLeftOrigin=None,
-        org_source="Numpy",
+            img,
+            text,
+            org,
+            fontFace=None,
+            fontScale=1,
+            color=(0, 255, 0),
+            thickness=1,
+            lineType=None,
+            bottomLeftOrigin=None,
+            org_source="Numpy"
     ):
         import cv2
 
@@ -536,16 +570,16 @@ class Box:
 
     @staticmethod
     def put_text(
-        img,
-        text,
-        org,
-        fontFace=None,
-        fontScale: float = 1,
-        color=(0, 255, 0),
-        thickness=1,
-        lineType=None,
-        bottomLeftOrigin=None,
-        org_source="Numpy",
+            img,
+            text,
+            org,
+            fontFace=None,
+            fontScale: float = 1,
+            color=(0, 255, 0),
+            thickness=1,
+            lineType=None,
+            bottomLeftOrigin=None,
+            org_source="Numpy",
     ):
         if text is None or len(text) == 0 or org is None or len(org) == 0:
             pass
@@ -580,12 +614,12 @@ class Box:
 
     @staticmethod
     def get_biggest(
-        box,
-        in_format=BoxFormat.XYXY,
-        in_source=BoxSource.Numpy,
-        get_index=False,
-        inputs: Union[None, dict] = None,
-        reverse=False,
+            box,
+            in_format=BoxFormat.XYXY,
+            in_source=BoxSource.Numpy,
+            get_index=False,
+            inputs: Union[None, dict] = None,
+            reverse=False,
     ):
         if len(box) == 0 or box is None:
             return
@@ -646,7 +680,7 @@ class Box:
 
     @staticmethod
     def fill_outer_box(
-        img, box, value: int = 0, in_format=BoxFormat.XYXY, in_source=BoxSource.Numpy
+            img, box, value: int = 0, in_format=BoxFormat.XYXY, in_source=BoxSource.Numpy
     ):
         """
         Fill the outer area of the selected box with the specified value.
@@ -673,7 +707,7 @@ class Box:
 
     @staticmethod
     def _put_box_text(
-        img, box, label, color=(128, 128, 128), txt_color=(255, 255, 255), thickness=2
+            img, box, label, color=(128, 128, 128), txt_color=(255, 255, 255), thickness=2
     ):
         import cv2
 
@@ -716,12 +750,12 @@ class Box:
 
     @staticmethod
     def put_box_text(
-        img: Union[Sequence, np.ndarray],
-        box: Union[Sequence],
-        label: Union[Sequence, str],
-        color=(128, 128, 128),
-        txt_color=(255, 255, 255),
-        thickness=2,
+            img: Union[Sequence, np.ndarray],
+            box: Union[Sequence],
+            label: Union[Sequence, str],
+            color=(128, 128, 128),
+            txt_color=(255, 255, 255),
+            thickness=2,
     ):
         """
         :param img:
@@ -736,13 +770,13 @@ class Box:
             box, in_source=Box.BoxSource.Numpy, to_source=Box.BoxSource.CV
         )
         if (
-            isinstance(box, Sequence)
-            and isinstance(box[0], Sequence)
-            and isinstance(label, Sequence)
+                isinstance(box, Sequence)
+                and isinstance(box[0], Sequence)
+                and isinstance(label, Sequence)
         ):
             if isinstance(color, Sequence) and isinstance(color[0], Sequence):
                 if isinstance(txt_color, Sequence) and isinstance(
-                    txt_color[0], Sequence
+                        txt_color[0], Sequence
                 ):
                     for b, l, c, t_c in zip(box, label, color, txt_color):
                         img = Box._put_box_text(img, b, l, c, t_c, thickness)
