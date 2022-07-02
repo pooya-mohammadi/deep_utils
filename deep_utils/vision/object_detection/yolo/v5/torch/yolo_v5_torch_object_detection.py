@@ -24,7 +24,7 @@ from deep_utils.utils.lib_utils.lib_decorators import (
     out_shape_fix,
 )
 from deep_utils.utils.logging_utils import log_print
-from deep_utils.utils.opencv.main import show_destroy_cv2
+from deep_utils.utils.opencv_utils.main import show_destroy_cv2
 from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.utils import dictnamedtuple
 
@@ -53,14 +53,14 @@ class OutputType:
 
 class YOLOV5TorchObjectDetector(MainClass):
     def __init__(
-        self,
-        class_names=None,
-        model_weight=None,
-        device="cpu",
-        img_size=(320, 320),
-        confidence=0.4,
-        iou_thresh=0.45,
-        **kwargs,
+            self,
+            class_names=None,
+            model_weight=None,
+            device="cpu",
+            img_size=(320, 320),
+            confidence=0.4,
+            iou_thresh=0.45,
+            **kwargs,
     ):
         super(YOLOV5TorchObjectDetector, self).__init__(
             name=self.__class__.__name__,
@@ -77,12 +77,12 @@ class YOLOV5TorchObjectDetector(MainClass):
 
     @staticmethod
     def yolo_resize(
-        img,
-        new_shape=(640, 640),
-        color=(114, 114, 114),
-        auto=True,
-        scaleFill=False,
-        scaleup=True,
+            img,
+            new_shape=(640, 640),
+            color=(114, 114, 114),
+            auto=True,
+            scaleFill=False,
+            scaleup=True,
     ):
 
         return letterbox(
@@ -106,15 +106,15 @@ class YOLOV5TorchObjectDetector(MainClass):
         print(f"{self.name}: weights are loaded")
 
     def detect_objects(
-        self,
-        img,
-        is_rgb,
-        class_indices=None,
-        confidence=None,
-        iou_thresh=None,
-        img_size=None,
-        agnostic=None,
-        get_time=False,
+            self,
+            img,
+            is_rgb,
+            class_indices=None,
+            confidence=None,
+            iou_thresh=None,
+            img_size=None,
+            agnostic=None,
+            get_time=False,
     ) -> Union[Type[OutputType], Dict[str, list]]:
         """
 
@@ -223,13 +223,13 @@ class YOLOV5TorchObjectDetector(MainClass):
 
     @staticmethod
     def split_dataset(
-        base_dir,
-        out_dir,
-        mode="cp",
-        test_size=0.2,
-        remove_out_dir=False,
-        skip_transfer=True,
-        remove_in_dir=False,
+            base_dir,
+            out_dir,
+            mode="cp",
+            test_size=0.2,
+            remove_out_dir=False,
+            skip_transfer=True,
+            remove_in_dir=False,
     ):
         img_train_names, img_val_names = dir_train_test_split(
             join(base_dir, "images"),
@@ -293,18 +293,18 @@ class YOLOV5TorchObjectDetector(MainClass):
 
     @get_from_config
     def detect_dir(
-        self,
-        dir_,
-        confidence=None,
-        iou_thresh=None,
-        classes=None,
-        agnostic=None,
-        img_size=None,
-        extensions=(".png", ".jpg", ".jpeg"),
-        res_img_dir=None,
-        res_label_dir=None,
-        put_annotations=True,
-        remove_dirs=False,
+            self,
+            dir_,
+            confidence=None,
+            iou_thresh=None,
+            classes=None,
+            agnostic=None,
+            img_size=None,
+            extensions=(".png", ".jpg", ".jpeg"),
+            res_img_dir=None,
+            res_label_dir=None,
+            put_annotations=True,
+            remove_dirs=False,
     ):
         import cv2
 
@@ -366,7 +366,7 @@ class YOLOV5TorchObjectDetector(MainClass):
                         )
                         with open(res_path, mode="w") as f:
                             for (b1, b2, b3, b4), class_ in zip(
-                                xcyc_boxes, result["classes"]
+                                    xcyc_boxes, result["classes"]
                             ):
                                 f.write(f"{class_} {b1} {b2} {b3} {b4}\n")
 
@@ -398,9 +398,9 @@ class YOLOV5TorchObjectDetector(MainClass):
 
     @staticmethod
     def combine_datasets(
-        dataset_paths: List[str],
-        final_dataset_path: str,
-        remove_final_dataset: bool = False,
+            dataset_paths: List[str],
+            final_dataset_path: str,
+            remove_final_dataset: bool = False,
     ):
         """
 
@@ -432,9 +432,9 @@ class YOLOV5TorchObjectDetector(MainClass):
             img_index = len(os.listdir(final_images)) + len(os.listdir(final_labels))
             img_dict = dict()
             for img_name in tqdm(
-                os.listdir(images_path),
-                total=len(os.listdir(images_path)),
-                desc=f"copying {images_path} to {final_images}",
+                    os.listdir(images_path),
+                    total=len(os.listdir(images_path)),
+                    desc=f"copying {images_path} to {final_images}",
             ):
                 img_path = os.path.join(images_path, img_name)
                 new_name = split_extension(img_name, suffix=f"_{img_index}")
@@ -442,9 +442,9 @@ class YOLOV5TorchObjectDetector(MainClass):
                 img_dict[os.path.splitext(img_name)[0]] = img_index
                 img_index += 1
             for lbl_name in tqdm(
-                os.listdir(labels_path),
-                total=len(os.listdir(labels_path)),
-                desc=f"copying {labels_path} to {final_labels}",
+                    os.listdir(labels_path),
+                    total=len(os.listdir(labels_path)),
+                    desc=f"copying {labels_path} to {final_labels}",
             ):
                 lbl_path = os.path.join(labels_path, lbl_name)
                 lbl_index = img_dict.get(os.path.splitext(lbl_name)[0], img_index)

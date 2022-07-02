@@ -1,19 +1,20 @@
 import numpy as np
-
 from deep_utils.utils.box_utils.boxes import Point
+from deep_utils.utils.resize_utils.main_resize import resize
 
 
 class VideoWriterCV:
     def __init__(
-        self,
-        save_path,
-        width,
-        height,
-        fourcc="XVID",
-        fps=30,
-        colorful=True,
-        in_source="Numpy",
+            self,
+            save_path,
+            width,
+            height,
+            fourcc="XVID",
+            fps=30,
+            colorful=True,
+            in_source="Numpy",
     ):
+        self.width, self.height = width, height
         import cv2
 
         point = Point.point2point(
@@ -24,17 +25,19 @@ class VideoWriterCV:
         self.vw = cv2.VideoWriter(save_path, fourcc, fps, point, colorful)
 
     def write(self, frame):
+        if frame.shape[:2] != (self.width, self.height):
+            frame = resize(frame, (self.width, self.height))
         self.vw.write(frame)
 
 
 def rotate(
-    img,
-    rotation_degree,
-    center_point=None,
-    scale=1.0,
-    dsize=None,
-    bound=False,
-    clockwise=True,
+        img,
+        rotation_degree,
+        center_point=None,
+        scale=1.0,
+        dsize=None,
+        bound=False,
+        clockwise=True,
 ):
     import cv2
 

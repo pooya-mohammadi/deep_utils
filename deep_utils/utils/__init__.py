@@ -15,7 +15,7 @@ from .memory_utils import *
 from .minio_lib import *
 from .multi_label_utils import *
 from .np_utils import *
-from .opencv import *
+from .opencv_utils import *
 from .optimizers import *
 from .os_utils import *
 from .pickle_utils import *
