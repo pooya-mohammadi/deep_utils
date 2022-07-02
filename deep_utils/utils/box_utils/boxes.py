@@ -1,6 +1,5 @@
 from enum import Enum
-from typing import Iterable, Sequence, Union
-
+from typing import Sequence, Union
 import numpy as np
 
 
@@ -188,8 +187,8 @@ class Box:
             box,
             in_format=None,
             to_format=None,
-            in_source=BoxSource.Numpy,
-            to_source=BoxSource.Numpy,
+            in_source: Union[str, BoxSource] = BoxSource.Numpy,
+            to_source: Union[str, BoxSource] = BoxSource.Numpy,
             in_relative=None,
             to_relative=None,
             shape=None,
@@ -383,6 +382,74 @@ class Box:
         return [n.name for n in in_]
 
     @staticmethod
+    def _put_box_pil(img,
+                     box,
+                     outline="green",
+                     fill=None,
+                     in_relative=False,
+                     in_format="XYXY",
+                     in_source="Numpy",
+                     return_numpy=True):
+        from PIL import ImageDraw, Image
+        if isinstance(img, np.ndarray):
+            img = Image.fromarray(img)
+        box = Box.box2box(
+            box,
+            in_format=in_format,
+            to_format=Box.BoxFormat.XYXY,
+            in_source=in_source,
+            to_source=Box.BoxSource.Numpy,
+            in_relative=in_relative,
+            to_relative=False,
+            shape=img.size,
+            shape_source="Numpy",
+        )
+
+        shape = ((box[0], box[1]), (box[2], box[3]))
+        draw = ImageDraw.Draw(img)
+        draw.rectangle(shape, fill=fill, outline=outline)
+        if return_numpy:
+            np.array(img)
+        return img
+
+    @staticmethod
+    def put_box_pil(
+            img,
+            box,
+            outline="green",
+            fill=None,
+            in_relative=False,
+            in_format="XYXY",
+            in_source="Numpy",
+            return_numpy=True
+    ):
+        if box is None or len(box) == 0:
+            pass
+        elif isinstance(box[0], (tuple, list, np.ndarray)):
+            for b in box:
+                img = Box._put_box_pil(
+                    img=img,
+                    box=b,
+                    outline=outline,
+                    fill=fill,
+                    in_relative=in_relative,
+                    in_format=in_format,
+                    in_source=in_source,
+                    return_numpy=return_numpy)
+        else:
+            img = Box._put_box_pil(
+                img=img,
+                box=box,
+                outline=outline,
+                fill=fill,
+                in_relative=in_relative,
+                in_format=in_format,
+                in_source=in_source,
+                return_numpy=return_numpy)
+
+        return img
+
+    @staticmethod
     def _put_box(
             img,
             box,
@@ -395,6 +462,7 @@ class Box:
             in_format="XYXY",
             in_source="Numpy",
     ):
+
         import cv2
 
         box = Box.box2box(
@@ -506,8 +574,9 @@ class Box:
 
         if isinstance(img, np.ndarray):
             img = Image.fromarray(img)
-        if font:
+        if isinstance(font, str):
             font = ImageFont.truetype(font, font_size)
+
         draw = ImageDraw.Draw(img)
         draw.text(org, text, color, font=font)
         if return_np:
@@ -521,18 +590,17 @@ class Box:
             org,
             color=(0, 255, 0),
             font=None,
-            font_size=32,
+            font_size: int = 32,
             return_np=True
     ):
         if text is None or len(text) == 0 or org is None or len(org) == 0:
             pass
         elif isinstance(text, (tuple, list, np.ndarray)):
             for t, o in zip(text, org):
-                img = Box._put_text_pil(img, t, o, color,font, font_size,return_np)
+                img = Box._put_text_pil(img, t, o, color, font, font_size, return_np)
         else:
-            img = Box._put_text_pil(img, text, org, color,font, font_size,return_np)
+            img = Box._put_text_pil(img, text, org, color, font, font_size, return_np)
         return img
-
 
     @staticmethod
     def _put_text(
@@ -706,6 +774,71 @@ class Box:
         return img
 
     @staticmethod
+    def _put_box_text_pil(img, box, label, outline, text_color, text_font_size, text_font, return_numpy=True):
+        from PIL import ImageDraw, Image, ImageFont
+        if isinstance(img, np.ndarray):
+            pil_img = Image.fromarray(img)
+        else:
+            pil_img = img
+        if text_font is None:
+            pil_font = ImageFont.load_default()
+        elif isinstance(text_font, str):
+            pil_font = ImageFont.truetype(text_font, text_font_size)
+        p1, p2 = (int(box[0]), int(box[1])), (int(box[2]), int(box[3]))
+        pil_img = Box.put_box_pil(pil_img, [*p1, *p2], outline=outline, return_numpy=return_numpy)
+
+        draw_interface = ImageDraw.Draw(pil_img)
+        w, h = draw_interface.textsize(label, pil_font)
+        outside = p1[1] - h - 3 >= 0  # label fits outside box
+        p2 = p1[0] + w, (p1[1] - h - 3) if outside else (p1[1] + h + 3)
+        pil_img = Box.put_box_pil(pil_img, [*p1, *p2], outline=outline, fill=outline, return_numpy=return_numpy)
+
+        org = p1[0], (p1[1] - h - 2) if outside else (p1[1] + h + 2)
+
+        pil_img = Box.put_text_pil(pil_img, label, org, color=text_color, font_size=text_font_size, font=pil_font,
+                                   return_np=return_numpy)
+
+        img = np.array(pil_img) if return_numpy else pil_img
+        return img
+
+    @staticmethod
+    def put_box_text_pil(
+            img: Union[Sequence, np.ndarray],
+            box: Union[Sequence],
+            label: Union[Sequence, str],
+            outline=(128, 128, 128),
+            txt_color=(255, 255, 255),
+            text_font_size=32,
+            text_font=None,
+            return_numpy=True,
+            in_source=BoxSource.CV,
+    ):
+        box = Box.box2box(
+            box, in_source=in_source, to_source=Box.BoxSource.Numpy
+        )
+        if (
+                isinstance(box, Sequence)
+                and isinstance(box[0], Sequence)
+                and isinstance(label, Sequence)
+        ):
+            if isinstance(outline, Sequence) and isinstance(outline[0], Sequence):
+                if isinstance(txt_color, Sequence) and isinstance(txt_color[0], Sequence):
+                    for b, l, c, t_c in zip(box, label, outline, txt_color):
+                        img = Box._put_box_text_pil(img, b, l, c, t_c, text_font_size, text_font, return_numpy)
+                else:
+                    for b, l, c in zip(box, label, outline):
+                        img = Box._put_box_text_pil(img, b, l, c, txt_color, text_font_size, text_font,
+                                                    return_numpy)
+            else:
+                for b, l in zip(box, label):
+                    img = Box._put_box_text_pil(img, b, l, outline, txt_color, text_font_size, text_font,
+                                                return_numpy)
+        else:
+            img = Box._put_box_text_pil(img, box, label, outline, txt_color, text_font_size, text_font,
+                                        return_numpy)
+        return img
+
+    @staticmethod
     def _put_box_text(
             img, box, label, color=(128, 128, 128), txt_color=(255, 255, 255), thickness=2
     ):
@@ -792,49 +925,3 @@ class Box:
             img = Box._put_box_text(
                 img, box, label, color, txt_color, thickness)
         return img
-
-
-# @staticmethod
-# def _put_box_text(img, box, label, color=(128, 128, 128), txt_color=(255, 255, 255), thickness=2):
-#     import cv2
-#     Box.put_box(img, box, color, thickness=thickness, lineType=cv2.LINE_AA)
-#     tf = max(thickness - 1, 1)  # font thickness
-#     w, h = cv2.getTextSize(label, 0, fontScale=thickness / 3, thickness=tf)[0]  # text width, height
-#
-#     outside = box[1] - h - 3 >= 0  # label fits outside box
-#     p2 = p1[0] + w, p1[1] - h - 3 if outside else p1[1] + h + 3
-#     img = cv2.rectangle(img, p1, p2, color, -1, cv2.LINE_AA)  # filled
-#     img = cv2.putText(img, label, (p1[0], p1[1] - 2 if outside else p1[1] + h + 2), 0, thickness / 3, txt_color,
-#                       thickness=tf, lineType=cv2.LINE_AA)
-#     return img
-#
-#
-# @staticmethod
-# def put_box_text(img: Union[Sequence, np.ndarray], box: Union[Sequence], label: Union[Sequence, str],
-#                  color=(128, 128, 128), txt_color=(255, 255, 255), thickness=2):
-#     """
-#
-#     :param img:
-#     :param box: It should be in numpy format
-#     :param label:
-#     :param color:
-#     :param txt_color:
-#     :param thickness:
-#     :return:
-#     """
-#     if isinstance(img, Iterable) and isinstance(box, Iterable) and isinstance(label, Iterable):
-#         if isinstance(color, Sequence) and isinstance(color[0], Sequence):
-#             if isinstance(txt_color, Sequence) and isinstance(txt_color[0], Sequence):
-#                 for b, l, c, t_c in zip(box, label, color, txt_color):
-#                     img = Box._put_box_text(img, b, l, c, t_c, thickness)
-#             else:
-#                 for b, l, c in zip(box, label, color):
-#                     img = Box._put_box_text(img, b, l, c, txt_color, thickness)
-#         else:
-#             for b, l in zip(box, label):
-#                 img = Box._put_box_text(img, b, l, color, txt_color, thickness)
-#     else:
-#         img = Box._put_box_text(img, box, label, color, txt_color, thickness)
-#     return img
-if __name__ == "__main__":
-    print(Box.BoxFormat.XYXY is Box.BoxFormat)
