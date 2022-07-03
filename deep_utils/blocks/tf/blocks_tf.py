@@ -1,27 +1,27 @@
 from collections import OrderedDict
 
-from deep_utils.utils.utils.main import shift_lst
+from deep_utils.utils.list_utils import shift_lst
 
 
 class BlocksTF:
     @staticmethod
     def conv_norm_act(
-        out_c,
-        k=(3, 3),
-        s=(1, 1),
-        p="valid",
-        norm="bn",
-        act="relu",
-        conv=True,
-        index=0,
-        conv_kwargs: dict = None,
-        norm_kwargs: dict = None,
-        act_kwargs: dict = None,
-        pooling=None,
-        pooling_k=(2, 2),
-        pooling_s=(2, 2),
-        pool_kwargs=None,
-        move_forward=0,
+            out_c,
+            k=(3, 3),
+            s=(1, 1),
+            p="valid",
+            norm="bn",
+            act="relu",
+            conv=True,
+            index=0,
+            conv_kwargs: dict = None,
+            norm_kwargs: dict = None,
+            act_kwargs: dict = None,
+            pooling=None,
+            pooling_k=(2, 2),
+            pooling_s=(2, 2),
+            pool_kwargs=None,
+            move_forward=0,
     ):
         from tensorflow import keras
 

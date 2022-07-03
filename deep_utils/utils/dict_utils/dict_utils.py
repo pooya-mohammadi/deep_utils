@@ -10,7 +10,3 @@ class frozendict:
 
     def __setitem__(self, key, value):
         raise TypeError(f"frozendict object does not support updating")
-
-
-def shift_lst(lst: list, move_forward):
-    return lst[-move_forward:] + lst[:-move_forward]

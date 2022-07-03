@@ -27,4 +27,7 @@ from .tf_utils import *
 from .color_utils import *
 from .gif_utils import *
 from .dict_named_tuple_utils import *
+from .dict_utils import *
+from .list_utils import *
 from .utils import *
+
