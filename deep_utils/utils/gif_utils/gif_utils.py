@@ -11,10 +11,11 @@ class GIFUtils:
         GIFUtils.make_gif(frames, output_path, logger=logger, verbose=verbose)
 
     @staticmethod
-    def make_gif(frames, output_path, logger=None, verbose=1):
+    def make_gif(frames, output_path, duration=None, logger=None, verbose=1):
+        duration = duration if duration is not None else (len(frames) // 10)
         if isinstance(frames[0], np.ndarray):
             frames = [Image.fromarray(frame) for frame in frames]
         frame_one = frames[0]
         frame_one.save(output_path, format="GIF", append_images=frames,
-                       save_all=True, duration=len(frames) // 10, loop=0)
+                       save_all=True, duration=duration, loop=0)
         log_print(logger, f"Successfully saved gif to {output_path}", verbose=verbose)
