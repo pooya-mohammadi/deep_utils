@@ -85,7 +85,7 @@ def get_elapsed_time(func):
             if isinstance(results, dict):
                 results["elapsed_time"] = elapsed_time
             elif hasattr(results, "DictNamedTuple") and results.DictNamedTuple:
-                from deep_utils.utils.utils.main import dictnamedtuple
+                from deep_utils.utils.dict_named_tuple_utils import dictnamedtuple
 
                 new_results = dict(results.items())
                 new_results["elapsed_time"] = elapsed_time

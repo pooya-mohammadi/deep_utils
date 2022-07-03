@@ -26,7 +26,7 @@ from deep_utils.utils.lib_utils.lib_decorators import (
 from deep_utils.utils.logging_utils import log_print
 from deep_utils.utils.opencv_utils.main import show_destroy_cv2
 from deep_utils.utils.os_utils.os_path import split_extension
-from deep_utils.utils.utils import dictnamedtuple
+from deep_utils.utils.dict_named_tuple_utils import dictnamedtuple
 
 from .config import Config
 

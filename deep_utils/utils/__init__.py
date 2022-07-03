@@ -26,4 +26,5 @@ from .tensorboard_utils import *
 from .tf_utils import *
 from .color_utils import *
 from .gif_utils import *
+from .dict_named_tuple_utils import *
 from .utils import *

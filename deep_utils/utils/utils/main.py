@@ -1,7 +1,3 @@
-import argparse
-import sys
-
-
 class frozendict:
     def __init__(self, **kwargs):
         super(frozendict, self).__init__()
@@ -18,9 +14,3 @@ class frozendict:
 
 def shift_lst(lst: list, move_forward):
     return lst[-move_forward:] + lst[:-move_forward]
-
-
-if sys.version_info.major >= 3 and sys.version_info.minor >= 8:
-    from deep_utils.utils.utils.dictnamedtuple_38 import dictnamedtuple
-else:
-    from deep_utils.utils.utils.dictnamedtuple_37 import dictnamedtuple
