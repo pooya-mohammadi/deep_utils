@@ -6,7 +6,7 @@ from .ctc_decoder import *
 from .decorators import *
 from .dir_utils import *
 from .encodes import *
-from .imshow_utils import *
+from .image_utils import *
 from .lib_utils import *
 from .logging_utils import *
 from .lr_scheduler_utils import *

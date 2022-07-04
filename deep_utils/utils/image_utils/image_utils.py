@@ -2,22 +2,41 @@ import numpy as np
 
 from deep_utils.utils.box_utils.boxes import Box
 from deep_utils.utils.logging_utils import log_print
-from deep_utils.utils.resize_utils.main_resize import resize
+from deep_utils.utils.resize_utils.main_resize import resize, resize_ratio
 
 
-def group_show(
-    images,
-    size=(128, 128),
-    n_channels=3,
-    texts=None,
-    text_org=None,
-    text_kwargs=None,
-    title=None,
-    title_org=None,
-    title_kwargs=None,
+def get_horizontal_image_stack(images, size):
+    widths, heights = [], []
+    for img in images:
+        w, h = img.shape[:2]
+        widths.append(w)
+        heights.append(h)
+    width = sum(widths)
+    height = max(heights)
+    img_base = np.zeros((width, height, 3), dtype=np.uint8)
+    w_ = 0
+    for img in images:
+        w, h = img.shape[:2]
+        img_base[w_:w_ + w, 0: h] = img
+        w_ += w
+    if width > size or height > size:
+        img_base = resize_ratio(img_base, size)
+    return img_base
+
+
+def get_grid_images(
+        images,
+        size=(128, 128),
+        n_channels=3,
+        texts=None,
+        text_org=None,
+        text_kwargs=None,
+        title=None,
+        title_org=None,
+        title_kwargs=None,
 ):
     """
-    Visualizing a group of images in a grid! Returns a numpy array.
+    Create a group of images in a grid! Returns a numpy array.
     Args:
         images:
         size:
@@ -55,7 +74,7 @@ def group_show(
                 resized_img = Box.put_text(
                     resized_img, texts[i], org, **text_kwargs)
             img[
-                r * size[0]: (r + 1) * size[0], c * size[1]: (c + 1) * size[1]
+            r * size[0]: (r + 1) * size[0], c * size[1]: (c + 1) * size[1]
             ] = resized_img
             i += 1
             if i == len(images):
@@ -75,9 +94,9 @@ def group_show(
     return img
 
 
-def visualize_segmentation_batches(data_loader, save_path, n_samples=10, logger=None):
+def get_segmentation_grid_image(data_loader, save_path, n_samples=10, logger=None):
     """
-    Visualize and Save Segmentation Batches!
+    Save and get Segmentation Batches! One row is responsible for train images and the other one to mask images.
     """
     import os
 
@@ -90,7 +109,7 @@ def visualize_segmentation_batches(data_loader, save_path, n_samples=10, logger=
         for x_, y_ in zip(x, y):
             images.append(x_ * 255)
             images.append(np.stack((y_[..., 0] * 255,) * 3, axis=-1))
-        img = group_show(images)
+        img = get_grid_images(images)
         cv2.imwrite(os.path.join(
             save_path, f"batch_samples_{c}.jpg"), img[..., ::-1])
         c += 1
