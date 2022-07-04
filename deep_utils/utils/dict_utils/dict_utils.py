@@ -12,13 +12,15 @@ class frozendict:
         raise TypeError(f"frozendict object does not support updating")
 
 
-def get_dict_extreme(dict_: dict, key, mode='max', list_values=False):
+def get_dict_extreme(dict_: dict, key, mode='max', list_values=False, ignore_non_sequences=True):
     """
     Gets the maximum/minimum item of a dict based on a key in the input dict
     :param dict_:
     :param key:
     :param mode:
-    :param list_values: whether list values, so it would have the same shape as the input.
+    :param list_values: whether list values, so it would have the same shape as the input
+    :param ignore_non_sequences: In the input dict, there may be some features which are not a sequence type and do no
+    accept index. Ignore if those samples are seen.
     :return:
     """
     import numpy as np
@@ -28,5 +30,19 @@ def get_dict_extreme(dict_: dict, key, mode='max', list_values=False):
         index = np.argmax(dict_[key])
     else:
         raise ValueError()
-    res = {k: [v[index]] if list_values else v[index] for k, v in dict_.items()}
+    res = dict()
+
+    for k, v in dict_.items():
+        try:
+            value = v[index]
+        except TypeError as t:
+            if ignore_non_sequences:
+                value = v
+            else:
+                raise TypeError(t)
+        if list_values:
+            res[k] = [value]
+        else:
+            res[k] = value
+
     return res
