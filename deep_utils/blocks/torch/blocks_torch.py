@@ -4,30 +4,30 @@ from typing import Union
 import torch
 from torch import nn
 
-from deep_utils.utils.utils.main import shift_lst
+from deep_utils.utils.list_utils.list_utils import shift_lst
 
 
 class BlocksTorch:
     @staticmethod
     def conv_norm_act(
-        in_c,
-        out_c,
-        k=(3, 3),
-        s=(1, 1),
-        p=(1, 1),
-        norm=None,
-        act="relu",
-        conv=True,
-        index=None,
-        conv_kwargs: dict = None,
-        norm_kwargs: dict = None,
-        act_kwargs: dict = None,
-        pooling=None,
-        pooling_k=(2, 2),
-        pooling_s=(2, 2),
-        pool_kwargs=None,
-        padding: Union[None, str] = None,
-        move_forward=0,
+            in_c,
+            out_c,
+            k=(3, 3),
+            s=(1, 1),
+            p=(1, 1),
+            norm=None,
+            act="relu",
+            conv=True,
+            index=None,
+            conv_kwargs: dict = None,
+            norm_kwargs: dict = None,
+            act_kwargs: dict = None,
+            pooling=None,
+            pooling_k=(2, 2),
+            pooling_s=(2, 2),
+            pool_kwargs=None,
+            padding: Union[None, str] = None,
+            move_forward=0,
     ):
         """
 
@@ -120,14 +120,14 @@ class BlocksTorch:
 
     @staticmethod
     def conv_2d(
-        in_c,
-        out_c,
-        k=(3, 3),
-        s=(1, 1),
-        p=(1, 1),
-        groups=1,
-        bias=True,
-        padding_mode="zeros",
+            in_c,
+            out_c,
+            k=(3, 3),
+            s=(1, 1),
+            p=(1, 1),
+            groups=1,
+            bias=True,
+            padding_mode="zeros",
     ):
         import torch
 
@@ -170,15 +170,15 @@ class BlocksTorch:
 
     @staticmethod
     def fc_dropout(
-        in_f,
-        out_f,
-        act="relu",
-        drop_p=0.0,
-        fc=True,
-        index=None,
-        fc_kwargs: Union[None, dict] = None,
-        act_kwargs: Union[None, dict] = None,
-        drop_kwargs: Union[dict, None] = None,
+            in_f,
+            out_f,
+            act="relu",
+            drop_p=0.0,
+            fc=True,
+            index=None,
+            fc_kwargs: Union[None, dict] = None,
+            act_kwargs: Union[None, dict] = None,
+            drop_kwargs: Union[dict, None] = None,
     ):
         fc_kwargs = dict() if fc_kwargs is None else fc_kwargs
         drop_kwargs = dict() if drop_kwargs is None else drop_kwargs
