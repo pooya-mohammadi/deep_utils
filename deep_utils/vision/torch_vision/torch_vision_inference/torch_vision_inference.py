@@ -9,6 +9,7 @@ import torch
 
 from deep_utils.utils.logging_utils.logging_utils import log_print
 from deep_utils.vision.torch_vision.torch_vision_models import TorchVisionModel
+from deep_utils.vision.vision_utils.torch_vision_utils.torch_vision_utils import TorchVisionUtils
 
 
 class TorchVisionInference:
@@ -73,9 +74,7 @@ class TorchVisionInference:
         :param return_confidence: If True, return confidence alongside the prediction class
         :return:
         """
-        images_tensor = torch.cat(
-            [self.transform(image=img)["image"].unsqueeze(0) for img in images]
-        ).to(self.device)
+        images_tensor = TorchVisionUtils.transform_concatenate_images(images, self.transform, device=self.device)
         with torch.no_grad():
             logits = self.model(images_tensor)
         confidence, prediction = torch.max(torch.softmax(logits, dim=1), dim=1)
