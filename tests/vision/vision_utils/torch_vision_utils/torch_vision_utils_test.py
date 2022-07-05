@@ -1,13 +1,14 @@
 import pytest
 import numpy as np
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
-from torchvision.transforms import transforms
 from deep_utils import TorchVisionUtils
 
 
 @pytest.mark.torchvision
 def test_detection():
+    import albumentations as A
+    from albumentations.pytorch import ToTensorV2
+    from torchvision.transforms import transforms
+
     # albumentation test
     height, width, mean, std = 224, 220, 0, 1
     transform = A.Compose(
