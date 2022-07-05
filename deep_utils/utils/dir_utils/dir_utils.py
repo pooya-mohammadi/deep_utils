@@ -448,3 +448,22 @@ def find_file(dir_path, name, ext=".ckpt", logger=None, verbose=1):
         verbose=verbose,
     )
     return None
+
+
+def combine_directory_of_directories(dataset_dir, result_dir, remove_result_dir=True, logger=None, verbose=0):
+    """
+    Combine a directory of directories in which there are several samples, and they should be combined in a final
+    directory
+    :param dataset_dir:
+    :param result_dir:
+    :param remove_result_dir:
+    :param logger:
+    :param verbose:
+    :return:
+    """
+    remove_create(result_dir, remove_result_dir)
+    for directory_name in os.listdir(dataset_dir):
+        directory = join(dataset_dir, directory_name)
+        if os.path.isdir(directory):
+            os.system(f'cp {directory}/* {result_dir}')
+            log_print(logger, f'Successfully moved {directory} to {result_dir}!', verbose=verbose)
