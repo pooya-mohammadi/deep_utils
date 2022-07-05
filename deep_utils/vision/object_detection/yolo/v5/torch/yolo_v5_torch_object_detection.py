@@ -244,10 +244,9 @@ class YOLOV5TorchObjectDetector(MainClass):
             mode=mode,
             remove_out_dir=remove_out_dir,
             test_size=test_size,
+            remove_in_dir=remove_in_dir
         )
-        img_train_labels = [
-            os.path.splitext(name)[0] + ".txt" for name in img_train_names
-        ]
+        img_train_labels = [os.path.splitext(name)[0] + ".txt" for name in img_train_names]
         img_val_labels = [os.path.splitext(name)[0] + ".txt" for name in img_val_names]
 
         transfer_directory_items(
@@ -257,7 +256,7 @@ class YOLOV5TorchObjectDetector(MainClass):
             mode=mode,
             remove_out_dir=remove_out_dir,
             skip_transfer=skip_transfer,
-            remove_in_dir=remove_in_dir,
+            remove_in_dir=False,  # by removing dir at this point, there would be no data for the next transfer :)
         )
         transfer_directory_items(
             join(base_dir, "labels"),
@@ -268,6 +267,8 @@ class YOLOV5TorchObjectDetector(MainClass):
             skip_transfer=skip_transfer,
             remove_in_dir=remove_in_dir,
         )
+        if remove_in_dir:
+            shutil.rmtree(base_dir)
 
     @staticmethod
     def extract_label(label_path, img_path=None, shape=None, shape_source=None):
@@ -280,7 +281,6 @@ class YOLOV5TorchObjectDetector(MainClass):
 
         if img_path is not None:
             import cv2
-
             shape = cv2.imread(img_path).shape[:2]
             shape_source = "Numpy"
         if shape is not None and shape_source is not None:
@@ -380,12 +380,20 @@ class YOLOV5TorchObjectDetector(MainClass):
 
     @staticmethod
     def clean_samples(label_path, img_path, logger=None, verbose=1):
+        """
+        Using this method, one can remove images and the labels do not have their correspondences.
+        :param label_path:
+        :param img_path:
+        :param logger:
+        :param verbose:
+        :return:
+        """
         c = 0
-        image_names, image_exts = [], []
+        image_names, image_extensions = [], []
         for img in os.listdir(img_path):
             image_name, image_ext = os.path.splitext(img)
             image_names.append(image_name)
-            image_exts.append(image_ext)
+            image_extensions.append(image_ext)
         label_names = [os.path.splitext(l)[0] for l in os.listdir(label_path)]
 
         for label in label_names:
@@ -394,7 +402,7 @@ class YOLOV5TorchObjectDetector(MainClass):
                 log_print(logger, f"Removed {label_path}", verbose=verbose)
                 os.remove(label_path)
                 c += 1
-        for img_name, img_ext in zip(image_names, image_exts):
+        for img_name, img_ext in zip(image_names, image_extensions):
             if img_name not in label_names:
                 image_path = join(img_path, img_name + img_ext)
                 log_print(logger, f"Removed {image_path}", verbose=verbose)
