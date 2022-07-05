@@ -68,6 +68,7 @@ jobs:
           pip install pyaml>=21.10.0
           pip install seaborn>=0.11.0
           pip install scipy>=1.8.0
+          pip install albumentations>=1.1.0
         # Install pytest (you can use some other testing utility)
       - name: Install pytest
         run: |
