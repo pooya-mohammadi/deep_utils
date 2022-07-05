@@ -2,7 +2,7 @@ import os
 from abc import abstractmethod
 from deep_utils.main_abs.main import MainClass
 from deep_utils.utils.dict_named_tuple_utils import dictnamedtuple
-from deep_utils.utils.dir_utils.main import remove_create
+from deep_utils.utils.dir_utils.dir_utils import remove_create
 from deep_utils.utils.box_utils.boxes import Box
 from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.logging_utils.logging_utils import log_print

@@ -12,7 +12,7 @@ from tqdm import tqdm
 
 from deep_utils.main_abs import MainClass
 from deep_utils.utils.box_utils.boxes import Box, Point
-from deep_utils.utils.dir_utils.main import (
+from deep_utils.utils.dir_utils.dir_utils import (
     dir_train_test_split,
     remove_create,
     transfer_directory_items,
@@ -201,12 +201,12 @@ class YOLOV5TorchObjectDetector(MainClass):
             YOLOV5TorchObjectDetector.test_label(img_address, text_address)
 
     @staticmethod
-    def test_label(img_path, str_path, show=True):
+    def test_label(img_path, label_path, show=True):
         import cv2
 
         img = cv2.imread(img_path)
         boxes, texts, orgs = [], [], []
-        with open(str_path, mode="r") as f:
+        with open(label_path, mode="r") as f:
             for line in f.readlines():
                 label, xc, yc, w, h = line.strip().split()
                 xc, yc, w, h = float(xc), float(yc), float(w), float(h)

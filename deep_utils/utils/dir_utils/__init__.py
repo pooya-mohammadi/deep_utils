@@ -1,4 +1,4 @@
-from .main import (
+from .dir_utils import (
     cp_mv_all,
     crawl_directory_dataset,
     dir_train_test_split,

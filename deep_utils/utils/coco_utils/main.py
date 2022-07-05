@@ -1,6 +1,6 @@
 import os
 
-from deep_utils.utils.dir_utils.main import remove_create
+from deep_utils.utils.dir_utils.dir_utils import remove_create
 from deep_utils.utils.logging_utils import log_print
 from deep_utils.utils.utils.json_utils import dump_json, load_json
 
