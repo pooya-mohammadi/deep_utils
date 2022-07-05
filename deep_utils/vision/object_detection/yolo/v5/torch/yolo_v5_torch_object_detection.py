@@ -195,7 +195,7 @@ class YOLOV5TorchObjectDetector(MainClass):
     @staticmethod
     def test_label_dir(dataset_dir, images_name="images", labels_name="labels"):
         images_path = join(dataset_dir, images_name)
-        for name in os.listdir(images_path):
+        for name in sorted(os.listdir(images_path)):
             img_address = join(images_path, name)
             text_address = join(dataset_dir, labels_name, split_extension(name, '.txt'))
             YOLOV5TorchObjectDetector.test_label(img_address, text_address)
@@ -212,16 +212,6 @@ class YOLOV5TorchObjectDetector(MainClass):
                 xc, yc, w, h = float(xc), float(yc), float(w), float(h)
                 boxes.append([xc, yc, w, h])
                 texts.append(f"label: {label}")
-                # org = Point.point2point(
-                #     (xc - w / 2, yc - h / 2),
-                #     in_source="CV",
-                #     to_source="Numpy",
-                #     in_relative=True,
-                #     to_relative=False,
-                #     shape_source="Numpy",
-                #     shape=img.shape[:2],
-                # )
-                # orgs.append(org)
         boxes = Box.box2box(boxes,
                             in_format=Box.BoxFormat.XCYC,
                             to_format=Box.BoxFormat.XYXY,
@@ -233,10 +223,6 @@ class YOLOV5TorchObjectDetector(MainClass):
                             shape=img.shape[:2],
                             )
         img = Box.put_box_text(img, boxes, texts)
-        # img = Box.put_box(
-        #     img, boxes, in_source="CV", in_format=Box.BoxFormat.XCYC, in_relative=True
-        # )
-        # img = Box.put_text(img, texts, org=orgs, thickness=3, fontScale=3)
         if show:
             show_destroy_cv2(img)
         return img
