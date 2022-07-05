@@ -25,7 +25,7 @@ def transfer_directory_items(
         transfer_list:
         mode:
         remove_out_dir:
-        skip_transfer:
+        skip_transfer: If the file does not exist, skip and do not raise Error.
         remove_in_dir: if mode is mv and this is set to true the in_dir will be removed!
 
     Returns:
@@ -44,7 +44,7 @@ def transfer_directory_items(
                 if skip_transfer:
                     print("[INFO] shutil.copy did not find the file, skipping...")
                 else:
-                    raise FileNotFoundError()
+                    raise FileNotFoundError(e)
     elif mode == "mv":
         for name in transfer_list:
             try:
