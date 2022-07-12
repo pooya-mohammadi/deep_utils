@@ -465,3 +465,25 @@ class YOLOV5TorchObjectDetector(MainClass):
                 new_name = split_extension(lbl_name, suffix=f"_{lbl_index}")
                 shutil.copy(lbl_path, os.path.join(final_labels, new_name))
                 img_index += 1
+
+    @staticmethod
+    def rename_labels(labels_dir, rename_dict: dict):
+        """
+        rename labels of a directory of labels based on the input rename dictionary
+        :param labels_dir:
+        :param rename_dict: A dictionary by which the input labels will be renamed
+        :return:
+        """
+        assert os.path.isdir(labels_dir), "The input is not a directory"
+
+        for label_name in os.listdir(labels_dir):
+            if label_name.endswith(".txt"):
+                label_path = join(labels_dir, label_name)
+                with open(label_path, mode='r') as read_file:
+                    labels = []
+                    for line in read_file.readlines():
+                        line = line.strip()
+                        label, *box = line.split(" ")
+                        labels.append(" ".join([str(rename_dict.get(int(label), label)), *box]))
+                with open(label_path, mode='w') as write_file:
+                    write_file.writelines(labels)
