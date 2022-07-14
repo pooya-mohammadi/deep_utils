@@ -304,21 +304,27 @@ def mkdir_incremental(dir_path: str, base_name="exp", fix_name=None) -> Path:
     return Path(final_path)
 
 
-def file_incremental(file_path, artifact_type="prefix", artifact_value=0, extra_punctuation="_"):
+def file_incremental(file_path, artifact_type="prefix", artifact_value=0, extra_punctuation="_",
+                     add_artifact_value=False):
     """
     This function is used to increment a file's address with prefix or suffix values until it becomes unique
     :param file_path:
     :param artifact_type:
     :param artifact_value:
     :param extra_punctuation:
+    :param add_artifact_value: If set to True, adds the artifact_value then checks its existence.
     :return:
     """
     dir_, n = os.path.split(file_path)
     artifact_value = int(artifact_value)
-    while os.path.exists(file_path):
-        file_path = join(dir_, split_extension(n, artifact_type=artifact_type, artifact_value=artifact_value,
-                                               extra_punctuation=extra_punctuation))
-        artifact_value += 1
+    while True:
+        if add_artifact_value:
+            # Maybe someone requires their file to have the first artifact
+            file_path = join(dir_, split_extension(n, artifact_type=artifact_type, artifact_value=artifact_value,
+                                                   extra_punctuation=extra_punctuation))
+            artifact_value += 1
+        if not os.path.exists(file_path):
+            break
     return file_path
 
 
