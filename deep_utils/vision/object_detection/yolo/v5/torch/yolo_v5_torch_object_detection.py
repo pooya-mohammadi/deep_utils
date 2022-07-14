@@ -11,11 +11,12 @@ import torch
 from tqdm import tqdm
 
 from deep_utils.main_abs import MainClass
-from deep_utils.utils.box_utils.boxes import Box, Point
+from deep_utils.utils.box_utils.boxes import Box
 from deep_utils.utils.dir_utils.dir_utils import (
     dir_train_test_split,
     remove_create,
     transfer_directory_items,
+    file_incremental,
 )
 from deep_utils.utils.lib_utils.lib_decorators import (
     get_from_config,
@@ -27,6 +28,7 @@ from deep_utils.utils.logging_utils import log_print
 from deep_utils.utils.opencv_utils.main import show_destroy_cv2
 from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.dict_named_tuple_utils import dictnamedtuple
+from deep_utils.utils.shutil_utils.shutil_utils import mv_or_copy
 
 from .config import Config
 
@@ -415,56 +417,75 @@ class YOLOV5TorchObjectDetector(MainClass):
             dataset_paths: List[str],
             final_dataset_path: str,
             remove_final_dataset: bool = False,
+            extra_index_format="prefix"
     ):
         """
 
-        Args:
-            dataset_paths: A list of datasets that should be joined
-            final_dataset_path: path to final dataset
-            remove_final_dataset: whether to remove final dataset path or not!
-
-        Returns:
-
+        :param dataset_paths:
+        :param final_dataset_path:
+        :param remove_final_dataset:
+        :param extra_index_format: whether to add suffix, prefix, or nothing as an extra index to data
+        :return:
         """
-        if remove_final_dataset:
-            remove_create(final_dataset_path)
+        remove_create(final_dataset_path, remove_final_dataset)
+
+        for dataset_path in dataset_paths:
+            YOLOV5TorchObjectDetector.transfer_dataset(dataset_path, final_dataset_path, extra_index_format)
+
+    @staticmethod
+    def transfer_dataset(dataset_path, final_dataset_path, extra_index_format="prefix", mode="cp", logger=None,
+                         verbose=1):
+        """
+        This method is used to transfer samples from a dataset to other one
+        :param dataset_path:
+        :param final_dataset_path:
+        :param extra_index_format:
+        :param mode: Whether copy or move the dataset
+        :param logger:
+        :param verbose:
+        :return:
+        """
+        images_path = os.path.join(dataset_path, "images")
+        labels_path = os.path.join(dataset_path, "labels")
+
         final_images = os.path.join(final_dataset_path, "images")
         final_labels = os.path.join(final_dataset_path, "labels")
 
         os.makedirs(final_images, exist_ok=True)
         os.makedirs(final_labels, exist_ok=True)
 
-        for dataset_path in dataset_paths:
-            images_path = os.path.join(dataset_path, "images")
-            labels_path = os.path.join(dataset_path, "labels")
+        if not os.path.isdir(images_path) or not os.path.isdir(labels_path):
+            log_print(logger, f"{images_path} or {labels_path} do not exit!", verbose=verbose)
+            return
 
-            if os.path.isdir(images_path) and os.path.isdir(labels_path):
-                pass
-            else:
-                print(f"[INFO] {images_path} or {labels_path} do not exit!")
-            # to make sure it's not replicated
-            img_index = len(os.listdir(final_images)) + len(os.listdir(final_labels))
-            img_dict = dict()
-            for img_name in tqdm(
-                    os.listdir(images_path),
-                    total=len(os.listdir(images_path)),
-                    desc=f"copying {images_path} to {final_images}",
-            ):
-                img_path = os.path.join(images_path, img_name)
-                new_name = split_extension(img_name, suffix=f"_{img_index}")
-                shutil.copy(img_path, os.path.join(final_images, new_name))
-                img_dict[os.path.splitext(img_name)[0]] = img_index
-                img_index += 1
-            for lbl_name in tqdm(
-                    os.listdir(labels_path),
-                    total=len(os.listdir(labels_path)),
-                    desc=f"copying {labels_path} to {final_labels}",
-            ):
-                lbl_path = os.path.join(labels_path, lbl_name)
-                lbl_index = img_dict.get(os.path.splitext(lbl_name)[0], img_index)
-                new_name = split_extension(lbl_name, suffix=f"_{lbl_index}")
-                shutil.copy(lbl_path, os.path.join(final_labels, new_name))
-                img_index += 1
+        # to make sure it's not replicated
+        # index = len(os.listdir(final_images)) + len(os.listdir(final_labels))
+        img_dict = dict()
+        for img_name in tqdm(
+                os.listdir(images_path),
+                total=len(os.listdir(images_path)),
+                desc=f"copying {images_path} to {final_images}",
+        ):
+            img_path = join(images_path, img_name)
+            # new_name = split_extension(img_name, artifact_type=extra_index_format, artifact_value=img_index)
+            new_path = join(final_images, img_name)
+            new_path = file_incremental(new_path, artifact_type=extra_index_format)
+            mv_or_copy(img_path, new_path, mode=mode)
+            # key: original name without extension, val: new name without extension
+            img_dict[split_extension(img_name)[0]] = split_extension(os.path.split(new_path)[-1])[0]
+
+        for lbl_img_bare_name in tqdm(
+                os.listdir(labels_path),
+                total=len(os.listdir(labels_path)),
+                desc=f"copying {labels_path} to {final_labels}"):
+            lbl_path = os.path.join(labels_path, lbl_img_bare_name)
+            lbl_bare_name = split_extension(lbl_img_bare_name)[0]
+            lbl_img_bare_name = img_dict.get(lbl_bare_name, None)
+            if lbl_img_bare_name is None:
+                log_print(logger, f"label: {lbl_img_bare_name} has no image counterpart", verbose=verbose)
+                continue
+            mv_or_copy(lbl_path, os.path.join(final_labels, lbl_img_bare_name + ".txt"), mode=mode)
+        log_print(logger, f"Successfully {mode}-ed {dataset_path} to {final_dataset_path}")
 
     @staticmethod
     def rename_labels(labels_dir, rename_dict: dict):
