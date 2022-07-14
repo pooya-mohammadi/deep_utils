@@ -31,4 +31,5 @@ from .dict_utils import *
 from .list_utils import *
 from .object_utils import *
 from .torch_utils import *
+from .shutil_utils import *
 from .utils import *
