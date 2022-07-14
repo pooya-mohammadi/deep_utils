@@ -304,16 +304,34 @@ def mkdir_incremental(dir_path: str, base_name="exp", fix_name=None) -> Path:
     return Path(final_path)
 
 
+def file_incremental(file_path, artifact_type="prefix", artifact_value=0, extra_punctuation="_"):
+    """
+    This function is used to increment a file's address with prefix or suffix values until it becomes unique
+    :param file_path:
+    :param artifact_type:
+    :param artifact_value:
+    :param extra_punctuation:
+    :return:
+    """
+    dir_, n = os.path.split(file_path)
+    artifact_value = int(artifact_value)
+    while os.path.exists(file_path):
+        file_path = join(dir_, split_extension(n, artifact_type=artifact_type, artifact_value=artifact_value,
+                                               extra_punctuation=extra_punctuation))
+        artifact_value += 1
+    return file_path
+
+
 def cp_mv_all(
         input_dir,
         res_dir,
         mode="cp",
-        filter_ext: Union[list, None] = None,
+        filter_ext: Union[list, tuple, None] = None,
         logger=None,
         verbose=1,
 ):
     """
-    Using shutil library all the move/copy all the files from one directory to another one!
+    Using shutil library all the move/copy all the files from one directory to another one
     :param input_dir:
     :param res_dir:
     :param mode:

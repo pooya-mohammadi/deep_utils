@@ -9,5 +9,6 @@ from .dir_utils import (
     split_segmentation_dirs,
     split_xy_dir,
     transfer_directory_items,
-    combine_directory_of_directories
+    combine_directory_of_directories,
+    file_incremental
 )
