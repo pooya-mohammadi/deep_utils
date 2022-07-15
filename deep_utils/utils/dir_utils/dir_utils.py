@@ -322,9 +322,13 @@ def file_incremental(file_path, artifact_type="prefix", artifact_value=0, extra_
             # Maybe someone requires their file to have the first artifact
             file_path = join(dir_, split_extension(n, artifact_type=artifact_type, artifact_value=artifact_value,
                                                    extra_punctuation=extra_punctuation))
-            artifact_value += 1
         if not os.path.exists(file_path):
             break
+
+        if not add_artifact_value:
+            file_path = join(dir_, split_extension(n, artifact_type=artifact_type, artifact_value=artifact_value,
+                                                   extra_punctuation=extra_punctuation))
+        artifact_value += 1
     return file_path
 
 
