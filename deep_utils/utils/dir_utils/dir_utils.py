@@ -4,6 +4,7 @@ from os.path import join
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
+from deep_utils.utils.shutil_utils.shutil_utils import mv_or_copy
 from deep_utils.utils.logging_utils import log_print, value_error_log
 from deep_utils.utils.os_utils.os_path import split_extension
 
@@ -337,11 +338,17 @@ def cp_mv_all(
         res_dir,
         mode="cp",
         filter_ext: Union[list, tuple, None] = None,
+        artifact_type="prefix",
+        artifact_value=0,
+        extra_punctuation="_",
+        add_artifact_value=False,
         logger=None,
         verbose=1,
+
 ):
     """
-    Using shutil library all the move/copy all the files from one directory to another one
+    mv/cp all the files in a directory to another one. In case any of the files had the same name as the target files,
+     their name will be incremented using file_incremental
     :param input_dir:
     :param res_dir:
     :param mode:
@@ -355,17 +362,14 @@ def cp_mv_all(
             continue
         f_in_path = os.path.join(input_dir, f_name)
         f_out_path = os.path.join(res_dir, f_name)
-        if mode == "cp":
-            shutil.copy(f_in_path, f_out_path)
-            n += 1
-        elif mode == "mv":
-            shutil.move(f_in_path, f_out_path)
-            n += 1
-        else:
-            raise value_error_log(logger, f"mode {mode} is not supported!")
+        f_out_path = file_incremental(f_out_path, artifact_type=artifact_type, artifact_value=artifact_value,
+                                      extra_punctuation=extra_punctuation, add_artifact_value=add_artifact_value)
+
+        mv_or_copy(f_in_path, f_out_path, mode=mode)
+        n += 1
     log_print(
         logger,
-        f"Successfully moved {n} items with filters: {filter_ext} from {input_dir} to {res_dir}",
+        f"Successfully moved/copy {n} items with filters: {filter_ext} from {input_dir} to {res_dir}",
         verbose=verbose,
     )
 
