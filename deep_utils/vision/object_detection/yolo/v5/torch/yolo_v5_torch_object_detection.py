@@ -396,20 +396,22 @@ class YOLOV5TorchObjectDetector(MainClass):
             image_name, image_ext = os.path.splitext(img)
             image_names.append(image_name)
             image_extensions.append(image_ext)
-        label_names = [os.path.splitext(l)[0] for l in os.listdir(label_path)]
 
+        label_names = [os.path.splitext(l)[0] for l in os.listdir(label_path)]
         for label in label_names:
             if label not in image_names:
-                label_path = join(label_path, label + ".txt")
-                log_print(logger, f"Removed {label_path}", verbose=verbose)
-                os.remove(label_path)
+                remove_lbl_path = join(label_path, label + ".txt")
+                log_print(logger, f"Removed {remove_lbl_path}", verbose=verbose)
+                os.remove(remove_lbl_path)
                 c += 1
+
         for img_name, img_ext in zip(image_names, image_extensions):
             if img_name not in label_names:
-                image_path = join(img_path, img_name + img_ext)
-                log_print(logger, f"Removed {image_path}", verbose=verbose)
-                os.remove(image_path)
+                remove_img_path = join(img_path, img_name + img_ext)
+                log_print(logger, f"Removed {remove_img_path}", verbose=verbose)
+                os.remove(remove_img_path)
                 c += 1
+
         log_print(logger, f"Removed {c} samples!", verbose=verbose)
 
     @staticmethod
