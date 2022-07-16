@@ -83,7 +83,7 @@ class REUtils:
 
     @staticmethod
     def replace_single_char(
-        input_string, replace_expression, result_expression, left="[\s,]+", right="\s+"
+            input_string, replace_expression, result_expression, left="[\s,]+", right="\s+"
     ):
         """
         Replaces a single character with a complete word
@@ -105,6 +105,17 @@ class REUtils:
             input_string
         )  # This is done to clean up extra spaces and other characters!
         return input_string
+
+    @staticmethod
+    def remove_en_punctuations(input_string):
+        """
+        Removes punctuations in a string
+        :param input_string:
+        :return:
+        >>> REUtils.remove_en_punctuations('!hi. wh?at is the weat[h]er lik?e)()()(/\.')
+        'hi what is the weather like'
+        """
+        return re.sub(r'[^\w\s]', '', input_string)
 
 
 if __name__ == "__main__":
