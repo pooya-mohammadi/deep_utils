@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Sequence, Union
 import numpy as np
+from deep_utils.utils.logging_utils.logging_utils import log_print, value_error_log
 
 
 class Point:
@@ -242,9 +243,10 @@ class Box:
             in_relative=None,
             to_relative=None,
             shape=None,
-            shape_source=None,
+            shape_source: Point.PointSource = None,
             out_type=None,
             return_int=None,
+            logger=None
     ):
         """
 
@@ -253,10 +255,11 @@ class Box:
         :param to_format:
         :param in_source:
         :param to_source:
-        :param relative:
-        :param img_w:
-        :param img_h:
+        :param in_relative:
+        :param shape:
+        :param to_relative:
         :param out_type: output type of the box. Supported types: list, tuple, numpy
+        :param logger:
         :return:
         """
         if isinstance(in_format, Box.BoxFormat):
@@ -350,16 +353,20 @@ class Box:
                 f"Conversion form {in_source} to {to_source} is not Supported."
                 f" Supported types: {Box._get_enum_names(Box.BoxSource)}"
             )
-        if to_source is not None and shape_source is not None and shape is not None:
-            img_w, img_h = Point.point2point(
-                shape, in_source=shape_source, to_source=to_source
-            )
-            if not in_relative and to_relative:
-                b1, b2, b3, b4 = box
-                box = [b1 / img_w, b2 / img_h, b3 / img_w, b4 / img_h]
-            elif in_relative and not to_relative:
-                b1, b2, b3, b4 = box
-                box = [b1 * img_w, b2 * img_h, b3 * img_w, b4 * img_h]
+        if in_relative != to_relative:
+            if to_source is not None and shape_source is not None and shape is not None:
+                img_w, img_h = Point.point2point(
+                    shape, in_source=shape_source, to_source=to_source
+                )
+                if not in_relative and to_relative:
+                    b1, b2, b3, b4 = box
+                    box = [b1 / img_w, b2 / img_h, b3 / img_w, b4 / img_h]
+                elif in_relative and not to_relative:
+                    b1, b2, b3, b4 = box
+                    box = [b1 * img_w, b2 * img_h, b3 * img_w, b4 * img_h]
+            else:
+                value_error_log(logger,
+                                "to_source, shape_source, and shape should contain values and should not be None")
 
         box = Box.get_type(box, out_type)
         if return_int:
