@@ -68,7 +68,7 @@ class CoRHandler(Handler):
         )
 
 
-class CoRManger:
+class CoRManger(CoRHandler):
     def __init__(
             self,
             handlers: Union[Tuple[CoRHandler], List[CoRHandler]],
@@ -82,6 +82,7 @@ class CoRManger:
         """
         assert handlers, "handlers can not be None or empty"
         next_handler: Union[CoRHandler, None] = None
+        handler = None
         for handler in handlers[::-1]:
             assert isinstance(
                 handler, CoRHandler
@@ -93,7 +94,7 @@ class CoRManger:
         self.handler: CoRHandler = handler
         self.internal_error_code = internal_error_code
 
-    def manage(self, request: Any, logger=None, verbose=1):
+    def handle(self, request: Any, logger=None, verbose=1):
         try:
             output = self.handler.handle(request)
         except CoRError as e:
