@@ -125,3 +125,12 @@ def split_all(path):
             path = parts[0]
             all_parts.insert(0, parts[1])
     return all_parts
+
+
+def get_file_name(file):
+    """
+    Get the file's name
+    :param file: the file in which code is running. Path in `__file__`
+    :return:
+    """
+    return os.path.splitext(os.path.split(file)[-1])[0]
