@@ -2,7 +2,7 @@ from argparse import Namespace
 from typing import Union
 
 
-def get_attributes(obj) -> dict:
+def get_obj_variables(obj) -> dict:
     """
     Gets the attributes of an object not the methods.
     :param obj:
@@ -16,6 +16,16 @@ def get_attributes(obj) -> dict:
         else:
             out[key] = val
     return out
+
+
+def get_attributes(obj) -> dict:
+    """
+    Gets the attributes of an object not the methods. Deprecated: The naming was not appropriate, make sure to use
+    `get_variables` instead.
+    :param obj:
+    :return:
+    """
+    return get_obj_variables(obj)
 
 
 def update_obj_params(obj_instance: object, args: Union[dict, Namespace]):
@@ -36,3 +46,13 @@ def update_obj_params(obj_instance: object, args: Union[dict, Namespace]):
             setattr(obj_instance, k, v)
         else:
             raise ValueError(f"value {k} is not defined in {obj_instance.__class__.__name__}")
+
+
+def variable_repr(self):
+    """
+    A representation func for objects
+    :param self:
+    :return:
+    """
+    variables = get_obj_variables(self)
+    return f"{self.__class__.__name__} -> " + ", ".join(f"{k}: {v}" for k, v in variables.items())
