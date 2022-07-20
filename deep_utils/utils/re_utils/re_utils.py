@@ -117,6 +117,19 @@ class REUtils:
         """
         return re.sub(r'[^\w\s]', '', input_string)
 
+    @staticmethod
+    def replace_map(text: str, chars_to_map: dict):
+        """
+        This function is used to replace a dictionary of characters inside a text string
+        :param text:
+        :param chars_to_map:
+        :return:
+        """
+        import re
+
+        pattern = "|".join(map(re.escape, chars_to_map.keys()))
+        return re.sub(pattern, lambda m: chars_to_map[m.group()], str(text))
+
 
 if __name__ == "__main__":
     str_ = "s12"
