@@ -2,7 +2,7 @@ import os
 import shutil
 import sys
 import time
-from os.path import join
+from os.path import join, isfile
 from pathlib import Path
 from typing import Dict, List, Type, Union
 
@@ -302,7 +302,7 @@ class YOLOV5TorchObjectDetector(MainClass):
     @get_from_config
     def detect_dir(
             self,
-            dir_,
+            input_dir,
             confidence=None,
             iou_thresh=None,
             classes=None,
@@ -312,19 +312,34 @@ class YOLOV5TorchObjectDetector(MainClass):
             res_img_dir=None,
             res_label_dir=None,
             put_annotations=True,
+            save_crop=False,
             remove_dirs=False,
     ):
+        """
+
+        :param input_dir:
+        :param confidence:
+        :param iou_thresh:
+        :param classes:
+        :param agnostic:
+        :param img_size:
+        :param extensions:
+        :param res_img_dir:
+        :param res_label_dir:
+        :param put_annotations:
+        :param save_crop: If set True, ignores put_annotations
+        :param remove_dirs:
+        :return:
+        """
         import cv2
 
         results = dict()
-        if res_label_dir and remove_dirs:
-            remove_create(res_label_dir)
-        if res_img_dir and remove_dirs:
-            remove_create(res_img_dir)
-        for item_name in os.listdir(dir_):
+        remove_create(res_label_dir, remove_dirs)
+        remove_create(res_img_dir, remove_dirs)
+        for item_name in os.listdir(input_dir):
             _, extension = os.path.splitext(item_name)
             if extension in extensions:
-                img_path = os.path.join(dir_, item_name)
+                img_path = os.path.join(input_dir, item_name)
                 img = cv2.imread(img_path)
                 result = self.detect_objects(
                     img,
@@ -340,23 +355,36 @@ class YOLOV5TorchObjectDetector(MainClass):
                 print(
                     f'{img_path}: objects= {len(result["boxes"])}, time= {result["elapsed_time"]}'
                 )
-                boxes = result["boxes"]
-                if len(result["boxes"]):
+                boxes = result.boxes
+                if len(boxes):
                     if res_img_dir:
                         res_path = os.path.join(res_img_dir, item_name)
-                        if put_annotations:
-                            img = Box.put_box(img, boxes)
-                            img = Box.put_text(
-                                img,
-                                text=[
-                                    f"{name}_{conf}"
-                                    for name, conf in zip(
-                                        result["class_names"], result["confidences"]
-                                    )
-                                ],
-                                org=[(b[0], b[1]) for b in result["boxes"]],
-                            )
-                        cv2.imwrite(res_path, img)
+                        if save_crop:
+                            images = Box.get_box_img(img, boxes)
+                            for label, img in zip(result.class_names, images):
+                                res_path = os.path.join(res_img_dir, f"{label}_{item_name}")
+                                cv2.imwrite(file_incremental(res_path), img)
+                        elif put_annotations:
+                            img = Box.put_box_text(img, boxes, [
+                                f"{name}_{conf}"
+                                for name, conf in zip(
+                                    result["class_names"], result["confidences"]
+                                )
+                            ])
+                            # img = Box.put_box(img, boxes)
+                            # img = Box.put_text(
+                            #     img,
+                            #     text=[
+                            #         f"{name}_{conf}"
+                            #         for name, conf in zip(
+                            #             result["class_names"], result["confidences"]
+                            #         )
+                            #     ],
+                            #     org=[(b[0], b[1]) for b in result["boxes"]],
+                            # )
+                            cv2.imwrite(res_path, img)
+                        else:
+                            cv2.imwrite(res_path, img)
                     if res_label_dir:
                         res_path = os.path.join(
                             res_label_dir, split_extension(item_name, ".txt")
