@@ -1,4 +1,4 @@
-from deep_utils.dummy_objects import DummyObject, requires_backends
+from deep_utils.dummy_objects.dummy_framework import DummyObject, requires_backends
 
 
 class MemoryUtilsTorch(metaclass=DummyObject):

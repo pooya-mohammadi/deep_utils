@@ -9,7 +9,7 @@ try:
     from deep_utils.vision.object_detection.yolo.v5.torch.yolo_v5_torch_object_detection import (
         YOLOV5TorchObjectDetector,
     )
-except:
+except ModuleNotFoundError:
     pass
 
 Object_Detection_Models = {"YOLOV5TorchObjectDetector": YOLOV5TorchObjectDetector}

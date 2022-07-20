@@ -1,4 +1,4 @@
-from deep_utils.dummy_objects import DummyObject, requires_backends
+from deep_utils.main_abs.dummy_framework.dummy_framework import DummyObject, requires_backends
 
 
 class Wav2Vec2STTTorch(metaclass=DummyObject):

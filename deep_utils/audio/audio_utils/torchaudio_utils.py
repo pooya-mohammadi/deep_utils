@@ -13,13 +13,23 @@ from deep_utils.utils.os_utils.os_path import split_extension
 class TorchAudioUtils:
     @staticmethod
     def resample(
-        wave: Union[str, Path, torch.Tensor],
-        sr: int = None,
-        resample_rate=16000,
-        save=False,
-        resampled_path: str = None,
-        logger=None,
+            wave: Union[str, Path, torch.Tensor],
+            sr: int = None,
+            resample_rate=16000,
+            save=False,
+            resampled_path: str = None,
+            logger=None,
     ) -> Union[str, torch.Tensor]:
+        """
+        This file is used to resample an audio file or torch tensor
+        :param wave:
+        :param sr:
+        :param resample_rate:
+        :param save:
+        :param resampled_path:
+        :param logger:
+        :return:
+        """
 
         if isinstance(wave, str) or isinstance(wave, Path):
             waveform, sample_rate = torchaudio.load(wave)
@@ -60,7 +70,7 @@ class TorchAudioUtils:
 
     @staticmethod
     def split(
-        wave, sr, max_seconds: float = 10, min_seconds=1, logger=None, verbose=1
+            wave, sr, max_seconds: float = 10, min_seconds=1, logger=None, verbose=1
     ) -> list[torch.Tensor]:
         """
         Splits a wave to mini-waves based on input max_seconds. If the last segment's duration is less than min_seconds

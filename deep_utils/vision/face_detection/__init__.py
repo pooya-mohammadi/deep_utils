@@ -1,4 +1,4 @@
-from deep_utils.utils.lib_utils.framework_utils import (
+from deep_utils.main_abs.dummy_framework.dummy_framework import (
     is_cv2_available,
     is_tf_available,
     is_torch_available,
@@ -49,7 +49,6 @@ else:
     from deep_utils.vision.face_detection.ultralight.tf.ultralight_tf_face_detection import (
         UltralightTFFaceDetector,
     )
-
 
 Face_Detection_Models = {
     "SSDCV2CaffeFaceDetector": SSDCV2CaffeFaceDetector,
