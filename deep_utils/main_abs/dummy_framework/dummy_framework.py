@@ -28,6 +28,7 @@ _is_torch_available = importlib.util.find_spec("torch") is not None
 _is_cv2_available = importlib.util.find_spec("cv2") is not None
 _is_torchvision_available = importlib.util.find_spec("torchvision") is not None
 _is_torchaudio_available = importlib.util.find_spec("torchaudio") is not None
+_is_pyannote_audio_available = importlib.util.find_spec("pyannote.audio") is not None
 
 
 def is_torch_available():
@@ -48,6 +49,10 @@ def is_tf_available():
 
 def is_cv2_available():
     return _is_cv2_available
+
+
+def is_pyannote_audio_available():
+    return _is_pyannote_audio_available
 
 
 CV2_IMPORT_ERROR = """
@@ -125,6 +130,17 @@ or
 ```
 """
 
+PYANNOTE_AUDIO_IMPORT_ERROR = """
+{0} requires PYANNOTE_AUDIO library, but it was not found in your environment. You can install it with the following instruction or check out the main repository page of pyannote(https://github.com/pyannote/pyannote-audio):
+```
+pip install pyannote.audio
+```
+In a notebook or a colab, you can install it by executing a cell with
+```
+!pip install pyannote.audio
+```
+"""
+
 BACKENDS_MAPPING = OrderedDict(
     [
         ("cv2", (is_cv2_available, CV2_IMPORT_ERROR)),
@@ -137,7 +153,8 @@ BACKENDS_MAPPING = OrderedDict(
         is_available("numpy"),
         is_available("albumentation"),
         is_available("scikit-learn"),
-        is_available("PIL")
+        is_available("PIL"),
+        is_available("pyannote")
     ]
 )
 
