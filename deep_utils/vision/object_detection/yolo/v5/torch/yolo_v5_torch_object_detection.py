@@ -195,15 +195,15 @@ class YOLOV5TorchObjectDetector(MainClass):
         return output
 
     @staticmethod
-    def test_label_dir(dataset_dir, images_name="images", labels_name="labels"):
+    def test_label_dir(dataset_dir, rename_dict: Union[dict, None] = None, images_name="images", labels_name="labels"):
         images_path = join(dataset_dir, images_name)
         for name in sorted(os.listdir(images_path)):
             img_address = join(images_path, name)
             text_address = join(dataset_dir, labels_name, split_extension(name, '.txt'))
-            YOLOV5TorchObjectDetector.test_label(img_address, text_address)
+            YOLOV5TorchObjectDetector.test_label(img_address, text_address, rename_dict=rename_dict)
 
     @staticmethod
-    def test_label(img_path, label_path, show=True):
+    def test_label(img_path, label_path, rename_dict: Union[dict, None] = None, show=True):
         import cv2
 
         img = cv2.imread(img_path)
@@ -213,6 +213,8 @@ class YOLOV5TorchObjectDetector(MainClass):
                 label, xc, yc, w, h = line.strip().split()
                 xc, yc, w, h = float(xc), float(yc), float(w), float(h)
                 boxes.append([xc, yc, w, h])
+                if rename_dict is not None:
+                    label = rename_dict.get(int(label), label)
                 texts.append(f"label: {label}")
         boxes = Box.box2box(boxes,
                             in_format=Box.BoxFormat.XCYC,
