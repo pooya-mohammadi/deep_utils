@@ -195,7 +195,8 @@ class YOLOV5TorchObjectDetector(MainClass):
         return output
 
     @staticmethod
-    def test_label_dir(dataset_dir, rename_dict: Union[dict, None] = None, images_name="images", labels_name="labels"):
+    def test_label_dir(dataset_dir, rename_dict: Union[Dict[int, str], None], images_name="images",
+                       labels_name="labels"):
         images_path = join(dataset_dir, images_name)
         for name in sorted(os.listdir(images_path)):
             img_address = join(images_path, name)
@@ -203,7 +204,7 @@ class YOLOV5TorchObjectDetector(MainClass):
             YOLOV5TorchObjectDetector.test_label(img_address, text_address, rename_dict=rename_dict)
 
     @staticmethod
-    def test_label(img_path, label_path, rename_dict: Union[dict, None] = None, show=True):
+    def test_label(img_path, label_path, rename_dict: Union[Dict[int, str], None] = None, show=True):
         import cv2
 
         img = cv2.imread(img_path)
