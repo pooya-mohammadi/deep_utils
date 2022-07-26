@@ -21,8 +21,8 @@ requirements = [
 cv_requirements = ["opencv-python>=4.5.5.58"]
 
 tf_requirements = [
-    "tensorflow>=2.6.0",
-] + cv_requirements
+                      "tensorflow>=2.6.0",
+                  ] + cv_requirements
 
 torch_requirements = [
     "torch>=1.8.0,<1.12.0",
@@ -31,9 +31,9 @@ torch_requirements = [
 ]
 
 torchvision_requirements = [
-    "torch>=1.8.0,<1.12.0",
-    "torchvision>=0.10.0",
-] + cv_requirements
+                               "torch>=1.8.0,<1.12.0",
+                               "torchvision>=0.10.0",
+                           ] + cv_requirements
 torch_transformers_requirements = torch_requirements + ["transformers>=4.18.0"]
 setuptools.setup(
     name="deep_utils",
@@ -62,4 +62,5 @@ setuptools.setup(
     install_requires=requirements,
     dependency_links=dependency_links,
     python_requires=">=3.6",
+    license_files=('LICENSE',),
 )
