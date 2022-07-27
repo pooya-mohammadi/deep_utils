@@ -26,7 +26,7 @@ def check_bio_labels(input_labels: Union[str, List[str], Tuple[str]], query_labe
     return False
 
 
-def post_process_words_with_hashtag(input_words: List[str], input_labels: List[str]):
+def combine_tokens_with_hashtag_ner(input_words: List[str], input_labels: List[str]):
     """
     This function connects tokenized words with # to each other if they have the same labels
     :param input_words:
@@ -34,11 +34,11 @@ def post_process_words_with_hashtag(input_words: List[str], input_labels: List[s
     :return:
     >>> words =  ['تلفن', '98', '##21', '##55', '##87', '##14', '##42']
     >>> labels = [ 'B-phone', 'I-phone', 'I-phone', 'I-phone', 'I-phone', 'I-phone', 'I-phone']
-    >>> post_process_words_with_hashtag(words, labels)
+    >>> combine_tokens_with_hashtag_ner(words, labels)
     (['تلفن', '982155871442'], ['B-phone', 'I-phone'])
     >>> words =  ['تلفن', '98', '##21', '##55', '##87', '##14', '##42'] + [","] + ['تلفن', '98', '##21', '##55', '##87', '##14', '##42']
     >>> labels = [ 'B-phone', 'I-phone', 'I-phone', 'I-phone', 'I-phone', 'I-phone', 'I-phone'] + ["o"] + [ 'B-phone', 'I-phone', 'I-phone', 'I-phone', 'I-phone', 'I-phone', 'I-phone']
-    >>> post_process_words_with_hashtag(words, labels)
+    >>> combine_tokens_with_hashtag_ner(words, labels)
     (['تلفن', '982155871442', ',', 'تلفن', '982155871442'], ['B-phone', 'I-phone', 'o', 'B-phone', 'I-phone'])
     """
     assert len(input_words) == len(
