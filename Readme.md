@@ -438,7 +438,17 @@ Don't forget to give the project a ⭐️! Thanks again!
 
 <!-- LICENSE -->
 
-## License
+## 🌟 Spread the word!
+
+If you want to say thank you and/or support active development of the repo:
+- Add a GitHub Star to the project!
+- Join our discord servers [Deep Utils](https://discord.gg/pWe3yChw) .
+- Follow my profile [pooya-mohammadi](https://github.com/pooya-mohammadi)
+
+Thanks so much for your interest in growing the reach of the repo!
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## ⚠️ License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 The LICENSE of each model is located inside its corresponding directory.
