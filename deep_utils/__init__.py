@@ -6,5 +6,6 @@ from .callbacks import *
 from .design_patterns import *
 from .gis import *
 from .nlp import *
-from .utils import *
 from .vision import *
+from .elasticsearch import *
+from .utils import *
