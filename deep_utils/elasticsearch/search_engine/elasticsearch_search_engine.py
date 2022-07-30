@@ -1,5 +1,4 @@
 import os
-import string
 from typing import Dict, Union
 from elasticsearch import Elasticsearch
 from deep_utils.utils.logging_utils.logging_utils import value_error_log
