@@ -1,6 +1,6 @@
 import math
 from pathlib import Path
-from typing import Union
+from typing import Union, List
 
 import torch
 import torchaudio
@@ -71,7 +71,7 @@ class TorchAudioUtils:
     @staticmethod
     def split(
             wave, sr, max_seconds: float = 10, min_seconds=1, logger=None, verbose=1
-    ) -> list[torch.Tensor]:
+    ) -> List[torch.Tensor]:
         """
         Splits a wave to mini-waves based on input max_seconds. If the last segment's duration is less than min_seconds
         it is combined with its previous segment.
