@@ -4,6 +4,7 @@ import numpy as np
 from deep_utils.utils.logging_utils.logging_utils import log_print, value_error_log
 
 
+
 class Point:
     class PointSource(Enum):
         Torch = "Torch"
@@ -51,8 +52,8 @@ class Point:
     @staticmethod
     def _point2point(
             point,
-            in_source,
-            to_source,
+            in_source : Union[str, PointSource],
+            to_source : Union[str, PointSource],
             in_relative=None,
             to_relative=None,
             shape=None,
@@ -62,31 +63,33 @@ class Point:
             in_source = in_source.value
         if isinstance(to_source, Point.PointSource):
             to_source = to_source.value
+        in_source =in_source.lower()
+        to_source =to_source.lower()
 
         if (
-                in_source in [Point.PointSource.Torch.value,
-                              Point.PointSource.CV.value]
-                and to_source in [Point.PointSource.TF.value, Point.PointSource.Numpy.value]
+                in_source in [Point.PointSource.Torch.value.lower(),
+                              Point.PointSource.CV.value.lower()]
+                and to_source in [Point.PointSource.TF.value.lower(), Point.PointSource.Numpy.value.lower()]
         ) or (
-                in_source in [Point.PointSource.TF.value,
-                              Point.PointSource.Numpy.value]
-                and to_source in [Point.PointSource.Torch.value, Point.PointSource.CV.value]
+                in_source in [Point.PointSource.TF.value.lower(),
+                              Point.PointSource.Numpy.value.lower()]
+                and to_source in [Point.PointSource.Torch.value, Point.PointSource.CV.value.lower()]
         ):
             point = (point[1], point[0])
         elif (
                 (in_source is None and to_source is None)
                 or in_source == to_source
                 or (
-                        in_source in [Point.PointSource.Torch.value,
-                                      Point.PointSource.CV.value]
+                        in_source in [Point.PointSource.Torch.value.lower(),
+                                      Point.PointSource.CV.value.lower()]
                         and to_source
-                        in [Point.PointSource.CV.value, Point.PointSource.Torch.value]
+                        in [Point.PointSource.CV.value, Point.PointSource.Torch.value.lower()]
                 )
                 or (
-                        in_source in [Point.PointSource.TF.value,
-                                      Point.PointSource.Numpy.value]
+                        in_source in [Point.PointSource.TF.value.lower(),
+                                      Point.PointSource.Numpy.value.lower()]
                         and to_source
-                        in [Point.PointSource.TF.value, Point.PointSource.Numpy.value]
+                        in [Point.PointSource.TF.value.lower(), Point.PointSource.Numpy.value.lower()]
                 )
         ):
             pass
@@ -99,14 +102,19 @@ class Point:
             img_w, img_h = Point.point2point(
                 shape, in_source=shape_source, to_source=to_source
             )
+            if not in_relative:
+                if isinstance(point[0] ,float )   or isinstance(point[1],float ) :
+                    raise ValueError(f"the input is  relative while in_relative is set to {in_relative}")
+            if  in_relative:
+                 if isinstance(point[0] , int)   or isinstance(point[1], int) :
+                    raise ValueError(f"the input is not relative while in_relative is set to {in_relative}")
             if not in_relative and to_relative:
                 p1, p2 = point
                 point = [p1 / img_w, p2 / img_h]
             elif in_relative and not to_relative:
-                p1, p2 = point
-                point = [p1 * img_w, p2 * img_h]
+                 p1, p2 = point
+                 point = [p1 * img_w, p2 * img_h]
         return point
-
     @staticmethod
     def _put_point(
             img,
@@ -165,7 +173,16 @@ class Point:
         down_right = max(pts, key=lambda l: l[1])
         return top_left, top_right, down_right, down_left
 
-
+        """
+        >>> Point._point2point(point=[0.1, 0.05],shape=[10,100],in_relative=False,to_relative=True, in_source='numpy', to_source='NUMPY',shape_source=Point.PointSource.Numpy)
+        ValueError: the input is  relative while in_relative is set to False
+        >>> Point._point2point(point=[0.1, 0.05],shape=[10,100],in_relative=True,to_relative=False, in_source='TF', to_source='tF',shape_source=Point.PointSource.Numpy)
+        [1.0, 5.0]
+        >>> Point._point2point(point=[1, 5],shape=[10,100],in_relative=True,to_relative=False, in_source='numPY', to_source='NUMPy',shape_source=Point.PointSource.Numpy)   
+        ValueError: the input is not relative while in_relative is set to True
+        >>>Point._point2point(point=[1, 5],shape=[10,100],in_relative=False,to_relative=True, in_source='NUMPY', to_source='NUmpy',shape_source=Point.PointSource.Numpy)
+        [0.1, 0.05]
+        """
 class Box:
     class BoxFormat(Enum):
         XYWH = "XYWH"
@@ -385,7 +402,7 @@ class Box:
         return in_
 
     @staticmethod
-    def _get_enum_names(in_):
+    def get_enum_names(in_):
         return [n.name for n in in_]
 
     @staticmethod
