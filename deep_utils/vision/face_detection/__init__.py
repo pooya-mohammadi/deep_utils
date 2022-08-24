@@ -12,7 +12,7 @@ Face_Detection_Models = {
     "HaarcascadeCV2FaceDetector": HaarcascadeCV2FaceDetector,
     "MTCNNTFFaceDetector": MTCNNTFFaceDetector,
     "UltralightTorchFaceDetector": UltralightTorchFaceDetector,
-    "UltralightTFFaceDetector": UltralightTFFaceDetector,
+    # "UltralightTFFaceDetector": UltralightTFFaceDetector,
     "RetinaFaceTorchFaceDetector": RetinaFaceTorchFaceDetector,
 }
 

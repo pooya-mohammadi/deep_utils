@@ -6,3 +6,10 @@ class TorchAudioUtils(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, self._backend)
+
+
+class LibrosaUtils(metaclass=DummyObject):
+    _backend = ["numpy", "librosa"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, self._backend)

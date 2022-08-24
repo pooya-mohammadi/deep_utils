@@ -17,7 +17,7 @@ def load_yaml(yaml_path: Union[Path, str], logger=None, verbose=1) -> dict:
     """
     import yaml
 
-    with open(yaml_path) as f:
+    with open(yaml_path, mode='r') as f:
         data_map = yaml.safe_load(f)
     log_print(logger, f"Successfully loaded {yaml_path}", verbose=verbose)
     return data_map
