@@ -337,7 +337,7 @@ def cp_mv_all(
         input_dir,
         res_dir,
         mode="cp",
-        filter_ext: Union[list, tuple, None] = None,
+        filter_ext: Union[list, tuple, str, None] = None,
         artifact_type="prefix",
         artifact_value=0,
         extra_punctuation="_",
@@ -356,6 +356,7 @@ def cp_mv_all(
     :return:
     """
     n = 0
+    filter_ext = [filter_ext] if filter_ext is not None and isinstance(filter_ext, str) else filter_ext
     for f_name in os.listdir(input_dir):
         _, ext = split_extension(f_name)
         if filter_ext is not None and ext not in filter_ext:
@@ -369,7 +370,7 @@ def cp_mv_all(
         n += 1
     log_print(
         logger,
-        f"Successfully moved/copy {n} items with filters: {filter_ext} from {input_dir} to {res_dir}",
+        f"Successfully {mode}-ed {n} items with filters: {filter_ext} from {input_dir} to {res_dir}",
         verbose=verbose,
     )
 
