@@ -14,13 +14,36 @@ class Point:
     @staticmethod
     def point2point(
             point,
-            in_source,
-            to_source,
+            in_source: Union[str, PointSource],
+            to_source: Union[str, PointSource],
             in_relative=None,
             to_relative=None,
             shape=None,
             shape_source=None,
     ):
+        """
+        >>> #The ability to write in_source and to_source in any mode (capital or small letters, etc.)
+
+        >>> Point.point2point(point = [1, 5], in_source=Point.PointSource.Numpy, to_source=Point.PointSource.Torch)
+        (5, 1)
+        >>> Point.point2point(point = [1, 5], in_source="nUmpy", to_source=Point.PointSource.Torch)
+        (5, 1)
+
+        >>>  #Convert point from in_relative to to_relative
+
+        >>> Point.point2point(point = [0.1, 0.05], shape = [10,100], in_relative = False, to_relative = True, in_source = 'numpy', to_source = 'NUMPY', shape_source = Point.PointSource.Numpy)
+        Traceback (most recent call last):
+         Point._point2point(point = [0.1, 0.05], shape=[10,100],in_relative=False,to_relative=True, in_source='numpy', to_source='NUMPY', shape_source=Point.PointSource.Numpy)
+        ValueError: the input is  relative while in_relative is set to False
+        >>> Point.point2point(point = [0.1, 0.05], shape = [10,100], in_relative = True, to_relative = False, in_source = 'TF', to_source = 'tF', shape_source = Point.PointSource.Numpy)
+        [1.0, 5.0]
+        >>> Point.point2point(point = [1, 5], shape = [10,100], in_relative = True, to_relative=False, in_source = 'numPY', to_source = 'NUMPy', shape_source = Point.PointSource.Numpy)
+        Traceback (most recent call last):
+         Point._point2point(point = [1, 5], shape = [10,100], in_relative = True, to_relative = False, in_source = 'numPY', to_source = 'NUMPy', shape_source = Point.PointSource.Numpy)
+        ValueError: the input is not relative while in_relative is set to True
+        >>> Point.point2point(point = [1, 5], shape = [10,100], in_relative = False, to_relative = True, in_source = 'NUMPY', to_source = 'NUmpy', shape_source = Point.PointSource.Numpy)
+        [0.1, 0.05]
+        """
         if point is None or len(point) == 0:
             pass
         elif isinstance(point[0], (tuple, list, np.ndarray)):
@@ -58,28 +81,6 @@ class Point:
             shape=None,
             shape_source=None,
     ):
-        """
-                >>> Point._point2point(point=[0.1, 0.05],shape=[10,100],in_relative=False,to_relative=True, in_source='numpy', to_source='NUMPY',shape_source=Point.PointSource.Numpy)
-                Traceback (most recent call last):
-                  File "C:\Program Files\JetBrains\PyCharm 2022.1\plugins\python\helpers\pycharm\docrunner.py", line 138,
-                   in __run
-                   exec(compile(example.source, filename, "single",
-                  File "<doctest _point2point[0]>", line 1, in <module>
-                    Point._point2point(point=[0.1, 0.05],shape=[10,100],in_relative=False,to_relative=True, in_source='numpy', to_source='NUMPY',shape_source=Point.PointSource.Numpy)
-                ValueError: the input is  relative while in_relative is set to False
-                >>> Point._point2point(point=[0.1, 0.05],shape=[10,100],in_relative=True,to_relative=False, in_source='TF', to_source='tF',shape_source=Point.PointSource.Numpy)
-                [1.0, 5.0]
-                >>> Point._point2point(point=[1, 5],shape=[10,100],in_relative=True,to_relative=False, in_source='numPY', to_source='NUMPy',shape_source=Point.PointSource.Numpy)
-                Traceback (most recent call last):
-                  File "C:\Program Files\JetBrains\PyCharm 2022.1\plugins\python\helpers\pycharm\docrunner.py", line 138,
-                   in __run
-                   exec(compile(example.source, filename, "single",
-                  File "<doctest _point2point[2]>", line 1, in <module>
-                   Point._point2point(point=[1, 5],shape=[10,100],in_relative=True,to_relative=False, in_source='numPY', to_source='NUMPy',shape_source=Point.PointSource.Numpy)
-                ValueError: the input is not relative while in_relative is set to True
-                >>> Point._point2point(point=[1, 5],shape=[10,100],in_relative=False,to_relative=True, in_source='NUMPY', to_source='NUmpy',shape_source=Point.PointSource.Numpy)
-                [0.1, 0.05]
-        """
         if isinstance(in_source, Point.PointSource):
             in_source = in_source.value
         if isinstance(to_source, Point.PointSource):
@@ -94,7 +95,7 @@ class Point:
         ) or (
                 in_source in [Point.PointSource.TF.value.lower(),
                               Point.PointSource.Numpy.value.lower()]
-                and to_source in [Point.PointSource.Torch.value, Point.PointSource.CV.value.lower()]
+                and to_source in [Point.PointSource.Torch.value.lower(), Point.PointSource.CV.value.lower()]
         ):
             point = (point[1], point[0])
         elif (
@@ -116,7 +117,7 @@ class Point:
             pass
         else:
             raise Exception(
-                f"Conversion form {in_source} to {to_source} is not Supported."
+                f"Conversion from {in_source} to {to_source} is not Supported."
                 f" Supported types: {Box._get_enum_names(Point.PointSource)}"
             )
         if to_source is not None and shape_source is not None and shape is not None:
@@ -194,8 +195,6 @@ class Point:
         down_left = min(pts, key=lambda l: l[1])
         down_right = max(pts, key=lambda l: l[1])
         return top_left, top_right, down_right, down_left
-
-
 
 
 class Box:
