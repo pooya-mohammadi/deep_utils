@@ -14,13 +14,36 @@ class Point:
     @staticmethod
     def point2point(
             point,
-            in_source,
-            to_source,
+            in_source: Union[str, PointSource],
+            to_source: Union[str, PointSource],
             in_relative=None,
             to_relative=None,
             shape=None,
             shape_source=None,
     ):
+        """
+        >>> #The ability to write in_source and to_source in any mode (capital or small letters, etc.)
+
+        >>> Point.point2point(point = [1, 5], in_source=Point.PointSource.Numpy, to_source=Point.PointSource.Torch)
+        (5, 1)
+        >>> Point.point2point(point = [1, 5], in_source="nUmpy", to_source=Point.PointSource.Torch)
+        (5, 1)
+
+        >>>  #Convert point from in_relative to to_relative
+
+        >>> Point.point2point(point = [0.1, 0.05], shape = [10,100], in_relative = False, to_relative = True, in_source = 'numpy', to_source = 'NUMPY', shape_source = Point.PointSource.Numpy)
+        Traceback (most recent call last):
+         Point._point2point(point = [0.1, 0.05], shape=[10,100],in_relative=False,to_relative=True, in_source='numpy', to_source='NUMPY', shape_source=Point.PointSource.Numpy)
+        ValueError: the input is  relative while in_relative is set to False
+        >>> Point.point2point(point = [0.1, 0.05], shape = [10,100], in_relative = True, to_relative = False, in_source = 'TF', to_source = 'tF', shape_source = Point.PointSource.Numpy)
+        [1.0, 5.0]
+        >>> Point.point2point(point = [1, 5], shape = [10,100], in_relative = True, to_relative=False, in_source = 'numPY', to_source = 'NUMPy', shape_source = Point.PointSource.Numpy)
+        Traceback (most recent call last):
+         Point._point2point(point = [1, 5], shape = [10,100], in_relative = True, to_relative = False, in_source = 'numPY', to_source = 'NUMPy', shape_source = Point.PointSource.Numpy)
+        ValueError: the input is not relative while in_relative is set to True
+        >>> Point.point2point(point = [1, 5], shape = [10,100], in_relative = False, to_relative = True, in_source = 'NUMPY', to_source = 'NUmpy', shape_source = Point.PointSource.Numpy)
+        [0.1, 0.05]
+        """
         if point is None or len(point) == 0:
             pass
         elif isinstance(point[0], (tuple, list, np.ndarray)):
@@ -51,8 +74,8 @@ class Point:
     @staticmethod
     def _point2point(
             point,
-            in_source,
-            to_source,
+            in_source: Union[str, PointSource],
+            to_source: Union[str, PointSource],
             in_relative=None,
             to_relative=None,
             shape=None,
@@ -62,43 +85,51 @@ class Point:
             in_source = in_source.value
         if isinstance(to_source, Point.PointSource):
             to_source = to_source.value
+        in_source = in_source.lower()
+        to_source = to_source.lower()
 
         if (
-                in_source in [Point.PointSource.Torch.value,
-                              Point.PointSource.CV.value]
-                and to_source in [Point.PointSource.TF.value, Point.PointSource.Numpy.value]
+                in_source in [Point.PointSource.Torch.value.lower(),
+                              Point.PointSource.CV.value.lower()]
+                and to_source in [Point.PointSource.TF.value.lower(), Point.PointSource.Numpy.value.lower()]
         ) or (
-                in_source in [Point.PointSource.TF.value,
-                              Point.PointSource.Numpy.value]
-                and to_source in [Point.PointSource.Torch.value, Point.PointSource.CV.value]
+                in_source in [Point.PointSource.TF.value.lower(),
+                              Point.PointSource.Numpy.value.lower()]
+                and to_source in [Point.PointSource.Torch.value.lower(), Point.PointSource.CV.value.lower()]
         ):
             point = (point[1], point[0])
         elif (
                 (in_source is None and to_source is None)
                 or in_source == to_source
                 or (
-                        in_source in [Point.PointSource.Torch.value,
-                                      Point.PointSource.CV.value]
+                        in_source in [Point.PointSource.Torch.value.lower(),
+                                      Point.PointSource.CV.value.lower()]
                         and to_source
-                        in [Point.PointSource.CV.value, Point.PointSource.Torch.value]
+                        in [Point.PointSource.CV.value, Point.PointSource.Torch.value.lower()]
                 )
                 or (
-                        in_source in [Point.PointSource.TF.value,
-                                      Point.PointSource.Numpy.value]
+                        in_source in [Point.PointSource.TF.value.lower(),
+                                      Point.PointSource.Numpy.value.lower()]
                         and to_source
-                        in [Point.PointSource.TF.value, Point.PointSource.Numpy.value]
+                        in [Point.PointSource.TF.value.lower(), Point.PointSource.Numpy.value.lower()]
                 )
         ):
             pass
         else:
             raise Exception(
-                f"Conversion form {in_source} to {to_source} is not Supported."
+                f"Conversion from {in_source} to {to_source} is not Supported."
                 f" Supported types: {Box._get_enum_names(Point.PointSource)}"
             )
         if to_source is not None and shape_source is not None and shape is not None:
             img_w, img_h = Point.point2point(
                 shape, in_source=shape_source, to_source=to_source
             )
+            if not in_relative:
+                if isinstance(point[0], float) or isinstance(point[1], float):
+                    raise ValueError(f"the input is  relative while in_relative is set to {in_relative}")
+            if in_relative:
+                if isinstance(point[0], int) or isinstance(point[1], int):
+                    raise ValueError(f"the input is not relative while in_relative is set to {in_relative}")
             if not in_relative and to_relative:
                 p1, p2 = point
                 point = [p1 / img_w, p2 / img_h]
@@ -385,7 +416,7 @@ class Box:
         return in_
 
     @staticmethod
-    def _get_enum_names(in_):
+    def get_enum_names(in_):
         return [n.name for n in in_]
 
     @staticmethod
@@ -932,3 +963,7 @@ class Box:
             img = Box._put_box_text(
                 img, box, label, color, txt_color, thickness)
         return img
+
+    @classmethod
+    def _get_enum_names(cls, PointSource):
+        pass
