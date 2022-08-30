@@ -45,9 +45,11 @@ class TorchAudioUtils:
             if save:
                 wave_path = resampled_path
 
-        resampler = T.Resample(
-            sample_rate, resample_rate, dtype=waveform.dtype)
-        resampled_waveform = resampler(waveform)
+        if sr != resample_rate:
+            resampler = T.Resample(sample_rate, resample_rate, dtype=waveform.dtype)
+            resampled_waveform = resampler(waveform)
+        else:
+            resampled_waveform = waveform
         if save:
             torchaudio.save(
                 wave_path,
