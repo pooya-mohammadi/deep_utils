@@ -8,6 +8,7 @@ import librosa
 import numpy as np
 from deep_utils.utils.pickle_utils.pickles import load_pickle
 from deep_utils.utils.logging_utils.logging_utils import log_print
+from deep_utils.audio.audio_utils.torchaudio_utils import TorchAudioUtils
 
 
 class AudioClassificationWav2vec2Torch:
@@ -38,7 +39,8 @@ class AudioClassificationWav2vec2Torch:
             waveform = torch.from_numpy(waveform).unsqueeze(0)
         else:
             waveform = wave
-        waveform = torchaudio.transforms.Resample(sr, self.sr)(waveform)
+        waveform = TorchAudioUtils.resample(waveform, sr, self.sr)
+        # waveform = torchaudio.transforms.Resample(sr, self.sr)(waveform)
         inputs = self.feature_extractor(waveform, sampling_rate=self.feature_extractor.sampling_rate,
                                         max_length=16000, truncation=True)
         tensor = torch.tensor(inputs['input_values'][0]).to(self.device)
