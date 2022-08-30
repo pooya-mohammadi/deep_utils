@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from torch.nn import Module
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
+from deep_utils.audio.audio_utils.torchaudio_utils import TorchAudioUtils
 
 
 class Wav2Vec2STTTorch:
@@ -11,12 +12,14 @@ class Wav2Vec2STTTorch:
         self.device = device
         self.sample_rate = sample_rate
         self.processor = Wav2Vec2Processor.from_pretrained(model_path)
-        self.model:Module = Wav2Vec2ForCTC.from_pretrained(
+        self.model: Module = Wav2Vec2ForCTC.from_pretrained(
             model_path).eval().to(self.device)
 
-    def stt(self, speech_array) -> str:
+    def stt(self, speech_array, sr) -> str:
         if len(speech_array.shape) == 2:
             speech_array = speech_array.squeeze(0)
+        if sr != self.sample_rate:
+            speech_array = TorchAudioUtils.resample(speech_array, sr, self.sample_rate)
         with torch.no_grad():
             input_values = self.processor(
                 speech_array, sampling_rate=self.sample_rate, return_tensors="pt"
