@@ -1,3 +1,6 @@
+from typing import Union
+
+
 def persian_num2english(input_string: str, reverse: bool = False):
     """
     Converts persian numbers to english
@@ -33,3 +36,32 @@ def arabic_char2fa_char(input_string: str):
     }
     out_string = "".join(arabic2persian.get(s, s) for s in input_string)
     return out_string
+
+
+def num2spoken(num_string: Union[str, int]):
+    """
+    converting string number to the spoken format
+    :param num_string:
+    :return:
+    >>> num2spoken("30")
+    'سی ام'
+    >>> num2spoken("21")
+    'بیست و یکم'
+    >>> num2spoken("۳۲")
+    'سی و دوم'
+    >>> num2spoken(2)
+    'دوم'
+    """
+    from num2fawords import words
+    num_string = str(num_string)
+    if num_string.isdigit():
+        written_num = words(num_string)
+        if written_num[-2:] == "سه":
+            written_num = written_num[:-2] + "سوم"
+        elif written_num[-1] in ["ی", ]:
+            written_num += " ام"
+        else:
+            written_num += "م"
+        return written_num
+    else:
+        return num_string
