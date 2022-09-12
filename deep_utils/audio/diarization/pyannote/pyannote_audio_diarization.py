@@ -23,7 +23,7 @@ class PyannoteAudioDiarization:
 
         log_print(logger, "Successfully Created Speaker Diarization!")
 
-    def __call__(self, wave, sr=None, logger=None, verbose=1):
+    def infer(self, wave, sr=None, logger=None, verbose=1):
         model_input = dict({"waveform": wave, "sample_rate": sr})
         wave_note = f"wave-shape: {wave.shape}, sr: {sr}"
         out = self.diarize_model(model_input)
@@ -36,15 +36,15 @@ class PyannoteAudioDiarization:
         log_print(logger, f"Successfully diarized wav-file: {wave_note} to {len(audio_segments)} segments")
         return indices, audio_segments
 
-    def diarize_file(self, wave_path, logger=None):
+    def infer_file(self, wave_path, logger=None):
         wave, sr = torchaudio.load(wave_path)
-        indices, audio_segments = self(wave=wave, sr=sr, logger=logger)
+        indices, audio_segments = self.infer(wave=wave, sr=sr, logger=logger)
         return indices, audio_segments
 
-    def diarize_group(self, audio_segments, sr, logger=None, verbose=1):
+    def infer_group(self, audio_segments, sr, logger=None, verbose=1):
         res_segments, suffix = [], []
         for i, audio_segment in enumerate(audio_segments):
-            indices, segments = self(audio_segment, sr=sr, logger=logger)
+            indices, segments = self.infer(audio_segment, sr=sr, logger=logger)
 
             if indices:
                 for j, (index, segment) in enumerate(zip(indices, segments)):
@@ -55,25 +55,3 @@ class PyannoteAudioDiarization:
                 suffix.append(f"{i:03}_{0:02}_S{0:02}")
         log_print(logger, f"Successfully diarized {len(suffix)} samples", verbose=verbose)
         return res_segments, suffix
-
-
-if __name__ == '__main__':
-    logger = get_logger("pyannote/diarize")
-    audio_diarization = PyannoteAudioDiarization(logger=logger, device="cpu")
-    audio_path = "/home/ai/projects/speech/dataset/irancel-voice-dataset/samples_01/all-data_segments/0809155/0809155_000_00_S00_F.wav"
-    indices, audio_segments = audio_diarization.diarize_file(audio_path, logger)
-    # audio_dirs = ["/home/ai/projects/speech/dataset/irancel-voice-dataset/activation_segments",
-    #               "/home/ai/projects/speech/dataset/irancel-voice-dataset/old-audios/general_segments",
-    #               "/home/ai/projects/speech/dataset/irancel-voice-dataset/old-audios/repairs_segments",
-    #               "/home/ai/projects/speech/dataset/irancel-voice-dataset/old-audios/arrival_segments"]
-    # for audio_dir in audio_dirs:
-    #     for speech_name in os.listdir(audio_dir):
-    #         speech_path = os.path.join(audio_dir, speech_name)
-    #         for wave_name in os.listdir(speech_path):
-    #             wave_path = os.path.join(speech_path, wave_name)
-    #             indices, audio_segments = audio_diarization.diarize_file(wave_path)
-    #             if indices:
-    #                 for j, (index, segment) in enumerate(zip(indices, audio_segments)):
-    #                     diarized_audio_path = split_extension(wave_path, suffix=f"_{j:02}_S{index:02}")
-    #                     torchaudio.save(diarized_audio_path, segment, 16000)
-    #                     log_print(logger, f"Successfully saved {segment.shape} to {diarized_audio_path}")
