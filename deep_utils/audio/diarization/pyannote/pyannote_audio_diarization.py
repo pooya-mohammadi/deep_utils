@@ -4,9 +4,6 @@ from deep_utils.audio.audio_utils.torchaudio_utils import TorchAudioUtils
 import torchaudio
 
 
-# from pyannote.audio.pipelines import SpeakerSegmentation
-
-
 class PyannoteAudioDiarization:
     def __init__(self, device="cpu", min_duration_on=1, max_duration_on=10, logger=None):
         self.max_duration_on = max_duration_on
