@@ -23,7 +23,7 @@ class ElasticsearchEngin:
         }
         suggest = {
             "my-suggestion": {
-                "text": text,
+                "field_value": text,
                 "term": {
                     "field": field_name
                 }
@@ -35,34 +35,34 @@ class ElasticsearchEngin:
             return text
         options = results['suggest']['my-suggestion'][0]['options']
         if len(options) == 0:
-            # return the exact text
+            # return the exact field_value
             return text
         else:
-            return options[0]['text']
+            return options[0]['field_value']
 
-    def full_search_w_parents(self, city, index_name, province_id, search_field, area_type_start=None):
-        _id, area_type = None, None
-        if area_type_start is None:
-            for area_type in self.down_to_top:
-                result = self.term_search(self.es, {search_field: city,
-                                                    "province_id": province_id,
-                                                    "area_type": area_type},
-                                          index_name=index_name)
-                _id, area_type = self._get_id(result, area_type=True)
-                if _id:
-                    break
-        else:
-            area_type = area_type_start
-            while True:
-                result = self.term_search(self.es, {search_field: city,
-                                                    "province_id": province_id,
-                                                    "area_type": area_type},
-                                          index_name=index_name)
-                _id, area_type = self._get_id(result, area_type=True)
-                area_type = self.area_type_parents[area_type]
-                if _id or area_type is None:
-                    break
-        return _id, area_type
+    # def full_search_w_parents(self, city, index_name, province_id, search_field, area_type_start=None):
+    #     _id, area_type = None, None
+    #     if area_type_start is None:
+    #         for area_type in self.down_to_top:
+    #             result = self.term_search(self.es, {search_field: city,
+    #                                                 "province_id": province_id,
+    #                                                 "area_type": area_type},
+    #                                       index_name=index_name)
+    #             _id, area_type = self._get_id(result, area_type=True)
+    #             if _id:
+    #                 break
+    #     else:
+    #         area_type = area_type_start
+    #         while True:
+    #             result = self.term_search(self.es, {search_field: city,
+    #                                                 "province_id": province_id,
+    #                                                 "area_type": area_type},
+    #                                       index_name=index_name)
+    #             _id, area_type = self._get_id(result, area_type=True)
+    #             area_type = self.area_type_parents[area_type]
+    #             if _id or area_type is None:
+    #                 break
+    #     return _id, area_type
 
     @staticmethod
     def get_index_value_hits(hits, index, field_name):
@@ -125,22 +125,37 @@ class ElasticsearchEngin:
 
     @staticmethod
     def get_geo_sort(x, y, field_name="location", order="asc"):
-        sort = {
-            "_geo_distance": {
-                field_name: [x, y],
-                "order": order,
-                "unit": "km"
+        if x and y:
+            geo_sort = {
+                "_geo_distance": {
+                    field_name: [x, y],
+                    "order": order,
+                    "unit": "km"
+                }
             }
-        }
+            sort = [geo_sort]
+        else:
+            sort = []
+
         return sort
 
     @staticmethod
     def get_sort_query(field_name, order="asc"):
-        sort = {
-            field_name: {
-                "order": order,
+        """
+        This function creates a sort request
+        :param field_name: The field to sort
+        :param order: the order. Default is asc.
+        :return:
+        """
+        if order and field_name:
+            sort = {
+                field_name: {
+                    "order": order,
+                }
             }
-        }
+            sort = [sort]
+        else:
+            sort = []
         return sort
 
     @staticmethod
@@ -181,32 +196,50 @@ class ElasticsearchEngin:
         query = {"bool": {"must": must_list}}
         return query
 
-    def search_bool_must_fuzzy_query(self, field_term_dict: dict,
+    def search_bool_must_fuzzy_query(self,
+                                     field_term_dict: dict,
                                      index_name: str,
                                      size: Union[int, None] = None):
         query = self.get_bool_must_fuzzy_query(field_term_dict)
         results = self.es.search(index=index_name, query=query, size=size)
+        hits = ElasticsearchEngin.get_hits(results)
+        return hits
+
+    @staticmethod
+    def get_hits(results):
+        """
+        This is a simple method to extract hits or return none when the output of the search has no hits
+        :param results:
+        :return:
+        """
         hits = results['hits']['hits']
         if len(hits) == 0:
-            return None
+            hits = None
         return hits
 
     def search_bool_must_fuzzy_query_geo_sort(self,
                                               field_term_dict: dict,
                                               index_name: str,
-                                              lat: float, lon: float,
+                                              lat: float,
+                                              lon: float,
+                                              geo_sort_field_name="location",
+                                              geo_sort_order="asc",
                                               size: Union[int, None] = None):
+        """
+        :param field_term_dict:
+        :param index_name:
+        :param lat:
+        :param lon:
+        :param geo_sort_field_name:
+        :param geo_sort_order:
+        :param size:
+        :return:
+        """
         assert lat is not None and lon is not None
         query = self.get_bool_must_fuzzy_query(field_term_dict)
-        if lat and lon:
-            geo_sort = self.get_geo_sort(lat, lon)
-            sort = [geo_sort]
-        else:
-            sort = []
+        sort = self.get_geo_sort(lat, lon, field_name=geo_sort_field_name, order=geo_sort_order)
         results = self.es.search(index=index_name, query=query, sort=sort, size=size).body
-        hits = results['hits']['hits']
-        if len(hits) == 0:
-            return None
+        hits = self.get_hits(results)
         return hits
 
     def get_bool_must_constant_score_query_geo_sort(self,
@@ -216,49 +249,152 @@ class ElasticsearchEngin:
                                                     size: Union[int, None] = None):
         assert lat is not None and lon is not None
         query = self.get_bool_must_constant_score_query(field_term_dict)
-        if lat and lon:
-            geo_sort = self.get_geo_sort(lat, lon)
-            sort = [geo_sort]
-        else:
-            sort = []
+        sort = self.get_geo_sort(lat, lon)
         results = self.es.search(index=index_name, query=query, sort=sort, size=size).body
-        hits = results['hits']['hits']
-        if len(hits) == 0:
-            return None
+        hits = self.get_hits(results)
         return hits
 
-    def search_bool_must_fuzzy_query_range_sort(self,
-                                                field_term_dict: dict,
-                                                index_name: str,
-                                                sort_filed: str, sort_order: str = "asc",
-                                                size: Union[int, None] = None):
+    def search_bool_must_fuzzy_query_sort(self,
+                                          field_term_dict: dict,
+                                          index_name: str,
+                                          sort_filed: str,
+                                          sort_order: str = "asc",
+                                          size: Union[int, None] = None):
+        """
+        This method searches based on fuzzy based
+        GET iran-roads/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "fuzzy": {
+            "file-name": {
+              "value": "field-value"
+            }
+          }
+        },
+        {
+          "fuzzy": {
+            "file-name-2": {
+              "value": "field-value-2"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "sort-field-name": {
+        "order": "desc"
+      }
+    }
+  ]
+}
+        :param field_term_dict:
+        :param index_name:
+        :param sort_filed:
+        :param sort_order:
+        :param size:
+        :return:
+        """
         assert sort_filed is not None and sort_order is not None
         query = self.get_bool_must_fuzzy_query(field_term_dict)
-        if sort_order and sort_filed:
-            sort_query = self.get_sort_query(field_name=sort_filed, order=sort_order)
-            sort = [sort_query]
-        else:
-            sort = []
+        sort = self.get_sort_query(field_name=sort_filed, order=sort_order)
         results = self.es.search(index=index_name, query=query, sort=sort, size=size).body
-        hits = results['hits']['hits']
-        if len(hits) == 0:
-            return None
+        hits = self.get_hits(results)
         return hits
 
     def search_bool_must_fuzzy_constant_score_range_sort(self,
                                                          field_term_dict: dict,
                                                          index_name: str,
-                                                         sort_filed: str, sort_order: str = "asc",
+                                                         sort_filed: str,
+                                                         sort_order: str = "asc",
                                                          size: Union[int, None] = None):
         assert sort_filed is not None and sort_order is not None
         query = self.get_bool_must_constant_score_query(field_term_dict)
-        if sort_order and sort_filed:
-            sort_query = self.get_sort_query(field_name=sort_filed, order=sort_order)
-            sort = [sort_query]
-        else:
-            sort = []
+        sort = self.get_sort_query(field_name=sort_filed, order=sort_order)
         results = self.es.search(index=index_name, query=query, sort=sort, size=size).body
-        hits = results['hits']['hits']
-        if len(hits) == 0:
-            return None
+        hits = ElasticsearchEngin.get_hits(results)
+        return hits
+
+    @staticmethod
+    def get_match_query(field_name,
+                        field_value,
+                        ):
+        """
+        This function is used to get query-match. It will simply return query-match json
+        :param field_name:
+        :param field_value:
+        :return:
+        """
+        query = {
+            "match": {
+                field_name: field_value
+            }
+        }
+        return query
+
+    def search_query_match_sort(self, index_name, field_name, field_value, sort_field_name, sort_order, size=None):
+        """
+        This method is used to do a simple query match with sort.
+
+        :param index_name:
+        :param field_name:
+        :param field_value:
+        :param sort_field_name:
+        :param sort_order:
+        :param size:
+        :return:
+        """
+        query_match = ElasticsearchEngin.get_match_query(field_name, field_value)
+        sort = ElasticsearchEngin.get_sort_query(field_name=sort_field_name, order=sort_order)
+        results = self.es.search(index=index_name, query=query_match, sort=sort, size=size).body
+        hits = ElasticsearchEngin.get_hits(results)
+        return hits
+
+    def search_query_match_geo_sort(self, index_name, field_name, field_value, geo_sort_field_name, geo_sort_order, lat,
+                                    lon,
+                                    size=None):
+        """
+        This method is used to do a simple query match with geo_sort.
+
+        :param index_name:
+        :param field_name:
+        :param field_value:
+        :param geo_sort_field_name:
+        :param geo_sort_order:
+        :param lat:
+        :param lon:
+        :param size:
+        :return:
+        """
+        query_match = ElasticsearchEngin.get_match_query(field_name, field_value)
+        geo_sort = ElasticsearchEngin.get_geo_sort(lat, lon, geo_sort_field_name, geo_sort_order)
+        results = self.es.search(index=index_name, query=query_match, sort=geo_sort, size=size).body
+        hits = ElasticsearchEngin.get_hits(results)
+        return hits
+
+    def search_query_match_sort_geo_sort(self, index_name, field_name, field_value, geo_sort_field_name, geo_sort_order,
+                                         sort_field_name, sort_order, lat, lon, size=None):
+        """
+        This method is used to do a simple query match with geo_sort plus a usual sort
+        :param index_name:
+        :param field_name:
+        :param field_value:
+        :param geo_sort_field_name:
+        :param geo_sort_order:
+        :param sort_field_name:
+        :param sort_order:
+        :param lat:
+        :param lon:
+        :param size:
+        :return:
+        """
+        query_match = ElasticsearchEngin.get_match_query(field_name, field_value)
+        geo_sort = ElasticsearchEngin.get_geo_sort(lat, lon, geo_sort_field_name, geo_sort_order)
+        sort = ElasticsearchEngin.get_sort_query(field_name=sort_field_name, order=sort_order)
+        results = self.es.search(index=index_name, query=query_match, sort=geo_sort + sort, size=size).body
+        hits = ElasticsearchEngin.get_hits(results)
         return hits
