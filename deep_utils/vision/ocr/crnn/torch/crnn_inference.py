@@ -32,10 +32,12 @@ class CRNNInferenceTorch:
         self.transformer = state_dict['val_transform']
         del state_dict
 
-    def infer(self, img: Union[str, Path, np.ndarray], get_string=True):
+    def infer(self, img: Union[str, Path, np.ndarray], get_string=True, mean_min_conf: int = 0):
         """
         :param img:
-        :param get_string: Get the string,
+        :param get_string: Get the string
+        :param mean_min_conf: If set to a value larger than zero, returns the mean of the least probabilities.
+        It's a good indicator for showing mode's strength and the confidence of the model!
         :return:
         """
         if isinstance(img, np.ndarray):
@@ -44,12 +46,22 @@ class CRNNInferenceTorch:
             img = Image.open(img)
         image = self.transformer(img)
         image = image.view(1, *image.size())
-        with torch.no_grad():
-            preds = self.model(image).cpu().squeeze(1).numpy()
-        sim_pred = CTCDecoder.ctc_decode(preds, decoder_name=self.decode_method, label2char=self.label2char)
+        if mean_min_conf > 0:
+            with torch.no_grad():
+                logits, probabilities = self.model(image, return_cls=True)
+                logits = logits.cpu().squeeze(1).numpy()
+                probabilities = probabilities.cpu().squeeze(1)
+            conf = torch.mean(torch.sort(torch.max(probabilities[torch.argmax(probabilities, dim=1).to(torch.bool)], dim=1)[0])[0][:mean_min_conf]).item()
+        else:
+            with torch.no_grad():
+                logits = self.model(image).cpu().squeeze(1).numpy()
+        sim_pred = CTCDecoder.ctc_decode(logits, decoder_name=self.decode_method, label2char=self.label2char)
         if get_string:
             sim_pred = "".join(sim_pred)
-        return sim_pred
+        if mean_min_conf > 0:
+            return sim_pred, conf
+        else:
+            return sim_pred
 
     def infer_group(self, images: Union[List[np.ndarray]]):
         images = TorchVisionUtils.transform_concatenate_images(images, self.transformer, device=self.device)

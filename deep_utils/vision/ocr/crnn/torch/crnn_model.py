@@ -6,10 +6,9 @@ from deep_utils.blocks.torch.blocks_torch import BlocksTorch
 
 class CRNNModelTorch(nn.Module):
 
-    def __init__(self, img_h, n_channels, n_classes, n_hidden, lstm_input=64, return_cls=False):
+    def __init__(self, img_h, n_channels, n_classes, n_hidden, lstm_input=64):
         super(CRNNModelTorch, self).__init__()
-        assert img_h % 16 == 0, 'imgH has to be a multiple of 16'
-        self.return_cls = return_cls
+        assert img_h % 16 == 0, 'img_h has to be a multiple of 16'
 
         block_0 = BlocksTorch.conv_norm_act(n_channels, 64, pooling='max')
         block_1 = BlocksTorch.conv_norm_act(64, 128, pooling='max')
@@ -40,7 +39,7 @@ class CRNNModelTorch(nn.Module):
             torch.nn.init.xavier_uniform(m.weight)
             m.bias.data.fill_(0.01)
 
-    def forward(self, input):
+    def forward(self, input, return_cls=False):
         # conv features
         conv = self.cnn(input)
         batch_size, channels, h, w = conv.shape
@@ -54,7 +53,7 @@ class CRNNModelTorch(nn.Module):
         cls = self.classifier(rnn_output)
         # add log_softmax to converge output
         output = F.log_softmax(cls, dim=2)
-        if self.return_cls:
+        if return_cls:
             return output, F.softmax(cls, 2)
 
         return output
