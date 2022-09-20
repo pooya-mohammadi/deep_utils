@@ -1,7 +1,10 @@
+from deep_utils.utils.opencv_utils.main import show_destroy_cv2
+
+
 class AugmentTorch:
     @staticmethod
     def random_resized_crop(
-        size, scale=(0.08, 1.0), ratio=(3.0 / 4.0, 4.0 / 3.0), interpolation="BILINEAR"
+            size, scale=(0.08, 1.0), ratio=(3.0 / 4.0, 4.0 / 3.0), interpolation="BILINEAR"
     ):
         from torchvision import transforms
 
@@ -33,14 +36,14 @@ class AugmentTorch:
 
     @staticmethod
     def random_affine(
-        degrees,
-        translate=None,
-        scale=None,
-        shear=None,
-        interpolation="NEAREST",
-        fill=0,
-        fillcolor=None,
-        resample=None,
+            degrees,
+            translate=None,
+            scale=None,
+            shear=None,
+            interpolation="NEAREST",
+            fill=0,
+            fillcolor=None,
+            resample=None,
     ):
         from torchvision import transforms
 
@@ -61,12 +64,12 @@ class AugmentTorch:
 
     @staticmethod
     def random_rotation(
-        degrees,
-        interpolation="NEAREST",
-        expand=False,
-        center=None,
-        fill=0,
-        resample=None,
+            degrees,
+            interpolation="NEAREST",
+            expand=False,
+            center=None,
+            fill=0,
+            resample=None,
     ):
         from torchvision import transforms
 
@@ -91,7 +94,7 @@ class AugmentTorch:
 
     @staticmethod
     def random_erasing(
-        p=0.5, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False
+            p=0.5, scale=(0.02, 0.33), ratio=(0.3, 3.3), value=0, inplace=False
     ):
         from torchvision import transforms
 
@@ -127,7 +130,7 @@ class AugmentTorch:
 
     @staticmethod
     def random_crop(
-        size, padding=None, pad_if_needed=False, fill=0, padding_mode="constant"
+            size, padding=None, pad_if_needed=False, fill=0, padding_mode="constant"
     ):
         from torchvision import transforms
 
@@ -141,7 +144,7 @@ class AugmentTorch:
 
     @staticmethod
     def random_perspective(
-        distortion_scale=0.5, p=0.5, interpolation="BILINEAR", fill=0
+            distortion_scale=0.5, p=0.5, interpolation="BILINEAR", fill=0
     ):
         from torchvision import transforms
 
@@ -246,3 +249,17 @@ def tensor_to_image(tensor, mean=None, std=None, return_array=True):
     if return_array:
         image = np.array(image)
     return image
+
+
+def visualize_data_loader(data_loader, mean, std):
+    """
+    This function is used to convert tensor images to numpy images that will be shown by opencv!
+    :param data_loader:
+    :param mean:
+    :param std:
+    :return:
+    """
+    for x_data, *_ in data_loader:
+        for image_tensor in x_data:
+            cv2_image = tensor_to_image(image_tensor, mean, std)
+            show_destroy_cv2(cv2_image)
