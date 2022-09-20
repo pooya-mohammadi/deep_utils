@@ -1,8 +1,10 @@
+import os.path
 from pathlib import Path
 from typing import Union, List
 import numpy as np
 import torch
 from PIL import Image
+import cv2
 from .crnn_model import CRNNModelTorch
 from deep_utils.utils.ctc_decoder.ctc_decoder import CTCDecoder
 from deep_utils.vision.vision_utils.torch_vision_utils.torch_vision_utils import TorchVisionUtils
@@ -41,17 +43,21 @@ class CRNNInferenceTorch:
         :return:
         """
         if isinstance(img, np.ndarray):
-            img = Image.fromarray(img)
+            pass
+        elif os.path.isfile(img):
+            img = cv2.imread(img)[..., ::-1]
         else:
-            img = Image.open(img)
-        image = self.transformer(img)
+            raise ValueError(f"The input image:{img} is invalid")
+        image = self.transformer(image=img)['image'][0:1, ...]
         image = image.view(1, *image.size())
         if mean_min_conf > 0:
             with torch.no_grad():
                 logits, probabilities = self.model(image, return_cls=True)
                 logits = logits.cpu().squeeze(1).numpy()
                 probabilities = probabilities.cpu().squeeze(1)
-            conf = torch.mean(torch.sort(torch.max(probabilities[torch.argmax(probabilities, dim=1).to(torch.bool)], dim=1)[0])[0][:mean_min_conf]).item()
+            conf = torch.mean(
+                torch.sort(torch.max(probabilities[torch.argmax(probabilities, dim=1).to(torch.bool)], dim=1)[0])[0][
+                :mean_min_conf]).item()
         else:
             with torch.no_grad():
                 logits = self.model(image).cpu().squeeze(1).numpy()
