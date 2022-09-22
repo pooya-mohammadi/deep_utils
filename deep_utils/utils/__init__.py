@@ -33,4 +33,5 @@ from .object_utils import *
 from .torch_utils import *
 from .shutil_utils import *
 from .json_utils import *
+from .requests_utils import *
 from .utils import *
