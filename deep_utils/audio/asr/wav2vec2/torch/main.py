@@ -31,11 +31,11 @@ class Wav2Vec2STTTorch:
 
     def stt_file(self, file_path) -> Tuple[np.ndarray, float, str]:
         speech, sr = librosa.load(file_path, self.sample_rate)
-        return speech, sr, self.stt(speech)
+        return speech, sr, self.stt(speech, sr)
 
-    def stt_group(self, audio_segments) -> List[str]:
+    def stt_group(self, audio_segments, sr) -> List[str]:
         texts = []
         for audio in audio_segments:
-            text = self.stt(audio)
+            text = self.stt(audio, sr)
             texts.append(text)
         return texts
