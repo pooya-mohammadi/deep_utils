@@ -7,7 +7,7 @@ try:
 
     long_description = pypandoc.convert("Readme.md", "rst")
 except (IOError, ImportError):
-    long_description = open("Readme.md", mode="r").read()
+    long_description = open("Readme.md", mode="r", encoding="utf-8").read()
 
 # Module dependencies
 dependency_links = []
