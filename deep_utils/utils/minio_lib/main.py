@@ -60,7 +60,7 @@ class MinIOUtils:
         :param logger: a logger instance
         :return:
         """
-        MinIOUtils.find_create_bucket(bucket_name, create, logger, minio_client)
+        MinIOUtils.create_bucket(minio_client, bucket_name, create, logger, )
         try:
             length = len(data.read())
             data.seek(0)
@@ -100,7 +100,7 @@ class MinIOUtils:
         :param logger: a logger instance
         :return:
         """
-        MinIOUtils.find_create_bucket(bucket_name, create, logger, minio_client)
+        MinIOUtils.create_bucket(minio_client, bucket_name, create, logger)
 
         result = minio_client.fput_object(
             bucket_name,
@@ -114,7 +114,7 @@ class MinIOUtils:
         return result
 
     @staticmethod
-    def find_create_bucket(bucket_name, create, logger, minio_client):
+    def create_bucket(minio_client, bucket_name, create=True, logger=None):
         """
         This method is used to find the requested bucket and create it in case the user desires it.
         :param bucket_name:
