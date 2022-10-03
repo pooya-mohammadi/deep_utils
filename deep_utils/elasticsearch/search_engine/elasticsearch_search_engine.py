@@ -15,6 +15,57 @@ class ElasticsearchEngin:
             value_error_log(logger, "url or es instance are not provided")
         self.verbose = verbose
 
+    def get_bool_must_match_all_geo_filter(self, index_name, lat, lon, distance, scale="km"):
+        """
+        GET index-name/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match_all": {}
+      },
+      "filter": {
+        "geo_distance": {
+          "distance": "0.1km",
+          "location": {
+            "lat": 35.7041126,
+            "lon": 51.4629228
+          }
+        }
+      }
+    }
+  }
+}
+        :param index_name:
+        :param lat:
+        :param lon:
+        :param distance:
+        :param scale:
+        :return:
+        """
+        query = {
+            "bool": {
+                "must": self.get_match_query(keyword="match_all"),
+                "filter": self.get_geo_filter(lat, lon, distance, scale=scale)
+            }
+        }
+        results = self.es.search(index=index_name, query=query)
+        hits = ElasticsearchEngin.get_hits(results)
+        return hits
+
+    @staticmethod
+    def get_geo_filter(lat, lon, distance, scale="km"):
+        filter_ = {
+            "geo_distance": {
+                "distance": f"{distance}{scale}",
+                "location": {
+                    "lat": lat,
+                    "lon": lon
+                }
+            }
+        }
+        return filter_
+
     def get_suggestion_output(self, text, field_name, index_name="tehran-roads-centers"):
         query = {
             "match": {
