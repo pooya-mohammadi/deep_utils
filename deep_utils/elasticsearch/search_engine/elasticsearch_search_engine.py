@@ -6,9 +6,9 @@ from deep_utils.utils.json_utils.json_utils import dump_json
 
 
 class ElasticsearchEngin:
-    def __init__(self, elastic_url="http://localhost:9200", es=None, logger=None, verbose=1):
+    def __init__(self, elastic_url="http://localhost:9200", es=None, timeout=10, logger=None, verbose=1):
         if es is None:
-            self.es = Elasticsearch(elastic_url)
+            self.es = Elasticsearch(elastic_url, timeout=timeout)
         elif isinstance(es, Elasticsearch):
             self.es = es
         else:
@@ -319,21 +319,38 @@ class ElasticsearchEngin:
         hits = ElasticsearchEngin.get_hits(results)
         return hits
 
+    def get_match_all_geo_sort_query(self, index_name, lat, lon, sort_field="location", sort_order="asc", size=1):
+        query = self.get_match_query(keyword="match_all")
+        sort = self.get_geo_sort(lat, lon, field_name=sort_field, order=sort_order)
+        results = self.es.search(index=index_name, query=query, sort=sort, size=size).body
+        hits = ElasticsearchEngin.get_hits(results)
+        return hits
+
     @staticmethod
-    def get_match_query(field_name,
-                        field_value,
+    def get_match_query(field_name="",
+                        field_value="",
+                        keyword="match",
                         ):
         """
         This function is used to get query-match. It will simply return query-match json
         :param field_name:
         :param field_value:
+        :param keyword:
         :return:
         """
-        query = {
-            "match": {
-                field_name: field_value
+        if keyword == "match":
+
+            query = {
+                keyword: {
+                    field_name: field_value
+                }
             }
-        }
+        elif keyword == "match_all":
+            query = {
+                keyword: {}
+            }
+        else:
+            raise ValueError(f"keyword: {keyword} is not valid!")
         return query
 
     def search_query_match_sort(self, index_name, field_name, field_value, sort_field_name, sort_order, size=None):
