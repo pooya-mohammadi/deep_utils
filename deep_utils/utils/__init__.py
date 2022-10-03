@@ -36,4 +36,5 @@ from .json_utils import *
 from .requests_utils import *
 from .postgresql_utils import *
 from .kafka_utils import *
+from .download_utils import *
 from .utils import *
