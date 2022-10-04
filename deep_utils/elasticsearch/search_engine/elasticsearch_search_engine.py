@@ -15,7 +15,7 @@ class ElasticsearchEngin:
             value_error_log(logger, "url or es instance are not provided")
         self.verbose = verbose
 
-    def get_bool_must_match_all_geo_filter(self, index_name, lat, lon, distance, scale="km"):
+    def get_bool_must_match_all_geo_filter(self, index_name, lat, lon, distance, scale="km", size=10):
         """
         GET index-name/_search
 {
@@ -41,6 +41,7 @@ class ElasticsearchEngin:
         :param lon:
         :param distance:
         :param scale:
+        :param size:
         :return:
         """
         query = {
@@ -49,7 +50,7 @@ class ElasticsearchEngin:
                 "filter": self.get_geo_filter(lat, lon, distance, scale=scale)
             }
         }
-        results = self.es.search(index=index_name, query=query)
+        results = self.es.search(index=index_name, query=query, size=size)
         hits = ElasticsearchEngin.get_hits(results)
         return hits
 
