@@ -92,30 +92,6 @@ class ElasticsearchEngin:
         else:
             return options[0]['field_value']
 
-    # def full_search_w_parents(self, city, index_name, province_id, search_field, area_type_start=None):
-    #     _id, area_type = None, None
-    #     if area_type_start is None:
-    #         for area_type in self.down_to_top:
-    #             result = self.term_search(self.es, {search_field: city,
-    #                                                 "province_id": province_id,
-    #                                                 "area_type": area_type},
-    #                                       index_name=index_name)
-    #             _id, area_type = self._get_id(result, area_type=True)
-    #             if _id:
-    #                 break
-    #     else:
-    #         area_type = area_type_start
-    #         while True:
-    #             result = self.term_search(self.es, {search_field: city,
-    #                                                 "province_id": province_id,
-    #                                                 "area_type": area_type},
-    #                                       index_name=index_name)
-    #             _id, area_type = self._get_id(result, area_type=True)
-    #             area_type = self.area_type_parents[area_type]
-    #             if _id or area_type is None:
-    #                 break
-    #     return _id, area_type
-
     @staticmethod
     def get_index_value_hits(hits, index, field_name):
         if not hits:
@@ -157,23 +133,6 @@ class ElasticsearchEngin:
 
         results = es_client.search(index=index_name, query=query)
         return results.body
-
-    # def search_query_sort(self, field_term_dict, lat=None, lon=None, index_name:str):
-    #     query = self.get_bool_must_constant_score_query(field_term_dict)
-    #     if lat and lon:
-    #         geo_sort = self.get_geo_sort(lat, lon)
-    #         sort = [geo_sort]
-    #     else:
-    #         fclass_lev_sort = self.get_sort("fclass_lev")
-    #         sort = [fclass_lev_sort]
-    #     results = self.es.search(index=index_name, query=query, sort=sort).body
-    #     hits = results['hits']['hits']
-    #     if len(hits) == 0:
-    #         return None
-    #     source = hits[0]['_source']
-    #     location = source['location']
-    #     full_address = source['address']
-    #     return location["lat"], location['lon'], full_address
 
     @staticmethod
     def get_geo_sort(x, y, field_name="location", order="asc"):
@@ -232,6 +191,24 @@ class ElasticsearchEngin:
 
     @staticmethod
     def get_bool_must_fuzzy_query(field_term_dict: Dict[str, str]):
+        """
+        This method is used for getting a must query in fuzzy mode
+        GET index-name/_search
+        {
+        "query":
+            {"bool":
+                {"must":
+                    [{
+                    "fuzzy":
+                    {"field-name": {"value": "field-value"}}
+                    }]
+                }
+            }
+        }
+
+        :param field_term_dict:
+        :return:
+        """
         must_list = []
         for field, term in field_term_dict.items():
             if term is None:
@@ -252,6 +229,26 @@ class ElasticsearchEngin:
                                      field_term_dict: dict,
                                      index_name: str,
                                      size: Union[int, None] = None):
+        """
+        This method is used for searching a must query in fuzzy mode with size
+        GET index-name/_search
+        {
+        "query":
+            {"bool":
+                {"must":
+                    [{
+                    "fuzzy":
+                    {"field-name": {"value": "field-value"}}
+                    }]
+                }
+            },
+            "size": size
+        }
+        :param field_term_dict:
+        :param index_name:
+        :param size:
+        :return:
+        """
         query = self.get_bool_must_fuzzy_query(field_term_dict)
         results = self.es.search(index=index_name, query=query, size=size)
         hits = ElasticsearchEngin.get_hits(results)
