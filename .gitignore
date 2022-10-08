@@ -16,3 +16,5 @@ dog.jpg
 *.cfg
 *.jpg
 build
+remove.py
+to_be_removed.py
