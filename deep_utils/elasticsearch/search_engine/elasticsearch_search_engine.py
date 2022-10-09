@@ -1,6 +1,7 @@
 import os
-from typing import Dict, Union
-from elasticsearch import Elasticsearch
+import random
+from typing import Dict, Union, List
+from elasticsearch import Elasticsearch, NotFoundError
 from deep_utils.utils.logging_utils.logging_utils import value_error_log
 from deep_utils.utils.json_utils.json_utils import dump_json
 
@@ -255,6 +256,67 @@ class ElasticsearchEngin:
         return hits
 
     @staticmethod
+    def get_query_multi_match_fuzzy(query_value: str,
+                                    field_names: List[str],
+                                    fuzziness: Union[int, str] = "AUTO"):
+        """
+        This method is used to get the query for multi_match which is used for searching a query value in various
+        fields. The fuzziness is set to AUTO to compensate for spelling errors
+        "query": {
+            "multi_match" : {
+              "query":    "query-val",
+              "fields": [ "field-1", "field-2" ] ,
+              "fuzziness": "AUTO"
+            }
+        }
+        :param query_value:
+        :param field_names:
+        :param fuzziness: AUTO by default
+        :return:
+        """
+
+        query = {
+            "multi_match": {
+                "query": query_value,
+                "fields": field_names,
+                "fuzziness": fuzziness
+            }
+        }
+        return query
+
+    def search_query_multi_match_fuzzy(self,
+                                       index_name: str,
+                                       query_value: str,
+                                       field_names: List[str],
+                                       fuzziness: Union[int, str] = "AUTO",
+                                       size: Union[int, None] = None):
+        """
+        This method is used to get the query for multi_match which is used for searching a query value in various
+        fields. The fuzziness is set to AUTO to compensate for spelling errors
+        GET index-name/_search
+        {
+            "query": {
+                "multi_match" : {
+                  "query":    "query-val",
+                  "fields": [ "field-1", "field-2" ] ,
+                  "fuzziness": "AUTO"
+                }
+            },
+            "size": size
+        }
+        :param index_name:
+        :param query_value:
+        :param field_names:
+        :param fuzziness: set to AUTO
+        :param size:
+        :return:
+        """
+        query = self.get_query_multi_match_fuzzy(query_value=query_value, field_names=field_names, fuzziness=fuzziness)
+        results = self.es.search(index=index_name, query=query, size=size)
+        hits = ElasticsearchEngin.get_hits(results)
+        return hits
+
+    @staticmethod
     def get_hits(results):
         """
         This is a simple method to extract hits or return none when the output of the search has no hits
@@ -275,6 +337,7 @@ class ElasticsearchEngin:
                                               geo_sort_order="asc",
                                               size: Union[int, None] = None):
         """
+        This method is used for query-fuzzy search plus geo sort
         :param field_term_dict:
         :param index_name:
         :param lat:
@@ -402,6 +465,20 @@ class ElasticsearchEngin:
             raise ValueError(f"keyword: {keyword} is not valid!")
         return query
 
+    def search_match_query(self, index_name, field_name="", field_value="", keyword="match", size=None):
+        query = self.get_match_query(field_name=field_name, field_value=field_value, keyword=keyword)
+        results = self.es.search(index=index_name, query=query, size=size).body
+        hits = ElasticsearchEngin.get_hits(results)
+        return hits
+
+    def search_by_id(self, index_name, id_value, id_field_name="_id") -> Union[dict, None]:
+        hits = self.search_match_query(index_name, field_name=id_field_name, field_value=id_value, keyword="match",
+                                       size=1)
+        if len(hits) == 1:
+            return hits[0]["_source"]
+        else:
+            return None
+
     def search_query_match_sort(self, index_name, field_name, field_value, sort_field_name, sort_order, size=None):
         """
         This method is used to do a simple query match with sort.
@@ -464,3 +541,66 @@ class ElasticsearchEngin:
         results = self.es.search(index=index_name, query=query_match, sort=geo_sort + sort, size=size).body
         hits = ElasticsearchEngin.get_hits(results)
         return hits
+
+    def update_by_id_add_new_field(self, index_name, id_, new_field_name, new_field_value, scripted_upsert=False,
+                                   detect_noop=False):
+        """
+        This adds a new field to an existing document!
+        POST test/_update/1
+        {
+          "script" : "ctx._source.new_field = 'value_of_new_field'"
+        }
+
+
+        :param index_name:
+        :param id_:
+        :param new_field_name:
+        :param new_field_value:
+        :param scripted_upsert:
+        :param detect_noop:
+        :return:
+        """
+        script = f"ctx._source.{new_field_name} = '{new_field_value}'"
+        result = self.es.update(index=index_name,
+                                id=id_,
+                                detect_noop=detect_noop,
+                                scripted_upsert=scripted_upsert,
+                                script=script)
+        return result
+
+    def update_by_id_remove_field(self, index_name, id_, remove_field_name, scripted_upsert=False,
+                                  detect_noop=False):
+        """
+        This adds a new field to an existing document!
+        POST test/_update/1
+        {
+            "script" : "ctx._source.remove('new_field')"
+        }
+
+        :param index_name:
+        :param id_:
+        :param remove_field_name:
+        :param scripted_upsert:
+        :param detect_noop:
+        :return:
+        """
+        script = f"ctx._source.remove('{remove_field_name}')"
+        result = self.es.update(index=index_name,
+                                id=id_,
+                                detect_noop=detect_noop,
+                                scripted_upsert=scripted_upsert,
+                                script=script)
+        return result
+
+    def check_index_exists(self, index_name):
+        """
+        Checks whether this index exists or not !
+        :param index_name:
+        :return:
+        """
+        try:
+            self.es.get(index=index_name, id="an id that might not be chosen by someone!")
+        except NotFoundError as e:
+            if e.message == "index_not_found_exception":
+                return False
+        return True
