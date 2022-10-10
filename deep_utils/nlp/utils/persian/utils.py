@@ -38,9 +38,10 @@ def arabic_char2fa_char(input_string: str):
     return out_string
 
 
-def num2spoken(num_string: Union[str, int]):
+def num2fa_spoken(num_string: Union[str, int]):
     """
-    converting string number to the spoken format
+    converting string number to the spoken format. This function converts both persian and english workds to persian
+    spoken words
     :param num_string:
     :return:
     >>> num2spoken("30")
