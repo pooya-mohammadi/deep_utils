@@ -44,13 +44,13 @@ def num2fa_spoken(num_string: Union[str, int]):
     spoken words
     :param num_string:
     :return:
-    >>> num2spoken("30")
+    >>> num2fa_spoken("30")
     'سی ام'
-    >>> num2spoken("21")
+    >>> num2fa_spoken("21")
     'بیست و یکم'
-    >>> num2spoken("۳۲")
+    >>> num2fa_spoken("۳۲")
     'سی و دوم'
-    >>> num2spoken(2)
+    >>> num2fa_spoken(2)
     'دوم'
     """
     from num2fawords import words
