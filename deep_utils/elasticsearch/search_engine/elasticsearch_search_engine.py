@@ -592,15 +592,21 @@ class ElasticsearchEngin:
                                 script=script)
         return result
 
-    def check_index_exists(self, index_name):
+    def check_index_exists(self, index_name, create=False, es_mapping=Union[dict, None]):
         """
-        Checks whether this index exists or not !
+        Checks whether this index exists or not
         :param index_name:
+        :param create: If set to true creates the index
+        :param es_mapping:
         :return:
         """
         try:
             self.es.get(index=index_name, id="an id that might not be chosen by someone!")
         except NotFoundError as e:
             if e.message == "index_not_found_exception":
+                if create:
+                    self.es.indices.create(index=index_name, mappings=es_mapping)
+                    # After being created return True:)
+                    return True
                 return False
         return True
