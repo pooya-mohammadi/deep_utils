@@ -210,6 +210,22 @@ class ElasticsearchEngin:
         :param field_term_dict:
         :return:
         """
+        must_list = ElasticsearchEngin.get_fuzzy_values(field_term_dict)
+
+        query = {"bool": {"must": must_list}}
+        return query
+
+    @staticmethod
+    def get_fuzzy_values(field_term_dict):
+        """
+        Returns the fuzzy values:
+        [
+         {"fuzzy": {"value_1": {"value": "value"}}},
+         {"fuzzy": {"value_1": {"value": "value"}}}
+        ]
+        :param field_term_dict:
+        :return:
+        """
         must_list = []
         for field, term in field_term_dict.items():
             if term is None:
@@ -222,9 +238,7 @@ class ElasticsearchEngin:
                 }
             }
             must_list.append(inner_query)
-
-        query = {"bool": {"must": must_list}}
-        return query
+        return must_list
 
     def search_bool_must_fuzzy_query(self,
                                      field_term_dict: dict,
@@ -264,6 +278,7 @@ class ElasticsearchEngin:
         fields. The fuzziness is set to AUTO to compensate for spelling errors
         "query": {
             "multi_match" : {
+            "type": best_fields,
               "query":    "query-val",
               "fields": [ "field-1", "field-2" ] ,
               "fuzziness": "AUTO"
@@ -279,10 +294,64 @@ class ElasticsearchEngin:
             "multi_match": {
                 "query": query_value,
                 "fields": field_names,
-                "fuzziness": fuzziness
+                "fuzziness": fuzziness,
+                "type": "best_fields"
             }
         }
         return query
+
+    def search_query_bool_must_multi_match_fuzzy(self,
+                                                 index_name,
+                                                 multi_match_query_value,
+                                                 multi_match_field_names,
+                                                 fuzzy_field_term_dict: dict,
+                                                 size=None,
+                                                 ):
+        """
+        GET index-name/_search
+{
+  "query": {
+    "bool": {
+      "must": [{
+        "multi_match": {
+          "query": multi_match_query_value,
+          "type": "best_fields",
+          "fields": multi_match_field_names,
+          "fuzziness": "AUTO"
+        }
+      },
+      {
+        "fuzzy": {
+          "value_1": {"value": "value"}
+        }
+      },
+      {
+        "fuzzy": {
+          "value_2": {"value": "value"}
+        }
+      }
+      ...
+      ]
+    }
+  }
+}
+        :param index_name:
+        :param multi_match_query_value:
+        :param multi_match_field_names:
+        :param fuzzy_field_term_dict:
+        :param size:
+        :return:
+        """
+        fuzzy_list = self.get_fuzzy_values(fuzzy_field_term_dict)
+        multi_match = self.get_query_multi_match_fuzzy(multi_match_query_value, multi_match_field_names)
+        query = {
+            "bool": {
+                "must": [multi_match, *fuzzy_list]
+            }
+        }
+        results = self.es.search(index=index_name, query=query, size=size).body
+        hits = self.get_hits(results)
+        return hits
 
     def search_query_multi_match_fuzzy(self,
                                        index_name: str,
@@ -374,7 +443,7 @@ class ElasticsearchEngin:
                                           size: Union[int, None] = None):
         """
         This method searches based on fuzzy based
-        GET iran-roads/_search
+        GET index_name/_search
 {
   "query": {
     "bool": {
