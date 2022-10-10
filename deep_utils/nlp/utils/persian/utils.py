@@ -66,3 +66,12 @@ def num2fa_spoken(num_string: Union[str, int]):
         return written_num
     else:
         return num_string
+
+
+def num2fa_spoken_sentence(sentence: str) -> str:
+    """
+    Applies num2fa_spoken on a sentence of words!
+    :param sentence:
+    :return:
+    """
+    return " ".join([num2fa_spoken(word) for word in sentence.split(" ")])
