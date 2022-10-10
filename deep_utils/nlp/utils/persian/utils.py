@@ -1,4 +1,5 @@
 from typing import Union
+from deep_utils.utils.re_utils.re_utils import REUtils
 
 
 def persian_num2english(input_string: str, reverse: bool = False):
@@ -38,11 +39,12 @@ def arabic_char2fa_char(input_string: str):
     return out_string
 
 
-def num2fa_spoken(num_string: Union[str, int]):
+def num2fa_spoken(num_string: Union[str, int], split_num_char: bool = False):
     """
     converting string number to the spoken format. This function converts both persian and english workds to persian
     spoken words
     :param num_string:
+    :param split_num_char: if set to True, splits connected numbers and characters
     :return:
     >>> num2fa_spoken("30")
     'سی ام'
@@ -52,26 +54,37 @@ def num2fa_spoken(num_string: Union[str, int]):
     'سی و دوم'
     >>> num2fa_spoken(2)
     'دوم'
+    >>> num2fa_spoken("204غربی", split_num_char=True)
+    'دویست و چهارم غربی'
     """
-    from num2fawords import words
+
     num_string = str(num_string)
+    if split_num_char:
+        num_string = REUtils.split_char_number(num_string)
+    num_string = " ".join([_num2fa_spoken(word) for word in num_string.split(" ")])
+    return num_string
+
+
+def _num2fa_spoken(num_string):
+    from num2fawords import words
     if num_string.isdigit():
-        written_num = words(num_string)
-        if written_num[-2:] == "سه":
-            written_num = written_num[:-2] + "سوم"
-        elif written_num[-1] in ["ی", ]:
-            written_num += " ام"
+        spoken_num = words(num_string)
+        if spoken_num[-2:] == "سه":
+            spoken_num = spoken_num[:-2] + "سوم"
+        elif spoken_num[-1] in ["ی", ]:
+            spoken_num += " ام"
         else:
-            written_num += "م"
-        return written_num
+            spoken_num += "م"
     else:
-        return num_string
+        spoken_num = num_string
+    return spoken_num
 
 
-def num2fa_spoken_sentence(sentence: str) -> str:
+def num2fa_spoken_sentence(sentence: str, split_num_char=False) -> str:
     """
     Applies num2fa_spoken on a sentence of words!
     :param sentence:
+    :param split_num_char: if set to True, splits connected numbers and characters
     :return:
     """
-    return " ".join([num2fa_spoken(word) for word in sentence.split(" ")])
+    return " ".join([num2fa_spoken(word, split_num_char=split_num_char) for word in sentence.split(" ")])
