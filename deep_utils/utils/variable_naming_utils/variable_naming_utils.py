@@ -1,4 +1,4 @@
-def get_counter_name(name, name_dict, counter=0, separator="_"):
+def get_counter_name(name:str, name_dict: dict, counter=0, separator="_"):
     """
     increase the counter till it reaches a number that is not in the name_dict
     :param name:
