@@ -22,21 +22,25 @@ def img_to_b64(image: np.ndarray, extension: str = ".jpg") -> str:
     return base64_img
 
 
-def b64_to_img(image_string: str) -> np.ndarray:
+def b64_to_img(image_byte: Union[bytes, str]) -> np.ndarray:
     """
-    Converts the input byte string to an RGB image
-    :param image_string: base64 image string
+    Converts the input bytes or string to an 3-channel image
+    :param image_byte: base64 image string
     :return: numpy image
     """
     import base64
-
     import cv2
+    if isinstance(image_byte, bytes):
+        image_byte = image_byte.decode()
+    if ";" in image_byte:
+        image_byte = image_byte.split(";")[-1]
 
-    img_data = base64.b64decode(image_string)
-    image = np.array(bytearray(img_data), dtype=np.uint8)
-    image = cv2.imdecode(image, cv2.IMREAD_COLOR)
+    image_byte = image_byte.encode()
+    im_bytes = base64.b64decode(image_byte)
+    im_arr = np.frombuffer(im_bytes, dtype=np.uint8)  # im_arr is one-dim Numpy array
+    img = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
 
-    return image
+    return img
 
 
 def ndarray_to_b64(
@@ -150,6 +154,3 @@ def b64_to_ndarray(
     if shape is not None:
         ndarray = ndarray.reshape(shape)
     return ndarray
-
-
-
