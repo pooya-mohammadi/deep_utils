@@ -156,6 +156,7 @@ BACKENDS_MAPPING = OrderedDict(
         is_available("PIL"),
         is_available("pyannote"),
         is_available("librosa"),
+        is_available("transformers"),
     ]
 )
 
