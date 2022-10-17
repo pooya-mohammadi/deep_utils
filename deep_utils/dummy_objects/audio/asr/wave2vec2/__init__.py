@@ -2,7 +2,7 @@ from deep_utils.main_abs.dummy_framework.dummy_framework import DummyObject, req
 
 
 class Wav2Vec2STTTorch(metaclass=DummyObject):
-    _backend = ["torch", "librosa", "transformers"]
+    _backend = ["torch", "librosa", "transformers", "soundfile"]
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, self._backend)
