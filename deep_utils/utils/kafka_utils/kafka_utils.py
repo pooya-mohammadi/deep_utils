@@ -24,12 +24,12 @@ class KafkaUtils:
                       topic in topics]
         try:
             admin_client.create_topics(new_topics=topic_list, validate_only=validate_only)
-            log_print(logger, f"Successfully created {topics}")
+            log_print(logger, f"Successfully created {topics}", verbose=verbose)
         except TopicAlreadyExistsError:
-            log_print(logger, f"Topics: {topics} already exist")
+            log_print(logger, f"Topics: {topics} already exist", verbose=verbose)
 
     @staticmethod
-    def create_admin_client(admin_client, bootstrap_servers, client_id):
+    def create_admin_client(admin_client=None, bootstrap_servers="localhost:9092", client_id="kafka_utils"):
         if admin_client is None:
             from kafka.admin import KafkaAdminClient
             admin_client = KafkaAdminClient(
@@ -44,3 +44,14 @@ class KafkaUtils:
         from kafka import KafkaProducer
         producer = KafkaProducer(bootstrap_servers=bootstrap_servers)
         return producer
+
+    @staticmethod
+    def check_kafka_status(admin_client=None, bootstrap_servers="localhost:9092", status_key="KAFKA_STATUS"):
+        admin_client = KafkaUtils.create_admin_client(admin_client, bootstrap_servers=bootstrap_servers)
+        try:
+            topics = admin_client.list_topics()
+            if topics:
+                return {status_key: "Alive"}
+        except:
+            pass
+        return {status_key: "DOWN"}
