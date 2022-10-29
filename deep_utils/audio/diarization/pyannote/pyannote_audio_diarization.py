@@ -5,10 +5,11 @@ import torchaudio
 
 
 class PyannoteAudioDiarization:
-    def __init__(self, device="cpu", min_duration_on=1, max_duration_on=10, logger=None):
+    def __init__(self, device="cpu", min_duration_on=1, max_duration_on=10, logger=None,
+                 checkpoint_path="pyannote/speaker-segmentation", use_auth_token=None):
         self.max_duration_on = max_duration_on
         # self.diarize_model = SpeakerSegmentation("pyannote/segmentation")
-        self.diarize_model = Pipeline.from_pretrained("pyannote/speaker-segmentation")
+        self.diarize_model = Pipeline.from_pretrained(checkpoint_path=checkpoint_path, use_auth_token=use_auth_token)
         self.diarize_model._segmentation.model.to(device)
         self.diarize_model._segmentation.device = device
         self.diarize_model.instantiate({
