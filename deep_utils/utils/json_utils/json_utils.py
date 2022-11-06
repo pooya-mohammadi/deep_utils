@@ -17,12 +17,12 @@ def load_json(json_path: Union[str, Path], encoding="utf-8") -> dict:
 
 
 def dump_json(
-        json_path: Union[str, Path], dict_object: dict, encoding="utf-8", ensure_ascii=True
+        json_path: Union[str, Path], json_object: Union[list, dict], encoding="utf-8", ensure_ascii=True
 ) -> None:
     """
     dumps a json file
     Args:
-        dict_object:
+        json_object:
         json_path: path to json file
         encoding: encoding format
         ensure_ascii: set to False for persian characters
@@ -33,4 +33,4 @@ def dump_json(
     import json
 
     with open(json_path, mode="w", encoding=encoding) as f:
-        json.dump(dict_object, f, ensure_ascii=ensure_ascii)
+        json.dump(json_object, f, ensure_ascii=ensure_ascii)
