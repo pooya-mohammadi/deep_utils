@@ -1,5 +1,10 @@
-def load_json(json_path: str, encoding="utf-8") -> dict:
+from typing import Union
+from pathlib import Path
+
+
+def load_json(json_path: Union[str, Path], encoding="utf-8") -> dict:
     """
+    loads a json file
     :param json_path: Path to json file to load
     :param encoding: encoding format
     :return: returns a json file
@@ -12,7 +17,7 @@ def load_json(json_path: str, encoding="utf-8") -> dict:
 
 
 def dump_json(
-    json_path, dict_object: dict, encoding="utf-8", ensure_ascii=True
+        json_path: Union[str, Path], dict_object: dict, encoding="utf-8", ensure_ascii=True
 ) -> None:
     """
     dumps a json file
