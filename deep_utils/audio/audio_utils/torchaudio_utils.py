@@ -19,6 +19,7 @@ class TorchAudioUtils:
             save=False,
             resampled_path: str = None,
             logger=None,
+            verbose=1,
     ) -> Union[str, torch.Tensor]:
         """
         This file is used to resample an audio file or torch tensor
@@ -28,6 +29,7 @@ class TorchAudioUtils:
         :param save:
         :param resampled_path:
         :param logger:
+        :param verbose:
         :return:
         """
 
@@ -61,12 +63,14 @@ class TorchAudioUtils:
             log_print(
                 logger,
                 f"Successfully resampled and saved wav-file to {wave_path} with {resample_rate} sample rate!",
+                verbose=verbose
             )
             return wave_path
         else:
             log_print(
                 logger,
                 f"Successfully resampled wav-file {waveform.shape} with {resample_rate} sample rate!",
+                verbose=verbose
             )
             return resampled_waveform
 
