@@ -32,11 +32,8 @@ def transfer_directory_items(
     Returns:
 
     """
-    print(f"starting to copying/moving from {in_dir} to {out_dir}")
-    if remove_out_dir or os.path.isdir(out_dir):
-        remove_create(out_dir)
-    else:
-        os.makedirs(out_dir, exist_ok=True)
+    print(f"[INFO] Starting to copying/moving from {in_dir} to {out_dir}")
+    remove_create(out_dir, remove=remove_out_dir)
     if mode == "cp":
         for name in transfer_list:
             try:
@@ -73,6 +70,18 @@ def dir_train_test_split(
         skip_transfer=False,
         remove_in_dir=False,
 ):
+    """
+
+    :param in_dir:
+    :param train_dir:
+    :param val_dir:
+    :param test_size:
+    :param mode:
+    :param remove_out_dir:
+    :param skip_transfer: If the file does not exist, skip and do not raise Error
+    :param remove_in_dir: if mode is mv and this is set to true the in_dir will be removed!
+    :return:
+    """
     from sklearn.model_selection import train_test_split
 
     list_ = os.listdir(in_dir)
