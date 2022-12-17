@@ -114,7 +114,7 @@ class MinIOUtils:
         return result
 
     @staticmethod
-    def create_bucket(minio_client, bucket_name, create=True, logger=None):
+    def create_bucket(minio_client, bucket_name, create=True, logger=None) -> bool:
         """
         This method is used to find the requested bucket and create it in case the user desires it.
         :param bucket_name:
@@ -134,6 +134,7 @@ class MinIOUtils:
         else:
             value_error_log(
                 logger=logger, message='f"Error in creating minio bucket"')
+        return found
 
     @staticmethod
     def check_minio_connection(minio_host, status_key="MINIO_STATUS") -> Dict[str, str]:
@@ -146,3 +147,21 @@ class MinIOUtils:
         except:
             status[status_key] = "Down"
         return status
+
+    @staticmethod
+    def _get_minio_policy(bucket_name):
+        policy = {"Statement": [{"Action": ["s3:GetBucketLocation"],
+                                 "Effect": "Allow", "Principal": {"AWS": ["*"]},
+                                 "Resource": [f"arn:aws:s3:::{bucket_name}"]},
+                                {"Action": ["s3:GetObject"],
+                                 "Effect": "Allow", "Principal": {"AWS": ["*"]},
+                                 "Resource": [f"arn:aws:s3:::{bucket_name}/*"]}], "Version": "2012-10-17"}
+        return policy
+
+    @staticmethod
+    def make_bucket_public(minio_client, bucket_name, logger=None, verbose=1):
+        import json
+        found = MinIOUtils.create_bucket(minio_client, bucket_name)
+        if not found:
+            minio_client.set_bucket_policy(bucket_name, json.dumps(MinIOUtils._get_minio_policy(bucket_name)))
+            log_print(logger=logger, message=f"Successfully Made bucket: {bucket_name} public", verbose=verbose)
