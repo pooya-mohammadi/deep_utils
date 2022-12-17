@@ -13,3 +13,10 @@ class SQLAlchemyInserts(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, self._backend)
+
+
+class SQLAlchemyUtils(metaclass=DummyObject):
+    _backend = ["sqlalchemy"]
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, self._backend)
