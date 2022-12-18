@@ -7,7 +7,7 @@ SQLAlchemyUtilsType = TypeVar("SQLAlchemyUtilsType", bound="SQLAlchemyUtils")
 
 class SQLAlchemyUtils:
 
-    @classmethod
+    @staticmethod
     def select_id(cls, id_, session, class_id_feature="id") -> Union[SQLAlchemyUtilsType, None]:
         try:
             selected = select(cls).where(getattr(cls, class_id_feature) == id_)
