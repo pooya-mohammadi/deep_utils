@@ -1,22 +1,7 @@
 from deep_utils.utils.lib_utils.main_utils import list_utils, loader
 
 from .main import ObjectDetector
-
-try:
-    from deep_utils.dummy_objects.vision.object_detection import YOLOV5TorchObjectDetector
-    from deep_utils.vision.object_detection.yolo.v5.torch.yolo_v5_torch_object_detection import (
-        YOLOV5TorchObjectDetector,
-    )
-except ModuleNotFoundError:
-    pass
-
-try:
-    from deep_utils.dummy_objects.vision.object_detection import YOLOV7TorchObjectDetector
-    from deep_utils.vision.object_detection.yolo.v7.torch.yolo_v7_torch_object_detection import (
-        YOLOV7TorchObjectDetector,
-    )
-except ModuleNotFoundError:
-    pass
+from .yolo import *
 
 Object_Detection_Models = {"YOLOV5TorchObjectDetector": YOLOV5TorchObjectDetector,
                            "YOLOV7TorchObjectDetector": YOLOV7TorchObjectDetector}

@@ -1,17 +1,17 @@
 from typing import Union, List
+
 import numpy as np
 import torch
 
-from deep_utils import lib_rgb2bgr
 from deep_utils.utils.lib_utils.download_utils import download_decorator
 from deep_utils.utils.lib_utils.lib_decorators import (
     expand_input,
     get_elapsed_time,
     get_from_config,
-    rgb2bgr,
+    lib_rgb2bgr
 )
-from deep_utils.vision.face_recognition.main.main_face_recognition import FaceRecognition, OUTPUT_CLASS
 from deep_utils.utils.pickle_utils.pickles import load_pickle
+from deep_utils.vision.face_recognition.main.main_face_recognition import FaceRecognition, OUTPUT_CLASS
 from .config import Config
 from .src import load_model
 

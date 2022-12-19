@@ -20,7 +20,16 @@ class Wav2Vec2STTTorch:
             self.decoder = build_ctcdecoder(list(self.processor.tokenizer.get_vocab().keys()),
                                             kenlm_model_path=kenlm_model_path)
 
-    def stt(self, speech_array, sr) -> Union[str, torch.Tensor]:
+    def stt(self, speech_array, sr, mean=True) -> Union[str, torch.Tensor]:
+        """
+
+        :param speech_array:
+        :param sr:
+        :param mean: if set to True, get the mean of channels that are more than 1
+        :return:
+        """
+        if len(speech_array.shape) == 2 and speech_array.shape[0] != 1:
+            speech_array = torch.mean(speech_array, dim=0, keepdim=True)
         if len(speech_array.shape) == 2:
             speech_array = speech_array.squeeze(0)
         if sr != self.sample_rate:
