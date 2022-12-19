@@ -160,6 +160,7 @@ BACKENDS_MAPPING = OrderedDict(
         is_available("soundfile"),
         is_available("psutil"),
         is_available("yaml", "pyyaml"),
+        is_available("ipython", "IPython"),
     ]
 )
 
