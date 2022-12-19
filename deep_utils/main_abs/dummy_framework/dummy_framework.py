@@ -1,6 +1,7 @@
 import importlib.util
 from collections import OrderedDict
 from deep_utils.utils.utils.str_utils import color_str
+from deep_utils.utils.lib_utils.main_utils import import_module
 
 
 def is_available(module_name: str, lib_name: str = None):
@@ -165,7 +166,7 @@ BACKENDS_MAPPING = OrderedDict(
 )
 
 
-def requires_backends(obj, backends):
+def requires_backends(obj, backends, module_name: str = None, cls_name: str = None):
     if not isinstance(backends, (list, tuple)):
         backends = [backends]
 
@@ -175,6 +176,9 @@ def requires_backends(obj, backends):
     if failed:
         color_str("".join(failed), color="red", mode=["bold", "underline"])
         print("".join(failed))
+    else:
+        error = import_module(module_name, cls_name)
+        raise error
 
 
 class DummyObject(type):
