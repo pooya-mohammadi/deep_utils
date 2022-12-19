@@ -3,11 +3,12 @@ from collections import OrderedDict
 from deep_utils.utils.utils.str_utils import color_str
 
 
-def is_available(lib_name: str):
+def is_available(module_name: str, lib_name: str = None):
+    lib_name = module_name if lib_name is None else lib_name
     import_error = (
             "{0} "
             + f"""
-    requires {lib_name} library but it was not found in your environment. You can install it with the following instructions:
+    requires {module_name} library but it was not found in your environment. You can install it with the following instructions:
     ```
     pip install {lib_name}
     ```
@@ -17,8 +18,8 @@ def is_available(lib_name: str):
     ```
     """
     )
-    return lib_name, (
-        lambda: importlib.util.find_spec(lib_name) is not None,
+    return module_name, (
+        lambda: importlib.util.find_spec(module_name) is not None,
         import_error,
     )
 
@@ -149,7 +150,6 @@ BACKENDS_MAPPING = OrderedDict(
         ("torchvision", (is_torchvision_available, TORCHVISION_IMPORT_ERROR)),
         ("torchaudio", (is_torchaudio_available, TORCHAUDIO_IMPORT_ERROR)),
         is_available("seaborn"),
-        is_available("pyyaml"),
         is_available("numpy"),
         is_available("albumentations"),
         is_available("sklearn"),
@@ -159,6 +159,7 @@ BACKENDS_MAPPING = OrderedDict(
         is_available("transformers"),
         is_available("soundfile"),
         is_available("psutil"),
+        is_available("yaml", "pyyaml"),
     ]
 )
 

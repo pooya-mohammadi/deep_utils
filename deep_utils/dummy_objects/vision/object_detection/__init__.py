@@ -2,14 +2,14 @@ from deep_utils.main_abs.dummy_framework.dummy_framework import DummyObject, req
 
 
 class YOLOV5TorchObjectDetector(metaclass=DummyObject):
-    _backend = ["torch", "cv2", "seaborn", "pyyaml", "psutil"]
+    _backend = ["torch", "cv2", "seaborn", "psutil", "yaml"]
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, self._backend)
 
 
 class YOLOV7TorchObjectDetector(metaclass=DummyObject):
-    _backend = ["torch", "cv2", "seaborn", "pyyaml"]
+    _backend = ["torch", "cv2", "seaborn", "yaml"]
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, self._backend)
