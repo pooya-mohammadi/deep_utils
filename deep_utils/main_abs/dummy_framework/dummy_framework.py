@@ -149,7 +149,7 @@ BACKENDS_MAPPING = OrderedDict(
         ("torchvision", (is_torchvision_available, TORCHVISION_IMPORT_ERROR)),
         ("torchaudio", (is_torchaudio_available, TORCHAUDIO_IMPORT_ERROR)),
         is_available("seaborn"),
-        is_available("pyaml"),
+        is_available("pyyaml"),
         is_available("numpy"),
         is_available("albumentations"),
         is_available("sklearn"),
