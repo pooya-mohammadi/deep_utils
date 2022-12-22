@@ -66,22 +66,20 @@ def get_grid_images(
         for c in range(columns):
             resized_img = resize(images[i], size)
             if texts is not None:
-                org = (
-                    (size[1] // 10, size[0] // 2 - size[0] // 5)
-                    if text_org is None
-                    else text_org[i]
-                )
-                resized_img = Box.put_text(
-                    resized_img, texts[i], org, **text_kwargs)
-            img[
-            r * size[0]: (r + 1) * size[0], c * size[1]: (c + 1) * size[1]
-            ] = resized_img
+                org = ((size[1] // 10, size[0] // 2 - size[0] // 5)
+                       if text_org is None
+                       else text_org[i]
+                       )
+                resized_img = Box.put_text(resized_img, texts[i], org, **text_kwargs)
+            if n_channels == 1 and len(resized_img.shape) == 2 and resized_img.shape[-1] !=1:
+                resized_img = resized_img.reshape((*resized_img.shape[:2], 1))
+            img[r * size[0]: (r + 1) * size[0], c * size[1]: (c + 1) * size[1]] = resized_img
             i += 1
             if i == len(images):
                 break
         if i == len(images):
             break
-    img = np.concatenate([np.zeros((size[0] // 5, img_size[1], 3)), img])
+    img = np.concatenate([np.zeros((size[0] // 5, img_size[1], n_channels)), img])
     if title:
         if title_org is None:
             title_org = (
