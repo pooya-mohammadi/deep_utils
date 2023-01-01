@@ -108,7 +108,7 @@ def log_print(
     Logs the input messages with the given log_type. In case the logger object is not provided, prints the message.
     :param logger:
     :param message:
-    :param log_type:
+    :param log_type: possible log types: info, error. Default is set to info
     :param verbose: whether to print/log
     :param get_func_name: whether to include func-name in the message
     :param roll_back: roll back used for func-log. This number indicates how many functions should `func-log` trace back
