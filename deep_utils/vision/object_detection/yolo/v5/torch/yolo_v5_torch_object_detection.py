@@ -16,13 +16,8 @@ from deep_utils.utils.lib_utils.lib_decorators import (
 from deep_utils.vision.object_detection.yolo.yolo_detector import YOLOObjectDetector
 from .config import Config
 
-FILE = Path(__file__).resolve()
-ROOT = FILE.parents[0]  # YOLOv5 root directory
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))  # add ROOT to PATH
-from .models.experimental import attempt_load
-from .utils_.datasets import letterbox
-from .utils_.general import non_max_suppression, scale_boxes
+
+
 
 OUTPUT_CLASS = dictnamedtuple(
     "Object", ["class_indices", "boxes", "confidences", "class_names", "elapsed_time"]
@@ -70,7 +65,7 @@ class YOLOV5TorchObjectDetector(YOLOObjectDetector):
             scaleFill=False,
             scaleup=True,
     ):
-
+        from .yolov5_utils.datasets import letterbox
         return letterbox(
             img,
             new_shape=new_shape,
@@ -81,6 +76,14 @@ class YOLOV5TorchObjectDetector(YOLOObjectDetector):
         )
 
     def load_model(self):
+        FILE = Path(__file__).resolve()
+        ROOT = str(FILE.parents[0])  # YOLOv5 root directory
+        if ROOT not in sys.path:
+            sys.path.append(ROOT)  # add ROOT to PATH
+            v7_root = ROOT.replace("v5", "v7")
+            if v7_root in sys.path:
+                sys.path.remove(v7_root)
+        from .models.experimental import attempt_load
         self.model = attempt_load(
             self.config.model_weight, device=self.config.device
         )
@@ -114,7 +117,7 @@ class YOLOV5TorchObjectDetector(YOLOObjectDetector):
         :param kwargs:
         :return:
         """
-
+        from .yolov5_utils.general import non_max_suppression, scale_boxes
         tic = time.time() if get_time else 0
 
         self.update_config(

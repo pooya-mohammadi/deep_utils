@@ -82,7 +82,7 @@ class Config:
             "hair drier",
             "toothbrush",
         ]
-        self.model_weight = "yolov5s.pt"
+        self.model_weight = "yolov7.pt"
         self.device = "cpu"
         self.img_size = (320, 320)
         self.confidence = 0.4

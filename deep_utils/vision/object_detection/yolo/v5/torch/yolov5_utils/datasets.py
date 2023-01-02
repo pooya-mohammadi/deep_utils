@@ -1,6 +1,6 @@
 # YOLOv5 🚀 by Ultralytics, GPL-3.0 license
 """
-Dataloaders and dataset utils_
+Dataloaders and dataset yolov5_utils
 """
 
 import glob
@@ -25,7 +25,7 @@ import yaml
 from PIL import ExifTags, Image, ImageOps
 from torch.utils.data import Dataset
 from tqdm import tqdm
-from utils_.augmentations import (
+from yolov5_utils.augmentations import (
     Albumentations,
     augment_hsv,
     copy_paste,
@@ -33,7 +33,7 @@ from utils_.augmentations import (
     mixup,
     random_perspective,
 )
-from utils_.general import (
+from yolov5_utils.general import (
     check_dataset,
     check_requirements,
     check_yaml,
@@ -44,7 +44,7 @@ from utils_.general import (
     xywhn2xyxy,
     xyxy2xywhn,
 )
-from utils_.torch_utils import torch_distributed_zero_first
+from yolov5_utils.torch_utils import torch_distributed_zero_first
 
 # Parameters
 HELP_URL = "https://github.com/ultralytics/yolov5/wiki/Train-Custom-Data"
@@ -169,7 +169,7 @@ def create_dataloader(
         torch.utils.data.distributed.DistributedSampler(dataset) if rank != -1 else None
     )
     loader = torch.utils.data.DataLoader if image_weights else InfiniteDataLoader
-    # Use torch.utils_.data.DataLoader() if dataset.properties will update during training else InfiniteDataLoader()
+    # Use torch.yolov5_utils.data.DataLoader() if dataset.properties will update during training else InfiniteDataLoader()
     dataloader = loader(
         dataset,
         batch_size=batch_size,
@@ -1073,7 +1073,7 @@ def flatten_recursive(path="../datasets/coco128"):
 
 def extract_boxes(
     path="../datasets/coco128",
-):  # from utils_.datasets import *; extract_boxes()
+):  # from yolov5_utils.datasets import *; extract_boxes()
     # Convert detection dataset into classification dataset, with one directory per class
     path = Path(path)  # images dir
     shutil.rmtree(path / "classifier") if (
@@ -1122,7 +1122,7 @@ def autosplit(
     path="../datasets/coco128/images", weights=(0.9, 0.1, 0.0), annotated_only=False
 ):
     """Autosplit a dataset into train/val/test splits and save path/autosplit_*.txt files
-    Usage: from utils_.datasets import *; autosplit()
+    Usage: from yolov5_utils.datasets import *; autosplit()
     Arguments
         path:            Path to images directory
         weights:         Train, val, test weights (list, tuple)
@@ -1231,8 +1231,8 @@ def dataset_stats(
 ):
     """Return dataset statistics dictionary with images and instances counts per split per class
     To run in parent directory: export PYTHONPATH="$PWD/yolov5"
-    Usage1: from utils_.datasets import *; dataset_stats('coco128.yaml', autodownload=True)
-    Usage2: from utils_.datasets import *; dataset_stats('../datasets/coco128_with_yaml.zip')
+    Usage1: from yolov5_utils.datasets import *; dataset_stats('coco128.yaml', autodownload=True)
+    Usage2: from yolov5_utils.datasets import *; dataset_stats('../datasets/coco128_with_yaml.zip')
     Arguments
         path:           Path to data.yaml or data.zip (with data.yaml inside data.zip)
         autodownload:   Attempt to download dataset if not found locally

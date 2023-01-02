@@ -3,7 +3,8 @@ import warnings
 from collections.abc import Callable
 
 
-def import_module(module_name, things_to_import):
+def import_module(module_name: str, things_to_import):
+    assert isinstance(module_name, str), "module_name is not string, make sure you have correctly defined it"
     try:
         new_module = importlib.import_module(module_name)
         return getattr(new_module, things_to_import)

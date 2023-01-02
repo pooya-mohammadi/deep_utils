@@ -177,6 +177,7 @@ def requires_backends(obj, backends, module_name: str = None, cls_name: str = No
         color_str("".join(failed), color="red", mode=["bold", "underline"])
         print("".join(failed))
     else:
+        assert isinstance(module_name, str), f"module_name is not defined for obj: {name}"
         error = import_module(module_name, cls_name)
         raise error
 

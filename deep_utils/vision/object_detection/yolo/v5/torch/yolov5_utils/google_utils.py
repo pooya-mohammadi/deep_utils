@@ -1,4 +1,4 @@
-# Google utils_: https://cloud.google.com/storage/docs/reference/libraries
+# Google yolov5_utils: https://cloud.google.com/storage/docs/reference/libraries
 
 import os
 import platform
@@ -68,7 +68,7 @@ def attempt_download(weights):
 
 
 def gdrive_download(id="1n_oKgR81BJtqk75b00eAjdv03qVCQn2f", name="coco128.zip"):
-    # Downloads a file from Google Drive. from utils_.google_utils import *; gdrive_download()
+    # Downloads a file from Google Drive. from yolov5_utils.google_utils import *; gdrive_download()
     t = time.time()
 
     print(

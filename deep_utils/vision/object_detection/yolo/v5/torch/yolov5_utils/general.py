@@ -36,9 +36,9 @@ import torch
 import torchvision
 import yaml
 
-from utils_ import TryExcept, emojis
-from utils_.downloads import gsutil_getsize
-from utils_.metrics import box_iou, fitness
+from yolov5_utils import TryExcept, emojis
+from yolov5_utils.downloads import gsutil_getsize
+from yolov5_utils.metrics import box_iou, fitness
 
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[1]  # YOLOv5 root directory
@@ -478,7 +478,7 @@ def check_file(file, suffix=''):
         return file
     else:  # search
         files = []
-        for d in 'data', 'models', 'utils_':  # search directories
+        for d in 'data', 'models', 'yolov5_utils':  # search directories
             files.extend(glob.glob(str(ROOT / d / '**' / file), recursive=True))  # find file
         assert len(files), f'File not found: {file}'  # assert file was found
         assert len(files) == 1, f"Multiple files match '{file}', specify exact path: {files}"  # assert unique
@@ -999,7 +999,7 @@ def non_max_suppression(
     return output
 
 
-def strip_optimizer(f='best.pt', s=''):  # from utils_.general import *; strip_optimizer()
+def strip_optimizer(f='best.pt', s=''):  # from yolov5_utils.general import *; strip_optimizer()
     # Strip optimizer from 'f' to finalize training, optionally save as 's'
     x = torch.load(f, map_location=torch.device('cpu'))
     if x.get('ema'):

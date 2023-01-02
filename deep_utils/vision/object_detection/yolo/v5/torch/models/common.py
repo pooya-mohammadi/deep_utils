@@ -25,13 +25,13 @@ from IPython.display import display
 from PIL import Image
 from torch.cuda import amp
 
-from utils_ import TryExcept
-from utils_.dataloaders import exif_transpose, letterbox
-from utils_.general import (LOGGER, ROOT, Profile, check_requirements, check_suffix, check_version, colorstr,
+from yolov5_utils import TryExcept
+from yolov5_utils.dataloaders import exif_transpose, letterbox
+from yolov5_utils.general import (LOGGER, ROOT, Profile, check_requirements, check_suffix, check_version, colorstr,
                            increment_path, is_notebook, make_divisible, non_max_suppression, scale_boxes, xywh2xyxy,
                            xyxy2xywh, yaml_load)
-from utils_.plots import Annotator, colors, save_one_box
-from utils_.torch_utils import copy_attr, smart_inference_mode
+from yolov5_utils.plots import Annotator, colors, save_one_box
+from yolov5_utils.torch_utils import copy_attr, smart_inference_mode
 
 
 def autopad(k, p=None, d=1):  # kernel, padding, dilation
@@ -489,7 +489,7 @@ class DetectMultiBackend(nn.Module):
         elif triton:  # NVIDIA Triton Inference Server
             LOGGER.info(f'Using {w} as Triton Inference Server...')
             check_requirements('tritonclient[all]')
-            from utils_.triton import TritonRemoteModel
+            from yolov5_utils.triton import TritonRemoteModel
             model = TritonRemoteModel(url=w)
             nhwc = model.runtime.startswith("tensorflow")
         else:
@@ -601,7 +601,7 @@ class DetectMultiBackend(nn.Module):
         # Return model type from model path, i.e. path='path/to/model.onnx' -> type=onnx
         # types = [pt, jit, onnx, xml, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs, paddle]
         from export import export_formats
-        from utils_.downloads import is_url
+        from yolov5_utils.downloads import is_url
         sf = list(export_formats().Suffix)  # export suffixes
         if not is_url(p, check=False):
             check_suffix(p, sf)  # checks
