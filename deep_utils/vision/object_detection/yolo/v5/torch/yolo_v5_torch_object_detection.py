@@ -81,7 +81,6 @@ class YOLOV5TorchObjectDetector(YOLOObjectDetector):
         )
 
     def load_model(self):
-        # if self.config.model_weight:
         self.model = attempt_load(
             self.config.model_weight, device=self.config.device
         )
