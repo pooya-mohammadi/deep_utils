@@ -16,9 +16,6 @@ from deep_utils.utils.lib_utils.lib_decorators import (
 from deep_utils.vision.object_detection.yolo.yolo_detector import YOLOObjectDetector
 from .config import Config
 
-
-
-
 OUTPUT_CLASS = dictnamedtuple(
     "Object", ["class_indices", "boxes", "confidences", "class_names", "elapsed_time"]
 )
