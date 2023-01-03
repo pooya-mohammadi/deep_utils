@@ -1,5 +1,5 @@
 import os
-from typing import Union
+from typing import Union, List, Tuple
 
 IMG_EXTENSIONS = [
     ".jpg",
@@ -16,8 +16,14 @@ IMG_EXTENSIONS = [
 ]
 
 
-def validate_file_extension(filename, extensions):
-    return any(filename.endswith(extension) for extension in extensions)
+def validate_file_extension(filename, extensions: Union[List[str], Tuple[str]]):
+    """
+    validates a file with provided extensions. It checks the extension in both uppercase and lowercase mode.
+    :param filename:
+    :param extensions:
+    :return:
+    """
+    return any(filename.endswith(extension.upper()) or filename.endswith(extension.lower()) for extension in extensions)
 
 
 def split_extension(path, extension: Union[str, None] = None,
