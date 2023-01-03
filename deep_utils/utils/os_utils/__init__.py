@@ -1,1 +1,1 @@
-from .os_path import is_image_file, split_all, split_extension, get_file_name
+from .os_path import validate_file_extension, split_all, split_extension, get_file_name, IMG_EXTENSIONS

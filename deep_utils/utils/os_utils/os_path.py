@@ -16,8 +16,8 @@ IMG_EXTENSIONS = [
 ]
 
 
-def is_image_file(filename):
-    return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
+def validate_file_extension(filename, extensions):
+    return any(filename.endswith(extension) for extension in extensions)
 
 
 def split_extension(path, extension: Union[str, None] = None,
