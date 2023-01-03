@@ -98,6 +98,8 @@ class YOLOV7TorchObjectDetector(YOLOObjectDetector):
             img_size=None,
             agnostic=None,
             get_time=False,
+            logger=None,
+            verbose=1
     ) -> Union[Type[OutputType], Dict[str, list]]:
         """
 
@@ -109,7 +111,8 @@ class YOLOV7TorchObjectDetector(YOLOObjectDetector):
         :param agnostic:
         :param get_time:
         :param img_size:
-        :param kwargs:
+        :param logger:
+        :param verbose:
         :return:
         """
         from .yolov7_utils.general import non_max_suppression, scale_coords

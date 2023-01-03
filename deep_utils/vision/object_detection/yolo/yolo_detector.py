@@ -2,7 +2,7 @@ import os
 import shutil
 from abc import ABC
 from os.path import join
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Type
 
 from tqdm import tqdm
 
@@ -19,6 +19,7 @@ from deep_utils.utils.logging_utils import log_print
 from deep_utils.utils.opencv_utils.main import show_destroy_cv2
 from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.shutil_utils.shutil_utils import mv_or_copy
+from deep_utils.utils.os_utils.os_path import validate_file_extension
 
 OUTPUT_CLASS = dictnamedtuple(
     "Object", ["class_indices", "boxes", "confidences", "class_names", "elapsed_time"]
@@ -297,3 +298,79 @@ class YOLOObjectDetector(MainClass, ABC):
                         labels.append(" ".join([str(rename_dict.get(int(label), label)), *box]))
                 with open(label_path, mode='w') as write_file:
                     write_file.writelines(labels)
+
+    def detect_objects(self,
+                       img,
+                       is_rgb,
+                       class_indices=None,
+                       confidence=None,
+                       iou_thresh=None,
+                       img_size=None,
+                       agnostic=None,
+                       get_time=False,
+                       logger=None,
+                       verbose=1) -> Union[Type[OutputType], Dict[str, list]]:
+        raise NotImplementedError("object_detects is not implemented!")
+
+    def detect_dir(self,
+                   dir_,
+                   confidence=None,
+                   iou_thresh=None,
+                   classes=None,
+                   extensions=(".png", ".jpg", ".jpeg"),
+                   save_labels_dir=None,
+                   remove_labels_dir=True,
+                   cut_images_dir=None,
+                   remove_cut_images_dir=True,
+                   create_labels=False,
+                   logger=None,
+                   verbose=1) -> Union[Dict[str, Type[OutputType]]]:
+        import cv2
+        outputs = {}
+        images = {}
+        for file_name in os.listdir(dir_):
+            if validate_file_extension(file_name, extensions):
+                file_path = os.path.join(dir_, file_name)
+                img = cv2.imread(file_path)
+                if os.path.isfile(file_path) and img is not None:
+                    output = self.detect_objects(img, is_rgb=False, class_indices=classes, iou_thresh=iou_thresh,
+                                                 confidence=confidence)
+                    outputs[file_name] = output
+                    images[file_name] = img
+                    log_print(logger, f"Successfully detected {file_path}")
+
+        if save_labels_dir:
+            remove_create(save_labels_dir, remove=remove_labels_dir)
+            for file_name, output in outputs.items():
+                label_path = os.path.join(save_labels_dir, split_extension(file_name, extension=".txt"))
+                with open(label_path, mode="w") as f:
+                    for cls_index, box in zip(output.class_indices, output.boxes):
+                        box = Box.box2box(box,
+                                          in_format=Box.BoxFormat.XYXY,
+                                          to_format=Box.BoxFormat.XCYC,
+                                          in_source="Numpy",
+                                          to_source="CV",
+                                          in_relative=False,
+                                          to_relative=True,
+                                          shape_source="Numpy",
+                                          shape=images[file_name].shape[:2],
+                                          )
+                        f.write(f"{cls_index} {' '.join(str(b) for b in box)}\n")
+                        log_print(logger, f"Successfully saved label {label_path}")
+        if save_labels_dir and create_labels:
+            with open(os.path.join(save_labels_dir, "labels.txt"), mode='w') as f:
+                for name in self.config.class_names:
+                    f.write(f"{name}\n")
+
+        if cut_images_dir:
+            remove_create(cut_images_dir, remove=remove_cut_images_dir)
+            for file_name, output in outputs.items():
+                for en, (cls_index, box) in enumerate(zip(output.class_indices, output.boxes)):
+                    img = Box.get_box_img(images[file_name], box)
+                    name, extension = split_extension(file_name)
+                    cut_image_save_dir = os.path.join(cut_images_dir,
+                                                      f"{name}{self.config.class_names[cls_index]}_{en}{extension}")
+                    cv2.imwrite(cut_image_save_dir, img)
+                    log_print(logger, f"Successfully saved cut image: {cut_image_save_dir}")
+
+        return outputs
