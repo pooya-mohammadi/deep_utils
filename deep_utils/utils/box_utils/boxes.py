@@ -315,7 +315,9 @@ class Box:
             in_source = in_source.value
         if isinstance(to_source, Box.BoxSource):
             to_source = to_source.value
-
+        for b in box:
+            if b < 0:
+                raise ValueError("Box values cannot be negative values")
         if (
                 in_format == Box.BoxFormat.XYWH.value
                 and to_format == Box.BoxFormat.XYXY.value
@@ -404,6 +406,8 @@ class Box:
                 )
                 if not in_relative and to_relative:
                     b1, b2, b3, b4 = box
+                    if b1 > img_w or b2 > img_h or b3 > img_w or b4 > img_h:
+                        raise ValueError(f"box values:{box} cannot be larger than shape:{img_w, img_h}")
                     box = [b1 / img_w, b2 / img_h, b3 / img_w, b4 / img_h]
                 elif in_relative and not to_relative:
                     b1, b2, b3, b4 = box
@@ -415,6 +419,7 @@ class Box:
         box = Box.get_type(box, out_type)
         if return_int:
             box = [int(b) for b in box]
+
         return box
 
     @staticmethod
