@@ -237,7 +237,7 @@ class Box:
             in_relative=None,
             to_relative=None,
             shape=None,
-            shape_source=None,
+            shape_source: Union[str, Point.PointSource] = None,
             out_type=None,
             return_int=None,
     ):
