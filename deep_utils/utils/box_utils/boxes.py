@@ -83,8 +83,21 @@ class Point:
     ):
         if isinstance(in_source, Point.PointSource):
             in_source = in_source.value
+        elif isinstance(in_source, str):
+            in_source = in_source
+        else:
+            raise Exception(
+                f"in_source: {in_source} is not supported, provide Point.PointSource or equivalent string"
+            )
         if isinstance(to_source, Point.PointSource):
             to_source = to_source.value
+        elif isinstance(to_source, str):
+            to_source = to_source
+        else:
+            raise Exception(
+                f"in_source: {in_source} is not supported, provide Point.PointSource or equivalent string"
+            )
+
         in_source = in_source.lower()
         to_source = to_source.lower()
 
