@@ -320,15 +320,15 @@ class YOLOObjectDetector(MainClass, ABC):
         output_dir = labels_dir if output_dir is None else output_dir
         for label_name in os.listdir(labels_dir):
             if label_name.endswith(".txt"):
-                label_path = join(output_dir, label_name)
-                with open(label_path, mode='r') as read_file:
+                with open(join(labels_dir, label_name), mode='r') as read_file:
                     labels = []
                     for line in read_file.readlines():
                         line = line.strip()
                         label, *box = line.split(" ")
                         labels.append(" ".join([str(rename_dict.get(int(label), label)), *box]))
-                with open(label_path, mode='w') as write_file:
-                    write_file.writelines(labels)
+                with open(join(output_dir, label_name), mode='w') as write_file:
+                    for line in labels:
+                        write_file.write(line + "\n")
 
     def detect_objects(self,
                        img,
