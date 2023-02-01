@@ -41,7 +41,7 @@ class YOLOObjectDetector(MainClass, ABC):
     """
 
     @staticmethod
-    def test_label_dir(dataset_dir, rename_dict: Union[Dict[int, str], None], images_name="images",
+    def test_label_dir(dataset_dir, rename_dict: Union[Dict[int, str], None] = None, images_name="images",
                        labels_name="labels"):
         images_path = join(dataset_dir, images_name)
         for name in sorted(os.listdir(images_path)):
@@ -123,7 +123,8 @@ class YOLOObjectDetector(MainClass, ABC):
             # set to False in order to make sure the background images are not removed
             remove_out_dir = False
             mv_or_copy_list(background_images, join(out_dir, "train", "images"), mode=mode)
-            log_print(logger, f"Moved {len(background_images)} background image to {join(out_dir, 'train', 'images')}", verbose=verbose)
+            log_print(logger, f"Moved {len(background_images)} background image to {join(out_dir, 'train', 'images')}",
+                      verbose=verbose)
         else:
             background_image_names = None
 
