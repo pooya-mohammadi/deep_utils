@@ -70,6 +70,7 @@ def dir_train_test_split(
         skip_transfer=False,
         remove_in_dir=False,
         skip_error=True,
+        ignore_list: List[str] = None,
         logger=None,
         verbose=1
 ):
@@ -84,13 +85,17 @@ def dir_train_test_split(
     :param skip_transfer: If the file does not exist, skip and do not raise Error
     :param remove_in_dir: if mode is mv and this is set to true the in_dir will be removed!
     :param skip_error: If set to True, skips the train_test_split error and returns empty lists
+    :param ignore_list: a list of names that are ignored
     :param logger:
     :param verbose:
     :return:
     """
     from sklearn.model_selection import train_test_split
     log_print(logger, f"Starting to split dir: {in_dir}", verbose=verbose)
-    list_ = os.listdir(in_dir)
+    if ignore_list is not None:
+        list_ = [n for n in os.listdir(in_dir) if n not in ignore_list]
+    else:
+        list_ = os.listdir(in_dir)
     try:
         train_name, val_name = train_test_split(list_, test_size=test_size)
     except ValueError as e:
