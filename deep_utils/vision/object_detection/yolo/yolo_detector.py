@@ -1,7 +1,7 @@
 import os
 import shutil
 from abc import ABC
-from os.path import join
+from os.path import join, split
 from typing import Dict, List, Union, Type
 
 from tqdm import tqdm
@@ -20,6 +20,7 @@ from deep_utils.utils.opencv_utils.main import show_destroy_cv2
 from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.shutil_utils.shutil_utils import mv_or_copy
 from deep_utils.utils.os_utils.os_path import validate_file_extension
+from deep_utils.utils.shutil_utils.shutil_utils import mv_or_copy_list
 
 OUTPUT_CLASS = dictnamedtuple(
     "Object", ["class_indices", "boxes", "confidences", "class_names", "elapsed_time"]
@@ -86,20 +87,46 @@ class YOLOObjectDetector(MainClass, ABC):
             remove_out_dir=False,
             skip_transfer=True,
             remove_in_dir=False,
-            image_based=True
+            image_based=True,
+            move_background_to_train=True,
+            logger=None,
+            verbose=1,
     ):
         """
 
         :param base_dir:
         :param out_dir:
-        :param mode:
+        :param mode: cp or mv
         :param test_size:
         :param remove_out_dir:
         :param skip_transfer: If the file does not exist, skip and do not raise Error
         :param remove_in_dir: if mode is mv and this is set to true the in_dir will be removed
         :param image_based: If set to True, the split will be done based on images not labels
+        :param move_background_to_train: if set to True, the images with no labels are collected and moved to train
+        folder prior to other preprocessing requested
+        :param logger
+        :param verbose
         :return:
         """
+        images_path, labels_path = join(base_dir, "images"), join(base_dir, "labels")
+        if move_background_to_train:
+            lbl_names_dict = {split_extension(name)[0]: join(labels_path, name) for name in os.listdir(labels_path)}
+            background_images = [join(images_path, name) for name in os.listdir(images_path) if
+                                 split_extension(name)[0] not in lbl_names_dict]
+            background_image_names = [split(name)[-1] for name in background_images]
+            # apply the remove operation
+            remove_create(join(out_dir, "train", "images"), remove=remove_out_dir)
+            remove_create(join(out_dir, "train", "labels"), remove=remove_out_dir)
+            remove_create(join(out_dir, "val", "images"), remove=remove_out_dir)
+            remove_create(join(out_dir, "val", "labels"), remove=remove_out_dir)
+
+            # set to False in order to make sure the background images are not removed
+            remove_out_dir = False
+            mv_or_copy_list(background_images, join(out_dir, "train", "images"), mode=mode)
+            log_print(logger, f"Moved {len(background_images)} background image to {join(out_dir, 'train', 'images')}", verbose=verbose)
+        else:
+            background_image_names = None
+
         split_identifier_name = "images" if image_based else "labels"
         split_identifier_name_prime = "labels" if image_based else "images"
         identifier_train_names, identifier_val_names = dir_train_test_split(
@@ -109,7 +136,8 @@ class YOLOObjectDetector(MainClass, ABC):
             mode=mode,
             remove_out_dir=remove_out_dir,
             test_size=test_size,
-            remove_in_dir=remove_in_dir
+            remove_in_dir=remove_in_dir,
+            ignore_list=background_image_names,
         )
         if image_based:
             identifier_train_prime = [os.path.splitext(name)[0] + ".txt" for name in identifier_train_names]
@@ -278,18 +306,20 @@ class YOLOObjectDetector(MainClass, ABC):
         log_print(logger, f"Successfully {mode}-ed {dataset_path} to {final_dataset_path}")
 
     @staticmethod
-    def rename_labels(labels_dir, rename_dict: dict):
+    def rename_labels(labels_dir, rename_dict: dict, output_dir: str = None):
         """
         rename labels of a directory of labels based on the input rename dictionary
         :param labels_dir:
         :param rename_dict: A dictionary by which the input labels will be renamed
+        :param output_dir: if provided, the labels are created in the provided directory
         :return:
         """
         assert os.path.isdir(labels_dir), "The input is not a directory"
 
+        output_dir = labels_dir if output_dir is None else output_dir
         for label_name in os.listdir(labels_dir):
             if label_name.endswith(".txt"):
-                label_path = join(labels_dir, label_name)
+                label_path = join(output_dir, label_name)
                 with open(label_path, mode='r') as read_file:
                     labels = []
                     for line in read_file.readlines():
