@@ -1,7 +1,7 @@
 import os
 from typing import Union, List, Tuple
 
-IMG_EXTENSIONS = [
+IMG_EXTENSIONS = (
     ".jpg",
     ".JPG",
     ".jpeg",
@@ -13,7 +13,7 @@ IMG_EXTENSIONS = [
     ".bmp",
     ".BMP",
     ".tiff",
-]
+)
 
 
 def validate_file_extension(filename, extensions: Union[List[str], Tuple[str]]):
@@ -24,6 +24,22 @@ def validate_file_extension(filename, extensions: Union[List[str], Tuple[str]]):
     :return:
     """
     return any(filename.endswith(extension.upper()) or filename.endswith(extension.lower()) for extension in extensions)
+
+
+def is_img(filename, extensions=IMG_EXTENSIONS):
+    """
+    validate whether the input filename is img or not
+    :param filename:
+    :param extensions:
+    :return:
+    >>> is_img("file1.png")
+    True
+    >>> is_img("file1.jPg")
+    False
+    >>> is_img("file1.wow")
+    False
+    """
+    return validate_file_extension(filename, extensions)
 
 
 def split_extension(path, extension: Union[str, None] = None,
