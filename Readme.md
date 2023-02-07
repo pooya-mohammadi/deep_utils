@@ -461,7 +461,7 @@ The LICENSE of each model is located inside its corresponding directory.
   <tr>
     <td align="center">
       <a href="#">
-        <img src="https://avatars.githubusercontent.com/u/55460936?v=4" width="100px;" alt="Pooya Mohammadi no GitHub"/><br>
+        <img src="https://avatars.githubusercontent.com/u/55460936?v=4" width="100px;" alt="Pooya Mohammadi on GitHub"/><br>
         <sub>
           <b>Pooya Mohammadi Kazaj</b>
         </sub>
