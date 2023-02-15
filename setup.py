@@ -40,7 +40,7 @@ setuptools.setup(
     version=VERSION,
     author="Pooya Mohammadi Kazaj",
     author_email="pooyamohammadikazaj@gmial.com",
-    download_url=f"https://github.com/Practical-AI/deep_utils/archive/refs/tags/{VERSION}.tar.gz",
+    download_url=f"https://github.com/pooya-mohammadi/deep_utils/archive/refs/tags/{VERSION}.tar.gz",
     description="Deep Utils",
     long_description=long_description,
     long_description_content_type="text/markdown",
