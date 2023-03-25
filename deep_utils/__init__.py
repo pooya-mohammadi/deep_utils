@@ -17,10 +17,20 @@ _import_structure = {
     "utils.box_utils": ["Box", "Point"],
 }
 
+if is_cv2_available():
+    _import_structure["vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection"] = ["HaarcascadeCV2FaceDetector"]
+else:
+    from .dummy_objects import cv2_dummy
+
+    _import_structure["dummy_objects.cv2_dummy"] = [
+        name for name in dir(cv2_dummy) if not name.startswith("_")
+    ]
+
 if is_torch_available() and is_cv2_available():
     _import_structure["vision.face_detection.mtcnn.torch.mtcnn_torch_face_detection"] = ["MTCNNTorchFaceDetector"]
 else:
     from .dummy_objects import torch_cv2_dummy
+
     _import_structure["dummy_objects.torch_cv2_dummy"] = [
         name for name in dir(torch_cv2_dummy) if not name.startswith("_")
     ]
@@ -39,6 +49,7 @@ if TYPE_CHECKING:
     from .vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection import HaarcascadeCV2FaceDetector
     from .vision.face_detection.mtcnn.tf.mtcnn_tf_face_detection import MTCNNTFFaceDetector
     from .vision.face_detection.mtcnn.torch.mtcnn_torch_face_detection import MTCNNTorchFaceDetector
+    from .vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection import HaarcascadeCV2FaceDetector
 
 else:
     import sys

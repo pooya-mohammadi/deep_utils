@@ -1,4 +1,4 @@
-from deep_utils.main_abs.dummy_framework.dummy_framework import DummyObject, requires_backends
+from deep_utils.dummy_objects.dummy_framework import DummyObject, requires_backends
 
 
 class AudioClassificationWav2vec2Torch(metaclass=DummyObject):

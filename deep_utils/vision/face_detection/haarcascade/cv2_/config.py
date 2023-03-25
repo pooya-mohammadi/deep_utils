@@ -27,3 +27,4 @@ class Config:
         self.minNeighbors = None
         self.flags = None
         self.maxSize = None
+        self.download_variables = ("haarcascade_frontalface", "haarcascade_eye", "haarcascade_nose", "landmarks")

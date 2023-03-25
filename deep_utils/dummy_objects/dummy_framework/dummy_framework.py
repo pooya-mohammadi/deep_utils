@@ -37,6 +37,11 @@ _is_cv2_available = importlib.util.find_spec("cv2") is not None
 _is_torchvision_available = importlib.util.find_spec("torchvision") is not None
 _is_torchaudio_available = importlib.util.find_spec("torchaudio") is not None
 _is_pyannote_audio_available = importlib.util.find_spec("pyannote") is not None
+_is_transformers_available = importlib.util.find_spec("transformers") is not None
+
+
+def is_transformers_available():
+    return _is_transformers_available
 
 
 def is_torch_available():

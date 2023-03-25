@@ -22,4 +22,4 @@ class Config:
         )
         self.onet_cache = "weights/vision/face_detection/mtcnn/tf/onet.h5"
         self.onet = None
-        self.download_variables = None
+        self.download_variables = ("pnet", "onet", "rnet")
