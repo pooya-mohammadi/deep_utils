@@ -1,1 +1,1 @@
-from .kafka_utils import KafkaUtils
+# from .kafka_utils import KafkaUtils
