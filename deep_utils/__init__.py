@@ -7,6 +7,7 @@ from deep_utils.dummy_objects.dummy_framework.dummy_framework import (
     is_transformers_available,
     is_cv2_available,
     is_torchvision_available,
+    is_monai_available,
 )
 
 # Deep Utils version number
@@ -29,6 +30,14 @@ _import_structure = {
                                   "find_file",
                                   "combine_directory_of_directories"],
 }
+if is_torch_available() and is_monai_available():
+    _import_structure['preprocessing.monai.monai_segmentation'] = ["MonaiChannelBasedContrastEnhancementD"]
+else:
+    from .dummy_objects import torch_monai_dummy
+
+    _import_structure["dummy_objects.torch_monai_dummy"] = [
+        name for name in dir(torch_monai_dummy) if not name.startswith("_")
+    ]
 
 if is_torch_available():
     _import_structure["callbacks.torch.torch_tensorboard"] = ["TensorboardTorch"]
@@ -68,7 +77,7 @@ else:
     ]
 
 if TYPE_CHECKING:
-    from .utils.box_utils import Box, Point
+    from .utils.box_utils.boxes import Box, Point
     from .vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection import HaarcascadeCV2FaceDetector
     from .vision.face_detection.mtcnn.tf.mtcnn_tf_face_detection import MTCNNTFFaceDetector
     from .vision.face_detection.mtcnn.torch.mtcnn_torch_face_detection import MTCNNTorchFaceDetector
@@ -79,6 +88,7 @@ if TYPE_CHECKING:
                                             split_xy_dir, crawl_directory_dataset, remove_create, mkdir_incremental,
                                             file_incremental, cp_mv_all, split_segmentation_dirs, find_file,
                                             combine_directory_of_directories)
+    from .preprocessing.monai.monai_segmentation import MonaiChannelBasedContrastEnhancementD
 else:
     import sys
 

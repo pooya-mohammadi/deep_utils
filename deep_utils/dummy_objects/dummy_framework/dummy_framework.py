@@ -38,6 +38,11 @@ _is_torchvision_available = importlib.util.find_spec("torchvision") is not None
 _is_torchaudio_available = importlib.util.find_spec("torchaudio") is not None
 _is_pyannote_audio_available = importlib.util.find_spec("pyannote") is not None
 _is_transformers_available = importlib.util.find_spec("transformers") is not None
+_is_monai_available = importlib.util.find_spec("monai") is not None
+
+
+def is_monai_available():
+    return _is_monai_available
 
 
 def is_transformers_available():
@@ -173,6 +178,7 @@ BACKENDS_MAPPING = OrderedDict(
         is_available("psutil"),
         is_available("yaml", "pyyaml"),
         is_available("ipython", "IPython"),
+        is_available("monai")
     ]
 )
 
