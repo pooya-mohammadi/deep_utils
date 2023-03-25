@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 from deep_utils.utils.shutil_utils.shutil_utils import mv_or_copy
-from deep_utils.utils.logging_utils import log_print, value_error_log
+from deep_utils.utils.logging_utils.logging_utils import log_print, value_error_log
 from deep_utils.utils.os_utils.os_path import split_extension
 
 
@@ -376,7 +376,7 @@ def cp_mv_all(
 
 ):
     """
-    mv/cp all the files in a directory to another one. In case any of the files had the same name as the target files,
+    Move or Copy all the files in a directory to another one. In case any of the files had the same name as the target files,
      their name will be incremented using file_incremental
     :param input_dir:
     :param res_dir:

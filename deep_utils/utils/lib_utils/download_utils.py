@@ -4,7 +4,7 @@ from functools import wraps
 
 import requests
 
-from deep_utils.utils.logging_utils import log_print, value_error_log
+from deep_utils.utils.logging_utils.logging_utils import log_print, value_error_log
 
 
 def get_file(fname, origin, cache_dir=None):
