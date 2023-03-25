@@ -15,10 +15,33 @@ __version__ = "1.0.0"
 # no third-party python libraries are required for the following classes
 _import_structure = {
     "utils.box_utils": ["Box", "Point"],
+    "utils.os_utils.os_path": ["validate_file_extension", "is_img", "split_extension", "split_all", "get_file_name"],
+    "utils.dir_utils.dir_utils": ["transfer_directory_items",
+                                  "dir_train_test_split",
+                                  "split_dir_of_dir",
+                                  "split_xy_dir",
+                                  "crawl_directory_dataset",
+                                  "remove_create",
+                                  "mkdir_incremental",
+                                  "file_incremental",
+                                  "cp_mv_all",
+                                  "split_segmentation_dirs",
+                                  "find_file",
+                                  "combine_directory_of_directories"],
 }
 
+if is_torch_available():
+    _import_structure["callbacks.torch.torch_tensorboard"] = ["TensorboardTorch"]
+else:
+    from .dummy_objects import torch_dummy
+
+    _import_structure["dummy_objects.torch_dummy"] = [
+        name for name in dir(torch_dummy) if not name.startswith("_")
+    ]
+
 if is_cv2_available():
-    _import_structure["vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection"] = ["HaarcascadeCV2FaceDetector"]
+    _import_structure["vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection"] = [
+        "HaarcascadeCV2FaceDetector"]
 else:
     from .dummy_objects import cv2_dummy
 
@@ -50,7 +73,12 @@ if TYPE_CHECKING:
     from .vision.face_detection.mtcnn.tf.mtcnn_tf_face_detection import MTCNNTFFaceDetector
     from .vision.face_detection.mtcnn.torch.mtcnn_torch_face_detection import MTCNNTorchFaceDetector
     from .vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection import HaarcascadeCV2FaceDetector
-
+    from .callbacks.torch.torch_tensorboard import TensorboardTorch
+    from .utils.os_utils.os_path import validate_file_extension, is_img, split_extension, split_all, get_file_name
+    from .utils.dir_utils.dir_utils import (transfer_directory_items, dir_train_test_split, split_dir_of_dir,
+                                            split_xy_dir, crawl_directory_dataset, remove_create, mkdir_incremental,
+                                            file_incremental, cp_mv_all, split_segmentation_dirs, find_file,
+                                            combine_directory_of_directories)
 else:
     import sys
 
