@@ -134,8 +134,15 @@ def _split_extension(path, extension: Union[str, None] = None,
 
 
 def split_all(path):
+    """
+    splits and extracts all the parts of an input path
+    :param path:
+    :return:
+    >>> split_all(r"Users\pooya\projects\deep_utils")
+    ['Users', 'pooya', 'projects', 'deep_utils']
+    """
     all_parts = []
-    while 1:
+    while True:
         parts = os.path.split(path)
         if parts[0] == path:  # sentinel for absolute paths
             all_parts.insert(0, parts[0])
