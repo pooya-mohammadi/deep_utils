@@ -12,7 +12,7 @@ class TensorboardTorch:
             flush_secs=120,
             filename_suffix="",
             logger=None,
-            verbose=1,
+            verbose=0,
     ):
         """
         Creates an instance for TensorboardTorch class. Using this instance logs can be done easily.
