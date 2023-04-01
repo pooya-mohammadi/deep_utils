@@ -301,18 +301,22 @@ def remove_create(dir_, remove=True, logger=None, verbose=1):
         log_print(logger, f"Successfully removed and created dir: {dir_}", verbose=verbose)
 
 
-def mkdir_incremental(dir_path: str, base_name="exp", fix_name=None) -> Path:
+def mkdir_incremental(dir_path: str, base_name="exp", fix_name=None, overwrite=False) -> Path:
     """
     makes new directories, if it exists increment it and makes another one. Good for hyperparameter tuning!
     Args:
         dir_path:
         base_name:
         fix_name: If provided this will be created!
+        overwrite: If True, it will overwrite the existing directory!
 
     Returns:
 
     """
     os.makedirs(dir_path, exist_ok=True)
+    if overwrite:
+        return Path(dir_path)
+
     if fix_name is not None:
         final_path = os.path.join(dir_path, fix_name)
         os.makedirs(final_path, exist_ok=True)
