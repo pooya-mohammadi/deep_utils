@@ -41,6 +41,7 @@ else:
 
 if is_torch_available():
     _import_structure["callbacks.torch.torch_tensorboard"] = ["TensorboardTorch"]
+    _import_structure["utils.torch_utils.torch_utils"] = ["TorchUtils"]
 else:
     from .dummy_objects import torch_dummy
 
@@ -89,6 +90,7 @@ if TYPE_CHECKING:
                                             file_incremental, cp_mv_all, split_segmentation_dirs, find_file,
                                             combine_directory_of_directories)
     from .preprocessing.monai.monai_segmentation import MonaiChannelBasedContrastEnhancementD
+    from .utils.torch_utils.torch_utils import TorchUtils
 else:
     import sys
 
