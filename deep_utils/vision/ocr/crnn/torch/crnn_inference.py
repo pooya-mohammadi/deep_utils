@@ -1,13 +1,14 @@
 import os.path
 from pathlib import Path
 from typing import Union, List
+
+import cv2
 import numpy as np
 import torch
-from PIL import Image
-import cv2
-from .crnn_model import CRNNModelTorch
+
 from deep_utils.utils.ctc_decoder.ctc_decoder import CTCDecoder
 from deep_utils.vision.vision_utils.torch_vision_utils.torch_vision_utils import TorchVisionUtils
+from .crnn_model import CRNNModelTorch
 
 
 class CRNNInferenceTorch:
