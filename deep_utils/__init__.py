@@ -30,6 +30,16 @@ _import_structure = {
                                   "find_file",
                                   "combine_directory_of_directories"],
 }
+if is_tf_available():
+    _import_structure["utils.tf_utils.main"] = ["TFUtils"]
+else:
+    from .dummy_objects import tf_dummy
+
+    _import_structure["dummy_objects.tf_dummy"] = [
+        name for name in dir(tf_dummy) if not name.startswith("_")
+    ]
+
+
 if is_torch_available() and is_monai_available():
     _import_structure['preprocessing.monai.monai_segmentation'] = ["MonaiChannelBasedContrastEnhancementD"]
 else:
@@ -91,6 +101,7 @@ if TYPE_CHECKING:
                                             combine_directory_of_directories)
     from .preprocessing.monai.monai_segmentation import MonaiChannelBasedContrastEnhancementD
     from .utils.torch_utils.torch_utils import TorchUtils
+    from .utils.tf_utils.main import TFUtils
 else:
     import sys
 
