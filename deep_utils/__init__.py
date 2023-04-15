@@ -15,7 +15,7 @@ __version__ = "1.0.0"
 
 # no third-party python libraries are required for the following classes
 _import_structure = {
-    "utils.box_utils": ["Box", "Point"],
+    "utils.box_utils.boxes": ["Box", "Point"],
     "utils.os_utils.os_path": ["validate_file_extension", "is_img", "split_extension", "split_all", "get_file_name"],
     "utils.dir_utils.dir_utils": ["transfer_directory_items",
                                   "dir_train_test_split",
@@ -38,7 +38,6 @@ else:
     _import_structure["dummy_objects.tf_dummy"] = [
         name for name in dir(tf_dummy) if not name.startswith("_")
     ]
-
 
 if is_torch_available() and is_monai_available():
     _import_structure['preprocessing.monai.monai_segmentation'] = ["MonaiChannelBasedContrastEnhancementD"]
@@ -71,6 +70,10 @@ else:
 
 if is_torch_available() and is_cv2_available():
     _import_structure["vision.face_detection.mtcnn.torch.mtcnn_torch_face_detection"] = ["MTCNNTorchFaceDetector"]
+    _import_structure["vision.object_detection.yolo.v5.torch.yolo_v5_torch_object_detection"] = [
+        "YOLOV5TorchObjectDetector"]
+    _import_structure["vision.object_detection.yolo.v7.torch.yolo_v7_torch_object_detection"] = [
+        "YOLOV7TorchObjectDetector"]
 else:
     from .dummy_objects import torch_cv2_dummy
 
@@ -102,6 +105,8 @@ if TYPE_CHECKING:
     from .preprocessing.monai.monai_segmentation import MonaiChannelBasedContrastEnhancementD
     from .utils.torch_utils.torch_utils import TorchUtils
     from .utils.tf_utils.main import TFUtils
+    from .vision.object_detection.yolo.v5.torch.yolo_v5_torch_object_detection import YOLOV5TorchObjectDetector
+    from .vision.object_detection.yolo.v7.torch.yolo_v7_torch_object_detection import YOLOV7TorchObjectDetector
 else:
     import sys
 
