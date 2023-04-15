@@ -16,7 +16,7 @@ from deep_utils.utils.dir_utils.dir_utils import (
     file_incremental
 )
 from deep_utils.utils.logging_utils.logging_utils import log_print
-from deep_utils.utils.opencv_utils.main import show_destroy_cv2
+from deep_utils.utils.opencv_utils.opencv_utils import CVUtils
 from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.shutil_utils.shutil_utils import mv_or_copy
 from deep_utils.utils.os_utils.os_path import validate_file_extension
@@ -75,7 +75,7 @@ class YOLOObjectDetector(MainClass, ABC):
                             )
         img = Box.put_box_text(img, boxes, texts)
         if show:
-            show_destroy_cv2(img)
+            CVUtils.show_destroy_cv2(img)
         return img
 
     @staticmethod
