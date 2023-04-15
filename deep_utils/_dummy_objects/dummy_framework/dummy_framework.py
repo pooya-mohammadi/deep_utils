@@ -39,6 +39,11 @@ _is_torchaudio_available = importlib.util.find_spec("torchaudio") is not None
 _is_pyannote_audio_available = importlib.util.find_spec("pyannote") is not None
 _is_transformers_available = importlib.util.find_spec("transformers") is not None
 _is_monai_available = importlib.util.find_spec("monai") is not None
+_is_timm_available = importlib.util.find_spec("timm") is not None
+
+
+def is_timm_available():
+    return _is_timm_available
 
 
 def is_monai_available():
@@ -188,7 +193,7 @@ def requires_backends(obj, backends, module_name: str = None, cls_name: str = No
         backends = [backends]
 
     name = obj.__name__ if hasattr(obj, "__name__") else obj.__class__.__name__
-    checks = (BACKENDS_MAPPING[backend] for backend in backends)
+    checks = (BACKENDS_MAPPING[backend[0] if isinstance(backend, tuple) else backend] for backend in backends)
     failed = [msg.format(name) for available, msg in checks if not available()]
     if failed:
         color_str("".join(failed), color="red", mode=["bold", "underline"])

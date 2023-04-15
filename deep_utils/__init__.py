@@ -8,6 +8,7 @@ from deep_utils._dummy_objects.dummy_framework.dummy_framework import (
     is_cv2_available,
     is_torchvision_available,
     is_monai_available,
+    is_timm_available,
 )
 
 # Deep Utils version number
@@ -31,6 +32,16 @@ _import_structure = {
                                   "combine_directory_of_directories"],
 
 }
+
+if is_timm_available() and is_transformers_available() and is_torchvision_available() and is_torch_available():
+    _import_structure["vision.image_caption.blip.torch.blip_torch_image_caption"] = ["BlipTorchImageCaption"]
+else:
+    from ._dummy_objects import torchvision_torch_timm_transformers_fairscale_dummy
+
+    _import_structure["_dummy_objects.torchvision_torch_timm_transformers_fairscale_dummy"] = [
+        name for name in dir(torchvision_torch_timm_transformers_fairscale_dummy) if not name.startswith("_")
+    ]
+
 if is_tf_available():
     _import_structure["utils.tf_utils.main"] = ["TFUtils"]
 else:
@@ -110,6 +121,8 @@ if TYPE_CHECKING:
     from .vision.object_detection.yolo.v5.torch.yolo_v5_torch_object_detection import YOLOV5TorchObjectDetector
     from .vision.object_detection.yolo.v7.torch.yolo_v7_torch_object_detection import YOLOV7TorchObjectDetector
     from .utils.opencv_utils.opencv_utils import CVUtils
+    from vision.image_caption.image_caption import ImageCaption
+    from vision.image_caption.blip.torch.blip_torch_image_caption import BlipTorchImageCaption
 else:
     import sys
 
