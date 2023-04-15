@@ -4,7 +4,7 @@ from abc import ABC
 from typing import Any, Dict, Union
 
 from deep_utils.utils.lib_utils.main_utils import import_module
-from deep_utils.utils.os_utils import split_all
+from deep_utils.utils.os_utils.os_path import split_all
 
 
 class MainClass(ABC):
