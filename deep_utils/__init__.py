@@ -61,6 +61,7 @@ else:
 if is_cv2_available():
     _import_structure["vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection"] = [
         "HaarcascadeCV2FaceDetector"]
+    _import_structure["utils.opencv_utils.opencv_utils"] = ["CVUtils"]
 else:
     from .dummy_objects import cv2_dummy
 
@@ -107,6 +108,7 @@ if TYPE_CHECKING:
     from .utils.tf_utils.main import TFUtils
     from .vision.object_detection.yolo.v5.torch.yolo_v5_torch_object_detection import YOLOV5TorchObjectDetector
     from .vision.object_detection.yolo.v7.torch.yolo_v7_torch_object_detection import YOLOV7TorchObjectDetector
+    from .utils.opencv_utils.opencv_utils import CVUtils
 else:
     import sys
 
