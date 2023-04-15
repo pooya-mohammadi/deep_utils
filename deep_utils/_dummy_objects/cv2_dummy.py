@@ -1,4 +1,4 @@
-from deep_utils.dummy_objects.dummy_framework import DummyObject, requires_backends
+from deep_utils._dummy_objects.dummy_framework import DummyObject, requires_backends
 
 
 class HaarcascadeCV2FaceDetector(metaclass=DummyObject):

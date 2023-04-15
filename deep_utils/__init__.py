@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
-from deep_utils.dummy_objects.dummy_framework.dummy_framework import _LazyModule
-from deep_utils.dummy_objects.dummy_framework.dummy_framework import (
+from deep_utils._dummy_objects.dummy_framework.dummy_framework import _LazyModule
+from deep_utils._dummy_objects.dummy_framework.dummy_framework import (
     is_torch_available,
     is_tf_available,
     is_transformers_available,
@@ -29,22 +29,23 @@ _import_structure = {
                                   "split_segmentation_dirs",
                                   "find_file",
                                   "combine_directory_of_directories"],
+
 }
 if is_tf_available():
     _import_structure["utils.tf_utils.main"] = ["TFUtils"]
 else:
-    from .dummy_objects import tf_dummy
+    from ._dummy_objects import tf_dummy
 
-    _import_structure["dummy_objects.tf_dummy"] = [
+    _import_structure["_dummy_objects.tf_dummy"] = [
         name for name in dir(tf_dummy) if not name.startswith("_")
     ]
 
 if is_torch_available() and is_monai_available():
     _import_structure['preprocessing.monai.monai_segmentation'] = ["MonaiChannelBasedContrastEnhancementD"]
 else:
-    from .dummy_objects import torch_monai_dummy
+    from ._dummy_objects import torch_monai_dummy
 
-    _import_structure["dummy_objects.torch_monai_dummy"] = [
+    _import_structure["_dummy_objects.torch_monai_dummy"] = [
         name for name in dir(torch_monai_dummy) if not name.startswith("_")
     ]
 
@@ -52,20 +53,20 @@ if is_torch_available():
     _import_structure["callbacks.torch.torch_tensorboard"] = ["TensorboardTorch"]
     _import_structure["utils.torch_utils.torch_utils"] = ["TorchUtils"]
 else:
-    from .dummy_objects import torch_dummy
+    from ._dummy_objects import torch_dummy
 
-    _import_structure["dummy_objects.torch_dummy"] = [
+    _import_structure["_dummy_objects.torch_dummy"] = [
         name for name in dir(torch_dummy) if not name.startswith("_")
     ]
 
 if is_cv2_available():
     _import_structure["vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection"] = [
         "HaarcascadeCV2FaceDetector"]
-    _import_structure["utils.opencv_utils.opencv_utils"] = ["CVUtils"]
+    _import_structure["utils.opencv_utils.opencv_utils"] = ["CVUtils", "show_destroy_cv2"]
 else:
-    from .dummy_objects import cv2_dummy
+    from ._dummy_objects import cv2_dummy
 
-    _import_structure["dummy_objects.cv2_dummy"] = [
+    _import_structure["_dummy_objects.cv2_dummy"] = [
         name for name in dir(cv2_dummy) if not name.startswith("_")
     ]
 
@@ -76,18 +77,18 @@ if is_torch_available() and is_cv2_available():
     _import_structure["vision.object_detection.yolo.v7.torch.yolo_v7_torch_object_detection"] = [
         "YOLOV7TorchObjectDetector"]
 else:
-    from .dummy_objects import torch_cv2_dummy
+    from ._dummy_objects import torch_cv2_dummy
 
-    _import_structure["dummy_objects.torch_cv2_dummy"] = [
+    _import_structure["_dummy_objects.torch_cv2_dummy"] = [
         name for name in dir(torch_cv2_dummy) if not name.startswith("_")
     ]
 
 if is_tf_available() and is_cv2_available():
     _import_structure["vision.face_detection.mtcnn.tf.mtcnn_tf_face_detection"] = ["MTCNNTFFaceDetector"]
 else:
-    from .dummy_objects import tf_cv2_dummy
+    from ._dummy_objects import tf_cv2_dummy
 
-    _import_structure["dummy_objects.tf_cv2_dummy"] = [
+    _import_structure["_dummy_objects.tf_cv2_dummy"] = [
         name for name in dir(tf_cv2_dummy) if not name.startswith("_")
     ]
 
