@@ -3,7 +3,7 @@ from typing import Union
 
 import numpy as np
 
-from deep_utils.utils.logging_utils import log_print, value_error_log
+from deep_utils.utils.logging_utils.logging_utils import log_print, value_error_log
 
 
 def img_to_b64(image: np.ndarray, extension: str = ".jpg") -> str:

@@ -74,6 +74,7 @@ if is_cv2_available():
     _import_structure["vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection"] = [
         "HaarcascadeCV2FaceDetector"]
     _import_structure["utils.opencv_utils.opencv_utils"] = ["CVUtils", "show_destroy_cv2"]
+    _import_structure["utils.encodes.b64"] = ["b64_to_img"]
 else:
     from ._dummy_objects import cv2_dummy
 
@@ -123,6 +124,7 @@ if TYPE_CHECKING:
     from .utils.opencv_utils.opencv_utils import CVUtils
     from vision.image_caption.image_caption import ImageCaption
     from vision.image_caption.blip.torch.blip_torch_image_caption import BlipTorchImageCaption
+    from utils.encodes.b64 import b64_to_img
 else:
     import sys
 
