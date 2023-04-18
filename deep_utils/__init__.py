@@ -74,7 +74,7 @@ if is_cv2_available():
     _import_structure["vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection"] = [
         "HaarcascadeCV2FaceDetector"]
     _import_structure["utils.opencv_utils.opencv_utils"] = ["CVUtils", "show_destroy_cv2"]
-    _import_structure["utils.encodes.b64"] = ["b64_to_img"]
+    _import_structure["utils.encodes.b64"] = ["b64_to_img", "img_to_b64"]
 else:
     from ._dummy_objects import cv2_dummy
 
