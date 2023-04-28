@@ -5,7 +5,7 @@ from os.path import join, split
 from typing import Dict, List, Union, Type
 
 from tqdm import tqdm
-
+import cv2
 from deep_utils.main_abs.main import MainClass
 from deep_utils.utils.box_utils.boxes import Box
 from deep_utils.utils.dict_named_tuple_utils import dictnamedtuple
@@ -342,6 +342,24 @@ class YOLOObjectDetector(MainClass, ABC):
                        logger=None,
                        verbose=1) -> Union[Type[OutputType], Dict[str, list]]:
         raise NotImplementedError("object_detects is not implemented!")
+
+    def detect_img_file(self,
+                        img_file,
+                        class_indices=None,
+                        confidence=None,
+                        iou_thresh=None,
+                        img_size=None,
+                        agnostic=None,
+                        get_time=False,
+                        logger=None,
+                        verbose=1) -> Union[Type[OutputType], Dict[str, list]]:
+        img = cv2.imread(img_file)
+        if img is None:
+            log_print(logger, f"Image {img_file} is not valid", verbose=verbose)
+        else:
+            return self.detect_objects(img, False, class_indices, confidence,
+                                       iou_thresh, img_size, agnostic, get_time,
+                                       logger, verbose)
 
     def detect_dir(self,
                    dir_,

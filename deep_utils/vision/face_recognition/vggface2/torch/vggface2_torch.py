@@ -10,7 +10,7 @@ from deep_utils.utils.lib_utils.lib_decorators import (
     get_from_config,
     lib_rgb2bgr
 )
-from deep_utils.utils.pickle_utils.pickles import load_pickle
+from deep_utils.utils.pickle_utils.pickle_utils import load_pickle
 from deep_utils.vision.face_recognition.main.main_face_recognition import FaceRecognition, OUTPUT_CLASS
 from .config import Config
 from .src import load_model

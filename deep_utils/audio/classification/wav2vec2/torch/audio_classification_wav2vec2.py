@@ -6,7 +6,7 @@ import torch
 import torchaudio
 import librosa
 import numpy as np
-from deep_utils.utils.pickle_utils.pickles import load_pickle
+from deep_utils.utils.pickle_utils.pickle_utils import load_pickle
 from deep_utils.utils.logging_utils.logging_utils import log_print
 from deep_utils.audio.audio_utils.torchaudio_utils import TorchAudioUtils
 

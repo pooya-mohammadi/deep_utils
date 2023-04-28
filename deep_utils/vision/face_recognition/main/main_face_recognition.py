@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from abc import abstractmethod
-from deep_utils.utils.pickle_utils.pickles import dump_pickle
+from deep_utils.utils.pickle_utils.pickle_utils import dump_pickle
 from deep_utils.main_abs.main import MainClass
 from deep_utils.utils.dict_named_tuple_utils import dictnamedtuple
 from deep_utils.utils.dir_utils.dir_utils import remove_create

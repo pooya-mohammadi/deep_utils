@@ -30,6 +30,7 @@ _import_structure = {
                                   "split_segmentation_dirs",
                                   "find_file",
                                   "combine_directory_of_directories"],
+    "utils.pickle_utils.pickle_utils": ["dump_pickle", "load_pickle"],
 
 }
 
@@ -63,6 +64,7 @@ else:
 if is_torch_available():
     _import_structure["callbacks.torch.torch_tensorboard"] = ["TensorboardTorch"]
     _import_structure["utils.torch_utils.torch_utils"] = ["TorchUtils"]
+    _import_structure["blocks.torch.blocks_torch"] = ["BlocksTorch"]
 else:
     from ._dummy_objects import torch_dummy
 
@@ -125,6 +127,7 @@ if TYPE_CHECKING:
     from vision.image_caption.image_caption import ImageCaption
     from vision.image_caption.blip.torch.blip_torch_image_caption import BlipTorchImageCaption
     from utils.encodes.b64 import b64_to_img
+    from blocks.torch.blocks_torch import BlocksTorch
 else:
     import sys
 
