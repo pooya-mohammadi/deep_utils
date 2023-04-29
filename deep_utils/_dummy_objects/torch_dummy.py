@@ -23,3 +23,11 @@ class BlocksTorch(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, self._backend, module_name=self._module, cls_name=self.__class__.__name__)
+
+
+class ColorRecognitionCNNTorch(metaclass=DummyObject):
+    _backend = [("torch", "1.13.1", "pip")]
+    _module = "deep_utils.vision.color_recognition.cnn_color.torch.color_cnn_torch"
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, self._backend, module_name=self._module, cls_name=self.__class__.__name__)

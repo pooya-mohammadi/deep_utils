@@ -65,6 +65,7 @@ if is_torch_available():
     _import_structure["callbacks.torch.torch_tensorboard"] = ["TensorboardTorch"]
     _import_structure["utils.torch_utils.torch_utils"] = ["TorchUtils"]
     _import_structure["blocks.torch.blocks_torch"] = ["BlocksTorch"]
+    _import_structure["vision.color_recognition.cnn_color.torch.color_cnn_torch"] = ["ColorRecognitionCNNTorch"]
 else:
     from ._dummy_objects import torch_dummy
 
@@ -128,6 +129,7 @@ if TYPE_CHECKING:
     from vision.image_caption.blip.torch.blip_torch_image_caption import BlipTorchImageCaption
     from utils.encodes.b64 import b64_to_img
     from blocks.torch.blocks_torch import BlocksTorch
+    from vision.color_recognition.cnn_color.torch.color_cnn_torch import ColorRecognitionCNNTorch
 else:
     import sys
 
