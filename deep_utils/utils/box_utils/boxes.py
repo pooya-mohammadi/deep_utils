@@ -1,7 +1,9 @@
 from enum import Enum
-from typing import Sequence, Union
+from typing import Sequence, Union, Tuple, List
+
 import numpy as np
-from deep_utils.utils.logging_utils.logging_utils import log_print, value_error_log
+
+from deep_utils.utils.logging_utils.logging_utils import value_error_log
 
 
 class Point:
@@ -226,6 +228,24 @@ class Box:
         Numpy = np.array
         List = list
         Tuple = tuple
+
+    @staticmethod
+    def check_overlap(box_a: Union[Tuple[int, int, int, int], List[int]],
+                      box_b: Union[Tuple[int, int, int, int], List[int]]):
+        """
+        Check if two boxes overlap
+        :param box_a:
+        :param box_b:
+        :return:
+        """
+        p1_x1, p1_y1, p1_x2, p1_y2 = box_a
+        p2_x1, p2_y1, p2_x2, p2_y2 = box_b
+
+        if p1_x1 > p2_x2 or p1_x2 < p2_x1:
+            return False
+        if p1_y1 > p2_y2 or p1_y2 < p2_y1:
+            return False
+        return True
 
     @staticmethod
     def box2box(
