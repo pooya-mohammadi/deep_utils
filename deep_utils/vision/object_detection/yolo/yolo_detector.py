@@ -42,12 +42,16 @@ class YOLOObjectDetector(MainClass, ABC):
 
     @staticmethod
     def test_label_dir(dataset_dir, rename_dict: Union[Dict[int, str], None] = None, images_name="images",
-                       labels_name="labels"):
+                       labels_name="labels", show=True):
         images_path = join(dataset_dir, images_name)
         for name in sorted(os.listdir(images_path)):
             img_address = join(images_path, name)
             text_address = join(dataset_dir, labels_name, split_extension(name, '.txt'))
-            YOLOObjectDetector.test_label(img_address, text_address, rename_dict=rename_dict)
+            if show:
+                YOLOObjectDetector.test_label(img_address, text_address, rename_dict=rename_dict, show=show)
+            else:
+                img = YOLOObjectDetector.test_label(img_address, text_address, rename_dict=rename_dict, show=show)
+                yield img
 
     @staticmethod
     def test_label(img_path, label_path, rename_dict: Union[Dict[int, str], None] = None, show=True):
