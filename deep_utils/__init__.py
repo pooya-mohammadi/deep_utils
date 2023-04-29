@@ -91,6 +91,8 @@ if is_torch_available() and is_cv2_available():
         "YOLOV5TorchObjectDetector"]
     _import_structure["vision.object_detection.yolo.v7.torch.yolo_v7_torch_object_detection"] = [
         "YOLOV7TorchObjectDetector"]
+    _import_structure["vision.color_recognition.cnn_color.torch.color_cnn_torch_pred"] = [
+        "ColorRecognitionCNNTorchPrediction"]
 else:
     from ._dummy_objects import torch_cv2_dummy
 
@@ -125,11 +127,12 @@ if TYPE_CHECKING:
     from .vision.object_detection.yolo.v5.torch.yolo_v5_torch_object_detection import YOLOV5TorchObjectDetector
     from .vision.object_detection.yolo.v7.torch.yolo_v7_torch_object_detection import YOLOV7TorchObjectDetector
     from .utils.opencv_utils.opencv_utils import CVUtils
-    from vision.image_caption.image_caption import ImageCaption
-    from vision.image_caption.blip.torch.blip_torch_image_caption import BlipTorchImageCaption
-    from utils.encodes.b64 import b64_to_img
-    from blocks.torch.blocks_torch import BlocksTorch
-    from vision.color_recognition.cnn_color.torch.color_cnn_torch import ColorRecognitionCNNTorch
+    from .vision.image_caption.image_caption import ImageCaption
+    from .vision.image_caption.blip.torch.blip_torch_image_caption import BlipTorchImageCaption
+    from .utils.encodes.b64 import b64_to_img
+    from .blocks.torch.blocks_torch import BlocksTorch
+    from .vision.color_recognition.cnn_color.torch.color_cnn_torch import ColorRecognitionCNNTorch
+    from .vision.color_recognition.cnn_color.torch.color_cnn_torch_pred import ColorRecognitionCNNTorchPrediction
 else:
     import sys
 

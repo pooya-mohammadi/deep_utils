@@ -1,7 +1,9 @@
+from copy import deepcopy
+
 import torch
 from torch import nn
+
 from deep_utils.blocks.torch.blocks_torch import BlocksTorch
-from copy import deepcopy
 
 
 class ColorRecognitionCNNTorch(nn.Module):
