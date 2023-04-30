@@ -32,3 +32,21 @@ class ColorRecognitionCNNTorchPrediction(metaclass=DummyObject):
 
     def __init__(self, *args, **kwargs):
         requires_backends(self, self._backend, module_name=self._module, cls_name=self.__class__.__name__)
+
+
+class CRNNModelTorch(metaclass=DummyObject):
+    _backend = [("torch", "1.13.1", "pip"),
+                ("opencv-python", " 4.7.0.68", "pip")]
+    _module = "deep_utils.vision.ocr.crnn.torch.crnn_model"
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, self._backend, module_name=self._module, cls_name=self.__class__.__name__)
+
+
+class CRNNInferenceTorch(metaclass=DummyObject):
+    _backend = [("torch", "1.13.1", "pip"),
+                ("opencv-python", " 4.7.0.68", "pip")]
+    _module = "deep_utils.vision.ocr.crnn.torch.crnn_inference"
+
+    def __init__(self, *args, **kwargs):
+        requires_backends(self, self._backend, module_name=self._module, cls_name=self.__class__.__name__)

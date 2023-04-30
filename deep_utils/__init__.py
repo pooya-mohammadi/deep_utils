@@ -93,6 +93,8 @@ if is_torch_available() and is_cv2_available():
         "YOLOV7TorchObjectDetector"]
     _import_structure["vision.color_recognition.cnn_color.torch.color_cnn_torch_pred"] = [
         "ColorRecognitionCNNTorchPrediction"]
+    _import_structure["vision.ocr.crnn.torch.crnn_inference"] = ["CRNNInferenceTorch"]
+    _import_structure["vision.ocr.crnn.torch.crnn_model"] = ["CRNNModelTorch"]
 else:
     from ._dummy_objects import torch_cv2_dummy
 
@@ -133,6 +135,8 @@ if TYPE_CHECKING:
     from .blocks.torch.blocks_torch import BlocksTorch
     from .vision.color_recognition.cnn_color.torch.color_cnn_torch import ColorRecognitionCNNTorch
     from .vision.color_recognition.cnn_color.torch.color_cnn_torch_pred import ColorRecognitionCNNTorchPrediction
+    from .vision.ocr.crnn.torch.crnn_inference import CRNNInferenceTorch
+    from .vision.ocr.crnn.torch.crnn_model import CRNNModelTorch
 else:
     import sys
 

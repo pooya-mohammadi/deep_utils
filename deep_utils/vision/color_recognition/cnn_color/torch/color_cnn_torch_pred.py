@@ -15,13 +15,14 @@ class ColorRecognitionCNNTorchPrediction:
         state_dict = torch.load(model_path, map_location=self.device)
         self.model = ColorRecognitionCNNTorch(n_classes=state_dict['n_classes'],
                                               in_channel=state_dict.get('in_channel', 3))
+        self.model.to(self.device)
         TorchUtils.load_model(self.model, state_dict['state_dict'])
         # skip cold start
         self.model(torch.randn((1, state_dict.get('in_channel', 3),
                                 state_dict.get("width", 224),
                                 state_dict.get("height", 224))).to(device))
         self.model.eval()
-        self.model.to(self.device)
+
         self.id2class = state_dict['id2class']
         self.transform = state_dict['val_transform']
         del state_dict
