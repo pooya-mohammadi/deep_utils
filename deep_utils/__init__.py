@@ -31,6 +31,7 @@ _import_structure = {
                                   "find_file",
                                   "combine_directory_of_directories"],
     "utils.pickle_utils.pickle_utils": ["dump_pickle", "load_pickle"],
+    "utils.logging_utils.logging_utils": ["get_logger"],
 
 }
 
@@ -137,6 +138,7 @@ if TYPE_CHECKING:
     from .vision.color_recognition.cnn_color.torch.color_cnn_torch_pred import ColorRecognitionCNNTorchPrediction
     from .vision.ocr.crnn.torch.crnn_inference import CRNNInferenceTorch
     from .vision.ocr.crnn.torch.crnn_model import CRNNModelTorch
+    from .utils.logging_utils.logging_utils import get_logger
 else:
     import sys
 
