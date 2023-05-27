@@ -43,6 +43,11 @@ _is_timm_available = importlib.util.find_spec("timm") is not None
 _is_glide_text2im_available = importlib.util.find_spec("glide_text2im") is not None
 _is_groundingdino_available = importlib.util.find_spec("groundingdino") is not None
 _is_pillow_available = importlib.util.find_spec("PIL") is not None
+_is_requests_available = importlib.util.find_spec("requests") is not None
+
+
+def is_requests_available():
+    return _is_requests_available
 
 
 def is_pillow_available():
@@ -210,6 +215,7 @@ BACKENDS_MAPPING = BackendMapping(
         is_available("monai"),
         is_available("glide_text2im"),
         is_available("groundingdino"),
+        is_available("requests"),
     ]
 )
 
