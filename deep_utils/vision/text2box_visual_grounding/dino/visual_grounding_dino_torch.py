@@ -13,7 +13,7 @@ from groundingdino.util.misc import clean_state_dict
 from groundingdino.util.slconfig import SLConfig
 from groundingdino.util.utils import get_phrases_from_posmap
 from torchvision.ops import box_convert
-from huggingface_hub import hf_hub_download
+from deep_utils.utils.download_utils.download_utils import DownloadUtils
 
 
 class Text2BoxVisualGroundingDinoModelTypes(str, Enum):
@@ -52,14 +52,17 @@ class Text2BoxVisualGroundingDinoOutput:
 class ModelDetails:
     repo_id: str
     filename: str
+    model_url: str
 
 
 class Text2BoxVisualGroundingDino:
     MODEL_DETAILS = {
         Text2BoxVisualGroundingDinoModelTypes.SWIN_T: ModelDetails(repo_id="ShilongLiu/GroundingDINO",
-                                                                   filename="groundingdino_swint_ogc.pth"),
+                                                                   filename="groundingdino_swint_ogc.pth",
+                                                                   model_url="https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth"),
         Text2BoxVisualGroundingDinoModelTypes.SWIN_B: ModelDetails(repo_id="ShilongLiu/GroundingDINO",
-                                                                   filename="groundingdino_swinb_cogcoor.pth")}
+                                                                   filename="groundingdino_swinb_cogcoor.pth",
+                                                                   model_url="https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha2/groundingdino_swinb_cogcoor.pth")}
 
     def __init__(self,
                  weight_path: str = None,
@@ -71,6 +74,7 @@ class Text2BoxVisualGroundingDino:
                  box_threshold=0.35,
                  text_threshold=0.25,
                  device: str = "cuda",
+                 overwrite_weight_download=False,
                  model_type=Text2BoxVisualGroundingDinoModelTypes.SWIN_T):
         """
         Creates an instance of Text2ObjectVisualGroundingDinoTorch.
@@ -85,6 +89,7 @@ class Text2BoxVisualGroundingDino:
         :param model_type: type of the model. It can be swin_b or swin_t. Default is swin_t which is smaller and faster.
         :param box_threshold: threshold for the boxes. Default is 0.35
         :param text_threshold: threshold for the text. Default is 0.25
+        :param overwrite_weight_download: if set to True, it will download the weight file even if it exists.
         """
         self._weight_path = weight_path
         self._device = device
@@ -95,7 +100,7 @@ class Text2BoxVisualGroundingDino:
         self._std_normalize = std_normalize
         self._box_threshold = box_threshold
         self._text_threshold = text_threshold
-        self._load_model(device, model_type, weight_path)
+        self._load_model(device, model_type, weight_path, overwrite=overwrite_weight_download)
         self._transform = T.Compose(
             [
                 T.RandomResize([self._width, self._height], max_size=self._max_size),
@@ -103,14 +108,19 @@ class Text2BoxVisualGroundingDino:
                 T.Normalize(list(self._mean_normalize), list(self._std_normalize)),
             ]
         )
+        print("[INFO] Groundingdino Model loaded successfully!")
 
-    def _load_model(self, device, model_type, weight_path):
+    def _load_model(self, device, model_type, weight_path, overwrite):
         if weight_path is not None:
-            self._load_model_weight_path(device, model_type)
+            self._load_model_weight_path(device, model_type, weight_path)
+        # else:
+        #     self._model = self._load_model_hf(model_type, device=self._device)
         else:
-            self._model = self._load_model_hf(model_type, device=self._device)
+            weight_path = DownloadUtils.download_file(Text2BoxVisualGroundingDino.MODEL_DETAILS[model_type].model_url,
+                                                      exists_skip=not overwrite)
+            self._load_model_weight_path(device, model_type, weight_path)
 
-    def _load_model_weight_path(self, device, model_type):
+    def _load_model_weight_path(self, device, model_type, weight_path):
         if model_type == Text2BoxVisualGroundingDinoModelTypes.SWIN_B:
             args = SLConfig.fromfile(GroundingDINO_SwinB_cfg.__file__)
         elif model_type == Text2BoxVisualGroundingDinoModelTypes.SWIN_T:
@@ -119,12 +129,13 @@ class Text2BoxVisualGroundingDino:
             raise ValueError(f"model_type {model_type} is not supported, supported model_type are swin_b and swin_t")
         args.device = device
         self._model = build_model(args)
-        checkpoint = torch.load(self._weight_path, map_location=self._device)
+        checkpoint = torch.load(weight_path, map_location=self._device)
         self._model.load_state_dict(clean_state_dict(checkpoint["model"]), strict=False)
         self._model.eval().to(self._device)
 
     @staticmethod
     def _load_model_hf(model_type, device='cpu'):
+        from huggingface_hub import hf_hub_download
         cache_config_file = hf_hub_download(repo_id=Text2BoxVisualGroundingDino.MODEL_DETAILS[model_type].repo_id,
                                             filename=Text2BoxVisualGroundingDino.MODEL_DETAILS[model_type].filename
                                             )
@@ -236,7 +247,8 @@ class Text2BoxVisualGroundingDino:
         return self._process_pil(text=text, frame=frame, threshold=threshold)
 
     @staticmethod
-    def annotate(img: np.ndarray, output: Text2BoxVisualGroundingDinoOutput, append_score=True, copy_img=True) -> np.ndarray:
+    def annotate(img: np.ndarray, output: Text2BoxVisualGroundingDinoOutput, append_score=True,
+                 copy_img=True) -> np.ndarray:
         """
         Given an image and the output of the model, it returns the image with the boxes and the text on it.
         :param output:
