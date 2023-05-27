@@ -41,6 +41,11 @@ _is_transformers_available = importlib.util.find_spec("transformers") is not Non
 _is_monai_available = importlib.util.find_spec("monai") is not None
 _is_timm_available = importlib.util.find_spec("timm") is not None
 _is_glide_text2im_available = importlib.util.find_spec("glide_text2im") is not None
+_is_groundingdino_available = importlib.util.find_spec("groundingdino") is not None
+
+
+def is_groundingdino_available():
+    return _is_groundingdino_available
 
 
 def is_glide_text2im_available():
@@ -169,7 +174,16 @@ In a notebook or a colab, you can install it by executing a cell with
 ```
 """
 
-BACKENDS_MAPPING = OrderedDict(
+
+class BackendMapping(OrderedDict):
+    def __getitem__(self, item):
+        try:
+            return super().__getitem__(item)
+        except KeyError:
+            raise KeyError(f"Library {item} is not available in BACKENDS_MAPPING. Contact the Library Maintainers.")
+
+
+BACKENDS_MAPPING = BackendMapping(
     [
         ("cv2", (is_cv2_available, CV2_IMPORT_ERROR)),
         ("tf", (is_tf_available, TENSORFLOW_IMPORT_ERROR)),
@@ -190,6 +204,7 @@ BACKENDS_MAPPING = OrderedDict(
         is_available("ipython", "IPython"),
         is_available("monai"),
         is_available("glide_text2im"),
+        is_available("groundingdino"),
     ]
 )
 
