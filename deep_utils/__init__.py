@@ -10,7 +10,8 @@ from deep_utils._dummy_objects.dummy_framework.dummy_framework import (
     is_monai_available,
     is_timm_available,
     is_glide_text2im_available,
-    is_pillow_available
+    is_pillow_available,
+    is_requests_available,
 )
 
 # Deep Utils version number
@@ -37,6 +38,16 @@ _import_structure = {
     "utils.logging_utils.logging_utils": ["get_logger"],
 
 }
+
+if is_requests_available():
+    _import_structure["utils.download_utils.download_utils"] = ["DownloadUtils"]
+else:
+    from ._dummy_objects import requests_dummy
+
+    _import_structure["_dummy_objects.requests_dummy"] = [
+        name for name in dir(requests_dummy) if not name.startswith("_")
+    ]
+
 if is_groundingdino_available() and is_torch_available() and is_pillow_available():
     _import_structure["vision.text2box_visual_grounding.dino.visual_grounding_dino_torch"] = [
         "Text2BoxVisualGroundingDino"]
@@ -160,6 +171,7 @@ if TYPE_CHECKING:
     from .utils.logging_utils.logging_utils import get_logger
     # from .vision.image_editing.glide.glide_image_editing import ImageEditingGLIDE
     from .vision.text2box_visual_grounding.dino.visual_grounding_dino_torch import Text2BoxVisualGroundingDino
+    from .utils.download_utils.download_utils import DownloadUtils
 else:
     import sys
 
