@@ -1,4 +1,4 @@
-[![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils) [![PyPI](https://img.shields.io/pypi/v/deep_utils.svg)](https://pypi.python.org/pypi/deep_utils) [![build](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/ci-tests.yml/badge.svg)](https://github.com/pooya-mohammadi/deep_utils/actions/workflows/ci-tests.yml)
+[![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils) [![PyPI](https://img.shields.io/pypi/v/deep_utils.svg)](https://pypi.python.org/pypi/deep_utils) 
 
 <div id="top"></div>
 <!-- PROJECT LOGO -->
@@ -28,6 +28,8 @@ latest version using pypi.
         * [MTCNN](#mtcnn)
     * [Object Detection](#object-detection)
         * [yolov5](#yolov5)
+    * [Visual Grounding](#visual-grounding)
+        * [Grounding DINO](#grounding-dino)
 * [NLP](#NLP)
     * [NER](#NER)
         * [Replacement Augmentation](replacement-augmentation)
@@ -227,13 +229,50 @@ Image.fromarray(img[..., ::-1])  # convert to rgb
 <img src="https://raw.githubusercontent.com/pooya-mohammadi/deep-utils-notebooks/main/vision/images/dog_yolov5.jpg" alt="Logo" >
 <p align="right">(<a href="#top">back to top</a>)</p>
 
+## Visual Grounding
+### Grounding DINO
+DINO is a self-supervised learning method for visual grounding. It is a simple and efficient method that can be used for
+visual grounding. Let's see how we can use it in `deep_utils`:
+
+#### First Download the weights:
+```commandline
+wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+```
+#### Download a sample image
+```commandline
+wget -q https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden.jpg
+```
+
+```python
+from PIL import Image
+from deep_utils import Text2BoxVisualGroundingDino
+import numpy as np
+import matplotlib.pyplot as plt
+
+weight_path = "groundingdino_swint_ogc.pth"
+model = Text2BoxVisualGroundingDino(weight_path=weight_path)
+
+img_path = "golsa_in_garden.jpg"
+img = np.asarray(Image.open(img_path))
+
+output = model.text_to_box(text="Hen", img=img)
+print(output.boxes, output.scores, output.labels)
+annotated_img = model.annotate(img, output)
+plt.axis("off")
+plt.imshow(annotated_img)
+```
 ## NLP
 
-In this section, models and utilities for nlp projects are provided
+In
+this
+section, models and utilities
+for nlp projects are provided
 
 ### NER
 
-Name Entity Recognition
+Name
+Entity
+Recognition
 
 #### multi-label-stratify
 
@@ -241,11 +280,10 @@ Name Entity Recognition
 
 ### CutMix
 
-<a href="https://colab.research.google.com/github/pooya-mohammadi/deep-utils-notebooks/blob/main/augmentation/cutmix/cutmix_tf.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
+<a href="https://colab.research.google.com/github/pooya-mohammadi/deep-utils-notebooks/blob/main/augmentation/cutmix/cutmix_tf.ipynb" target="_parent"> <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" /> </a> 
 
-CutMix is one of the best augmentation methods that's proven to be very effective in different vision-based project.
-Therefore, CutMix is now available on `deep_utils` to be used both for segmentation and classification tasks. Let some
-examples:
+CutMix is one of the best augmentation methods that's proven to be very effective in different vision-based project. Therefore, CutMix is now
+available on `deep_utils` to be used both for segmentation and classification tasks.Let some examples:
 
 #### Segmentation
 
