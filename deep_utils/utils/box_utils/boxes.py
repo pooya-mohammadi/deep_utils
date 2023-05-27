@@ -229,6 +229,8 @@ class Box:
         List = list
         Tuple = tuple
 
+    PointSource = Point.PointSource
+
     @staticmethod
     def check_overlap(box_a: Union[Tuple[int, int, int, int], List[int]],
                       box_b: Union[Tuple[int, int, int, int], List[int]]):
