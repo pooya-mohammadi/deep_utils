@@ -40,6 +40,11 @@ _is_pyannote_audio_available = importlib.util.find_spec("pyannote") is not None
 _is_transformers_available = importlib.util.find_spec("transformers") is not None
 _is_monai_available = importlib.util.find_spec("monai") is not None
 _is_timm_available = importlib.util.find_spec("timm") is not None
+_is_glide_text2im_available = importlib.util.find_spec("glide_text2im") is not None
+
+
+def is_glide_text2im_available():
+    return _is_glide_text2im_available
 
 
 def is_timm_available():
@@ -183,7 +188,8 @@ BACKENDS_MAPPING = OrderedDict(
         is_available("psutil"),
         is_available("yaml", "pyyaml"),
         is_available("ipython", "IPython"),
-        is_available("monai")
+        is_available("monai"),
+        is_available("glide_text2im"),
     ]
 )
 
