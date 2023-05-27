@@ -250,6 +250,42 @@ class Box:
         return True
 
     @staticmethod
+    def resize_box(box: List[int],
+                   img_input_shape: Union[list, tuple] = None,
+                   img_resized_shape: Union[list, tuple] = None,
+                   return_int: bool = True):
+        """
+        Resize a box from one source to another when the image is resized. Box and shapes must be in Numpy source.
+        Box must be in XYXY format.
+        :param box:
+        :param img_input_shape:
+        :param img_resized_shape:
+        :param return_int: if True, return the box as int, else return as float
+        :return:
+        """
+        if box is None or len(box) == 0:
+            raise ValueError("box is None or empty")
+        if len(box) != 4:
+            raise ValueError(f"box must have 4 elements, got {len(box)}")
+        # get the ratio
+        if img_input_shape is None or img_resized_shape is None:
+            raise ValueError("img_input_shape and img_resized_shape must be provided")
+        if len(img_input_shape) != 2 or len(img_resized_shape) != 2:
+            raise ValueError("img_input_shape and img_resized_shape must be 2D")
+        ratio_w = img_resized_shape[0] / img_input_shape[0]
+        ratio_h = img_resized_shape[1] / img_input_shape[1]
+        # resize the box
+        resized_box = [
+            box[0] * ratio_w,
+            box[1] * ratio_h,
+            box[2] * ratio_w,
+            box[3] * ratio_h,
+        ]
+        if return_int:
+            resized_box = [round(b) for b in resized_box]
+        return resized_box
+
+    @staticmethod
     def box2box(
             box,
             in_format=None,
