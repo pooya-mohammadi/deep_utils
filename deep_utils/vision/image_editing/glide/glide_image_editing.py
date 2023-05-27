@@ -41,8 +41,8 @@ class ImageEditingGLIDE:
             guidance_scale=0.5,
         ),
         ImageEditingGLIDETypes.Slow: ImageEditingGLIDEOptions(
-            img_small_size=128,
-            img_large_size=512,
+            img_small_size=64,
+            img_large_size=256,
             diffusion_steps="500",
             upsampling_steps="100",
             upsample_temp=0.99,
@@ -51,10 +51,10 @@ class ImageEditingGLIDE:
     }
 
     def __init__(self,
+                 execute_type: ImageEditingGLIDETypes = ImageEditingGLIDETypes.Fast,
                  inpaint_model_path=None,
                  upsampling_model_path=None,
-                 device='cuda',
-                 execute_type: ImageEditingGLIDETypes = ImageEditingGLIDETypes.Fast,
+                 device='cuda'
                  ):
         execute_details = self.EXECUTE_DETAILS[execute_type]
         self._img_large_size = execute_details.img_large_size
@@ -77,6 +77,7 @@ class ImageEditingGLIDE:
         self._inpaint_options['inpaint'] = True
         self._inpaint_options['use_fp16'] = self._has_cuda
         self._inpaint_options['timestep_respacing'] = self._diffusion_steps  # use 100 diffusion steps for fast sampling
+        self._inpaint_options['image_size'] = self._img_small_size
         model, diffusion = create_model_and_diffusion(**self._inpaint_options)
         model.eval()
         if self._has_cuda:
@@ -152,7 +153,6 @@ class ImageEditingGLIDE:
             box = BoxDataClass.from_list(box)
         batch_size = 1
         source_img_small = self._img_preparation(img, img_size=self._img_small_size)
-        print(img.size)
         resized_box_small = Box.resize_box(box.to_list(), img.size, (self._img_small_size, self._img_small_size))
         resized_box_small = BoxDataClass.from_list(resized_box_small)
         source_mask_small = torch.ones_like(source_img_small)[:, :1]
@@ -214,9 +214,6 @@ class ImageEditingGLIDE:
         )
 
     def upscale(self, edited_img: torch.Tensor, img: Union[np.ndarray, Image.Image], text: str, box: BoxDataClass):
-        ##############################
-        # Upsample the 64x64 samples #
-        ##############################
         if isinstance(box, list):
             box = BoxDataClass.from_list(box)
 
@@ -307,4 +304,5 @@ if __name__ == '__main__':
     pil_img = Image.open(image_path)
     edit_text = "dead gray leaves"
     output_img = editing_model.edit_box(img=pil_img, text=edit_text, box=box)
+    print(output_img.size)
     output_img.save("output.jpg")
