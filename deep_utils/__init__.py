@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from deep_utils._dummy_objects.dummy_framework.dummy_framework import _LazyModule
+from deep_utils._dummy_objects.dummy_framework.dummy_framework import _LazyModule, is_groundingdino_available
 from deep_utils._dummy_objects.dummy_framework.dummy_framework import (
     is_torch_available,
     is_tf_available,
@@ -9,6 +9,8 @@ from deep_utils._dummy_objects.dummy_framework.dummy_framework import (
     is_torchvision_available,
     is_monai_available,
     is_timm_available,
+    is_glide_text2im_available,
+    is_pillow_available
 )
 
 # Deep Utils version number
@@ -17,6 +19,7 @@ __version__ = "1.0.0"
 # no third-party python libraries are required for the following classes
 _import_structure = {
     "utils.box_utils.boxes": ["Box", "Point"],
+    "utils.box_utils.box_dataclasses": ["BoxDataClass", "PointDataClass"],
     "utils.os_utils.os_path": ["validate_file_extension", "is_img", "split_extension", "split_all", "get_file_name"],
     "utils.dir_utils.dir_utils": ["transfer_directory_items",
                                   "dir_train_test_split",
@@ -34,7 +37,23 @@ _import_structure = {
     "utils.logging_utils.logging_utils": ["get_logger"],
 
 }
+if is_groundingdino_available() and is_torch_available() and is_pillow_available():
+    _import_structure["vision.text2box_visual_grounding.dino.visual_grounding_dino_torch"] = [
+        "Text2BoxVisualGroundingDino"]
+else:
+    from ._dummy_objects import groundingdino_torch_dummy
 
+    _import_structure["_dummy_objects.groundingdino_torch_dummy"] = [
+        name for name in dir(groundingdino_torch_dummy) if not name.startswith("_")
+    ]
+# if is_glide_text2im_available() and is_torch_available():
+#     _import_structure["vision.image_editing.glide.glide_image_editing"] = ["ImageEditingGLIDE"]
+# else:
+#     from ._dummy_objects import glide_text2im_dummy
+#
+#     _import_structure["_dummy_objects.glide_text2im_dummy"] = [
+#         name for name in dir(glide_text2im_dummy) if not name.startswith("_")
+#     ]
 if is_timm_available() and is_transformers_available() and is_torchvision_available() and is_torch_available():
     _import_structure["vision.image_caption.blip.torch.blip_torch_image_caption"] = ["BlipTorchImageCaption"]
 else:
@@ -139,6 +158,8 @@ if TYPE_CHECKING:
     from .vision.ocr.crnn.torch.crnn_inference import CRNNInferenceTorch
     from .vision.ocr.crnn.torch.crnn_model import CRNNModelTorch
     from .utils.logging_utils.logging_utils import get_logger
+    # from .vision.image_editing.glide.glide_image_editing import ImageEditingGLIDE
+    from .vision.text2box_visual_grounding.dino.visual_grounding_dino_torch import Text2BoxVisualGroundingDino
 else:
     import sys
 
