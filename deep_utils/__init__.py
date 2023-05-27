@@ -57,14 +57,14 @@ else:
     _import_structure["_dummy_objects.groundingdino_torch_dummy"] = [
         name for name in dir(groundingdino_torch_dummy) if not name.startswith("_")
     ]
-# if is_glide_text2im_available() and is_torch_available():
-#     _import_structure["vision.image_editing.glide.glide_image_editing"] = ["ImageEditingGLIDE"]
-# else:
-#     from ._dummy_objects import glide_text2im_dummy
-#
-#     _import_structure["_dummy_objects.glide_text2im_dummy"] = [
-#         name for name in dir(glide_text2im_dummy) if not name.startswith("_")
-#     ]
+if is_glide_text2im_available() and is_torch_available():
+    _import_structure["vision.image_editing.glide.glide_image_editing"] = ["ImageEditingGLIDE"]
+else:
+    from ._dummy_objects import glide_text2im_dummy
+
+    _import_structure["_dummy_objects.glide_text2im_dummy"] = [
+        name for name in dir(glide_text2im_dummy) if not name.startswith("_")
+    ]
 if is_timm_available() and is_transformers_available() and is_torchvision_available() and is_torch_available():
     _import_structure["vision.image_caption.blip.torch.blip_torch_image_caption"] = ["BlipTorchImageCaption"]
 else:
@@ -169,7 +169,7 @@ if TYPE_CHECKING:
     from .vision.ocr.crnn.torch.crnn_inference import CRNNInferenceTorch
     from .vision.ocr.crnn.torch.crnn_model import CRNNModelTorch
     from .utils.logging_utils.logging_utils import get_logger
-    # from .vision.image_editing.glide.glide_image_editing import ImageEditingGLIDE
+    from .vision.image_editing.glide.glide_image_editing import ImageEditingGLIDE
     from .vision.text2box_visual_grounding.dino.visual_grounding_dino_torch import Text2BoxVisualGroundingDino
     from .utils.download_utils.download_utils import DownloadUtils
 else:
