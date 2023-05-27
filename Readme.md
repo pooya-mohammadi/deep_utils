@@ -261,6 +261,9 @@ annotated_img = model.annotate(img, output)
 plt.axis("off")
 plt.imshow(annotated_img)
 ```
+
+Output Image:<br/>
+<img src="https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden_dino.png" width="400">
 ## NLP
 
 In

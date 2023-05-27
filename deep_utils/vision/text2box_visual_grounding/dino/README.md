@@ -36,3 +36,8 @@ plt.axis("off")
 plt.imshow(annotated_img)
 ```
 
+Input Image:</br>
+<img src="https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden.jpg" width="400">
+
+Output Image:</br>
+<img src="https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden_dino.png" width="400">
