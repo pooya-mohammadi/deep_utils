@@ -42,6 +42,11 @@ _is_monai_available = importlib.util.find_spec("monai") is not None
 _is_timm_available = importlib.util.find_spec("timm") is not None
 _is_glide_text2im_available = importlib.util.find_spec("glide_text2im") is not None
 _is_groundingdino_available = importlib.util.find_spec("groundingdino") is not None
+_is_pillow_available = importlib.util.find_spec("PIL") is not None
+
+
+def is_pillow_available():
+    return _is_pillow_available
 
 
 def is_groundingdino_available():
@@ -194,7 +199,7 @@ BACKENDS_MAPPING = BackendMapping(
         is_available("numpy"),
         is_available("albumentations"),
         is_available("sklearn"),
-        is_available("PIL"),
+        is_available("PIL", "Pillow"),
         is_available("pyannote"),
         is_available("librosa"),
         is_available("transformers"),
