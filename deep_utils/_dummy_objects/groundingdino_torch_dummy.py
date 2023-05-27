@@ -5,7 +5,6 @@ class Text2BoxVisualGroundingDino(metaclass=DummyObject):
     _backend = [
         ("torch", "1.13.1", "pip"),
         ("groundingdino", "0.1.0", "pip"),
-        ("huggingface_hub", "0.14.1", "pip"),
         ("PIL", "9.3.0", "pip"),
     ]
     _module = "deep_utils.vision.text2box_visual_grounding.dino.visual_grounding_dino_torch"
