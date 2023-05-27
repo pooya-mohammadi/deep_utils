@@ -299,7 +299,7 @@ plt.imshow(edited_image)
 <img src="https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/glide_output.jpg" width="400">
 
 **Note:** The best way to get the box is to use the `Text2BoxVisualGroundingDino` model. See the example in the previous
-section.
+section. Or check the following full sample [easy_image_editing](https://github.com/pooya-mohammadi/easy_image_editing)
 
 ## NLP
 
