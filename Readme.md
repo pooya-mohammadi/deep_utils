@@ -1,4 +1,4 @@
-[![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils) [![PyPI](https://img.shields.io/pypi/v/deep_utils.svg)](https://pypi.python.org/pypi/deep_utils) 
+[![Downloads](https://static.pepy.tech/badge/deep_utils)](https://pepy.tech/project/deep_utils) [![PyPI](https://img.shields.io/pypi/v/deep_utils.svg)](https://pypi.python.org/pypi/deep_utils)
 
 <div id="top"></div>
 <!-- PROJECT LOGO -->
@@ -30,6 +30,8 @@ latest version using pypi.
         * [yolov5](#yolov5)
     * [Visual Grounding](#visual-grounding)
         * [Grounding DINO](#grounding-dino)
+    * [Image Editing](#image-editing)
+        * [GLIDE](#glide)
 * [NLP](#NLP)
     * [NER](#NER)
         * [Replacement Augmentation](replacement-augmentation)
@@ -230,15 +232,14 @@ Image.fromarray(img[..., ::-1])  # convert to rgb
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Visual Grounding
+
 ### Grounding DINO
+
 DINO is a self-supervised learning method for visual grounding. It is a simple and efficient method that can be used for
 visual grounding. Let's see how we can use it in `deep_utils`:
 
-#### First Download the weights:
-```commandline
-wget -q https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
-```
 #### Download a sample image
+
 ```commandline
 wget -q https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden.jpg
 ```
@@ -249,8 +250,7 @@ from deep_utils import Text2BoxVisualGroundingDino
 import numpy as np
 import matplotlib.pyplot as plt
 
-weight_path = "groundingdino_swint_ogc.pth"
-model = Text2BoxVisualGroundingDino(weight_path=weight_path)
+model = Text2BoxVisualGroundingDino()
 
 img_path = "golsa_in_garden.jpg"
 img = np.asarray(Image.open(img_path))
@@ -264,18 +264,50 @@ plt.imshow(annotated_img)
 
 Output Image:<br/>
 <img src="https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden_dino.png" width="400">
+<p align="right">(<a href="#top">back to top</a>)</p>
+
+## Image Editing
+
+### GLIDE
+
+GLIDE is a simple and efficient method for image editing/inpainting. It is developed by OpenAI.
+
+#### Download a sample image
+
+```commandline
+wget -q https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden.jpg
+```
+
+**Input Image**:<br/>
+<img src="https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden.jpg" width="400">
+
+```python
+import matplotlib.pyplot as plt
+from deep_utils import ImageEditingGLIDE
+from PIL import Image
+
+pil_img = Image.open("golsa_in_garden.jpg")
+# position of the editing box. Here the hen in the image. The  
+box = [340.6672668457031, 403.7683410644531, 372.0812072753906, 439.3288879394531]
+glide_model = ImageEditingGLIDE()
+text = "dead leaves"
+edited_image = glide_model.edit_box(pil_img, text=text, box=box)
+plt.imshow(edited_image)
+```
+
+**Output Image**: The `hen` is removed and replaced with `dead leaves` as the background<br/>
+<img src="https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/glide_output.jpg" width="400">
+
+**Note:** The best way to get the box is to use the `Text2BoxVisualGroundingDino` model. See the example in the previous
+section.
+
 ## NLP
 
-In
-this
-section, models and utilities
-for nlp projects are provided
+In this section, models and utilities for nlp projects are provided
 
 ### NER
 
-Name
-Entity
-Recognition
+Name Entity Recognition
 
 #### multi-label-stratify
 
@@ -285,7 +317,8 @@ Recognition
 
 <a href="https://colab.research.google.com/github/pooya-mohammadi/deep-utils-notebooks/blob/main/augmentation/cutmix/cutmix_tf.ipynb" target="_parent"> <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab" /> </a> 
 
-CutMix is one of the best augmentation methods that's proven to be very effective in different vision-based project. Therefore, CutMix is now
+CutMix is one of the best augmentation methods that's proven to be very effective in different vision-based project.
+Therefore, CutMix is now
 available on `deep_utils` to be used both for segmentation and classification tasks.Let some examples:
 
 #### Segmentation
@@ -293,7 +326,6 @@ available on `deep_utils` to be used both for segmentation and classification ta
 ```python
 import cv2
 import numpy as np
-from PIL import Image
 from deep_utils import CutMixTF, group_show, repeat_dimension
 
 # creating random images, the code for this section can be found in the colab notebook
@@ -392,9 +424,11 @@ lastname:  mohammadi
 
 While splitting a dataset for NER or Object detection tasks, you might have noticed that there is no way to split the
 dataset using
-stratify functionality of `train_test_split` of the `scikit-learn` library because not only does each sample in these two tasks may
+stratify functionality of `train_test_split` of the `scikit-learn` library because not only does each sample in these
+two tasks may
 have
-more than one tag/object, but also each tag/object of each class may appear more than once. For example, an image/sample may
+more than one tag/object, but also each tag/object of each class may appear more than once. For example, an image/sample
+may
 contain two dogs and three cats, which means the label/y of that sample would be like [2, 3] in which the index zero
 corresponds
 to the dog class, and the index one corresponds to the cat class.
@@ -482,6 +516,7 @@ Don't forget to give the project a ⭐️! Thanks again!
 ## 🌟 Spread the word!
 
 If you want to say thank you and/or support active development of the repo:
+
 - Add a GitHub Star to the project!
 - Join our discord servers [Deep Utils](https://discord.gg/pWe3yChw) .
 - Follow my profile [pooya-mohammadi](https://github.com/pooya-mohammadi)
