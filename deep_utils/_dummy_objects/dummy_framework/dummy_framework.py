@@ -216,6 +216,7 @@ BACKENDS_MAPPING = BackendMapping(
         is_available("glide_text2im"),
         is_available("groundingdino"),
         is_available("requests"),
+        is_available("huggingface_hub"),
     ]
 )
 
