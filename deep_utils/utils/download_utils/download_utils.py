@@ -73,7 +73,8 @@ class DownloadUtils:
                         downloaded += len(data)
                         f.write(data)
                         done = int(50 * downloaded / total)
-                        sys.stdout.write("\rDownloading: [{}{}]".format("█" * done, "." * (50 - done)))
+                        sys.stdout.write("\rDownloading {}: {}% [{}{}]"
+                                         .format(file_name, round((downloaded*100/total),2), "█" * done, "." * (50 - done)))
                         sys.stdout.flush()
             sys.stdout.write("\n")
             shutil.move(temp_download_des, download_des)
