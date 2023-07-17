@@ -5,7 +5,7 @@ VERSION = "1.2.2"
 try:
     import pypandoc
 
-    long_description = pypandoc.convert("Readme.md", "rst")
+    long_description = pypandoc.convert_file("Readme.md", "rst")
 except (IOError, ImportError):
     long_description = open("Readme.md", mode="r", encoding="utf-8").read()
 
