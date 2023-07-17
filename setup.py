@@ -2,12 +2,7 @@ import setuptools
 
 VERSION = "1.2.2"
 
-try:
-    import pypandoc
-
-    long_description = pypandoc.convert_file("Readme.md", "rst")
-except (IOError, ImportError):
-    long_description = open("Readme.md", mode="r", encoding="utf-8").read()
+long_description = open("Readme.md", mode="r", encoding="utf-8").read()
 
 # Module dependencies
 dependency_links = []
