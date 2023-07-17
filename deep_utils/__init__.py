@@ -15,7 +15,7 @@ from deep_utils._dummy_objects.dummy_framework.dummy_framework import (
 )
 
 # Deep Utils version number
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 
 # no third-party python libraries are required for the following classes
 _import_structure = {
@@ -36,7 +36,7 @@ _import_structure = {
                                   "combine_directory_of_directories"],
     "utils.pickle_utils.pickle_utils": ["dump_pickle", "load_pickle"],
     "utils.logging_utils.logging_utils": ["get_logger"],
-
+    "utils.lr_scheduler_utils.warmup": ["cosine_reduce", "warmup_cosine"],
 }
 
 if is_requests_available():
@@ -58,7 +58,8 @@ else:
         name for name in dir(groundingdino_torch_dummy) if not name.startswith("_")
     ]
 if is_glide_text2im_available() and is_torch_available():
-    _import_structure["vision.image_editing.glide.glide_image_editing"] = ["ImageEditingGLIDE", "ImageEditingGLIDETypes"]
+    _import_structure["vision.image_editing.glide.glide_image_editing"] = ["ImageEditingGLIDE",
+                                                                           "ImageEditingGLIDETypes"]
 else:
     from ._dummy_objects import glide_text2im_dummy
 
@@ -172,6 +173,7 @@ if TYPE_CHECKING:
     from .vision.image_editing.glide.glide_image_editing import ImageEditingGLIDE, ImageEditingGLIDETypes
     from .vision.text2box_visual_grounding.dino.visual_grounding_dino_torch import Text2BoxVisualGroundingDino
     from .utils.download_utils.download_utils import DownloadUtils
+    from .utils.lr_scheduler_utils.warmup import cosine_reduce, warmup_cosine
 else:
     import sys
 
