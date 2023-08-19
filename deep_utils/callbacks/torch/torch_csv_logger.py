@@ -1,10 +1,9 @@
 from collections import defaultdict
 from pathlib import Path
 from typing import Union
-
 import numpy as np
-
-from deep_utils.utils.logging_utils import log_print
+import pandas as pd
+from deep_utils.utils.logging_utils.logging_utils import log_print
 
 
 class CSVLogger:
@@ -23,8 +22,6 @@ class CSVLogger:
         self.__save()
 
     def __save(self):
-        import pandas as pd
-
         columns = list(self.logs.keys())
         values = np.array(list(self.logs.values())).T
         df = pd.DataFrame(values, columns=columns)
