@@ -15,7 +15,7 @@ from deep_utils._dummy_objects.dummy_framework.dummy_framework import (
 )
 
 # Deep Utils version number
-__version__ = "1.2.3"
+__version__ = "1.2.4"
 
 # no third-party python libraries are required for the following classes
 _import_structure = {
@@ -37,6 +37,7 @@ _import_structure = {
     "utils.pickle_utils.pickle_utils": ["dump_pickle", "load_pickle"],
     "utils.logging_utils.logging_utils": ["get_logger"],
     "utils.lr_scheduler_utils.warmup": ["cosine_reduce", "warmup_cosine"],
+    "utils.py_utils.py_utils": ["PyUtils"]
 }
 
 if is_requests_available():
@@ -174,6 +175,7 @@ if TYPE_CHECKING:
     from .vision.text2box_visual_grounding.dino.visual_grounding_dino_torch import Text2BoxVisualGroundingDino
     from .utils.download_utils.download_utils import DownloadUtils
     from .utils.lr_scheduler_utils.warmup import cosine_reduce, warmup_cosine
+    from .utils.py_utils.py_utils import PyUtils
 else:
     import sys
 
