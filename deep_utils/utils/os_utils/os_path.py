@@ -1,5 +1,6 @@
 import os
-from typing import Union, List, Tuple
+from pathlib import Path
+from typing import Union, List, Tuple, Optional
 
 IMG_EXTENSIONS = (
     ".jpg",
@@ -47,7 +48,8 @@ def split_extension(path, extension: Union[str, None] = None,
                     prefix: Union[str, None] = None,
                     artifact_type: Union[str, None] = None,
                     artifact_value: Union[str, int, None] = None,
-                    extra_punctuation: Union[str, None] = None
+                    extra_punctuation: Union[str, None] = None,
+                    current_extension: Optional[str] = None
                     ):
     """
     split extension or add new suffix, prefix, or extension
@@ -58,6 +60,7 @@ def split_extension(path, extension: Union[str, None] = None,
     :param artifact_type: prefix or suffix
     :param artifact_value: value for defined prefix or suffix
     :param extra_punctuation: the punctuation to be used before suffix or after prefix
+    :param current_extension: the current extension of the file.
     :return:
 
     >>> split_extension("image.jpg", suffix="_res")
@@ -72,35 +75,45 @@ def split_extension(path, extension: Union[str, None] = None,
     '0_image.png'
     >>> split_extension("image.jpg", extension="png", suffix="_res", prefix="0_")
     '0_image_res.png'
+    >>> split_extension("image.nii.gz", current_extension=".nii.gz", suffix="_crop")
+    'image_crop.nii.gz'
     """
     artifact_value = str(artifact_value) if artifact_value is not None else None
     assert (artifact_value and artifact_type) or (
-            not artifact_value and not artifact_type), "both artifact type and artifact value should be None or not None"
+            not artifact_value and not artifact_type), \
+        "both artifact type and artifact value should be None or not None"
 
     if (artifact_value and artifact_type) and (suffix or prefix):
         raise ValueError("artifact value and artifact type cannot have values while suffix and prefix are not None")
 
     extra_punctuation = extra_punctuation if extra_punctuation else ""
     if artifact_type == "suffix":
-        return _split_extension(path, extension=extension, suffix=extra_punctuation + artifact_value)
+        return _split_extension(path, extension=extension, suffix=extra_punctuation + artifact_value,
+                                current_extension=current_extension)
     elif artifact_type == "prefix":
-        return _split_extension(path, extension=extension, prefix=artifact_value + extra_punctuation)
+        return _split_extension(path, extension=extension, prefix=artifact_value + extra_punctuation,
+                                current_extension=current_extension)
     elif artifact_type is None:
         return _split_extension(path, extension=extension, suffix=extra_punctuation + suffix if suffix else None,
-                                prefix=prefix + extra_punctuation if prefix else None)
+                                prefix=prefix + extra_punctuation if prefix else None,
+                                current_extension=current_extension)
     else:
         raise ValueError(f"input artifact_type:{artifact_type} is invalid!")
 
 
-def _split_extension(path, extension: Union[str, None] = None,
+def _split_extension(path: Union[Path, str],
+                     extension: Union[str, None] = None,
                      suffix: Union[str, None] = None,
-                     prefix: Union[str, None] = None):
+                     prefix: Union[str, None] = None,
+                     current_extension: Optional[str] = None
+                     ):
     """
     split extension or add new suffix, prefix, or extension
     :param path:
     :param extension:
     :param suffix:
     :param prefix:
+    :param current_extension: the current extension of the file.
     :return:
 
     >>> split_extension("image.jpg", suffix="_res")
@@ -115,8 +128,17 @@ def _split_extension(path, extension: Union[str, None] = None,
     '0_image.png'
     >>> split_extension("image.jpg", extension="png", suffix="_res", prefix="0_")
     '0_image_res.png'
+    >>> split_extension("image.nii.gz", current_extension=".nii.gz", suffix="_crop")
+    'image_crop.nii.gz'
     """
-    remain, extension_ = os.path.splitext(path)
+    if current_extension:
+        if path.endswith(current_extension):
+            remain = path[:-len(current_extension)]
+            extension_ = current_extension
+        else:
+            raise ValueError(f"current extension:{current_extension} is not at the of the path:{path}")
+    else:
+        remain, extension_ = os.path.splitext(path)
     prefix = prefix if prefix else ""
     suffix = suffix if suffix else ""
     extension = extension if extension else ""
