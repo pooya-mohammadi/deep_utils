@@ -7,7 +7,7 @@ from types import ModuleType
 from typing import Any
 
 from deep_utils.utils.lib_utils.main_utils import import_module
-from deep_utils.utils.utils.str_utils import color_str
+from deep_utils.utils.py_utils.py_utils import PyUtils
 
 
 def is_available(module_name: str, lib_name: str = None):
@@ -229,8 +229,7 @@ def requires_backends(obj, backends, module_name: str = None, cls_name: str = No
     checks = (BACKENDS_MAPPING[backend[0] if isinstance(backend, tuple) else backend] for backend in backends)
     failed = [msg.format(name) for available, msg in checks if not available()]
     if failed:
-        color_str("".join(failed), color="red", mode=["bold", "underline"])
-        print("".join(failed))
+        PyUtils.print("".join(failed), color="red", mode=["bold", "underline"])
     else:
         assert isinstance(module_name, str), f"module_name is not defined for obj: {name}"
         error = import_module(module_name, cls_name)
