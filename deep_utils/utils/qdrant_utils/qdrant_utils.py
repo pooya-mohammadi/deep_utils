@@ -2,7 +2,7 @@ from typing import Dict, Any, List, Union, Optional
 
 from qdrant_client import QdrantClient
 from qdrant_client import models
-from qdrant_client.http.models import Record
+from qdrant_client.http.models import Record, ScoredPoint
 
 
 class QdrantUtils:
@@ -104,8 +104,9 @@ class QdrantUtils:
         """
         return [collection.name for collection in self.client.http.collections_api.get_collections().result.collections]
 
-    def get_points_in_collection(self, collection_name: Union[str, int], with_payload: bool = True, with_vector: bool = False) -> \
-        List[Record]:  # noqa
+    def get_points_in_collection(self, collection_name: Union[str, int], with_payload: bool = True,
+                                 with_vector: bool = False) -> \
+            List[Record]:  # noqa
         """
         get all points in collection
         :param collection_name: collection name to be retrieved
@@ -116,3 +117,28 @@ class QdrantUtils:
         return self.client.scroll(collection_name=collection_name,
                                   with_payload=with_payload,
                                   with_vectors=with_vector)[0]
+
+    def search(self, collection_name: str,
+               vector_name: str,
+               features: List[float],
+               threshold: Optional[float] = 0.0,
+               limit: int = 5) -> List[ScoredPoint]:
+        """
+        Do a simple research with one vector!
+        :param collection_name:
+        :param vector_name:
+        :param features:
+        :param threshold:
+        :param limit:
+        :return:
+        """
+        results: List[ScoredPoint] = self.client.search(collection_name=collection_name,
+                                                        score_threshold=threshold,
+
+                                                        search_params=models.SearchParams(hnsw_ef=512,
+                                                                                          exact=True),
+                                                        query_vector=(vector_name, features),
+                                                        with_vectors=False,
+                                                        append_payload=True,
+                                                        limit=limit)
+        return results
