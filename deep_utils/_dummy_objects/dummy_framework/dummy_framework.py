@@ -44,6 +44,11 @@ _is_glide_text2im_available = importlib.util.find_spec("glide_text2im") is not N
 _is_groundingdino_available = importlib.util.find_spec("groundingdino") is not None
 _is_pillow_available = importlib.util.find_spec("PIL") is not None
 _is_requests_available = importlib.util.find_spec("requests") is not None
+_is_qdrant_client_available = importlib.util.find_spec("qdrant_client") is not None
+
+
+def is_qdrant_client_available():
+    return _is_qdrant_client_available
 
 
 def is_requests_available():
@@ -217,6 +222,7 @@ BACKENDS_MAPPING = BackendMapping(
         is_available("groundingdino"),
         is_available("requests"),
         is_available("huggingface_hub"),
+        is_available("qdrant_client")
     ]
 )
 
