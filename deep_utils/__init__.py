@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
-from deep_utils._dummy_objects.dummy_framework.dummy_framework import _LazyModule, is_groundingdino_available
+from deep_utils._dummy_objects.dummy_framework.dummy_framework import _LazyModule, is_groundingdino_available, \
+    is_qdrant_client_available
 from deep_utils._dummy_objects.dummy_framework.dummy_framework import (
     is_torch_available,
     is_tf_available,
@@ -40,6 +41,14 @@ _import_structure = {
     "utils.py_utils.py_utils": ["PyUtils"],
     "utils.json_utils.json_utils": ["JsonUtils"]
 }
+if is_qdrant_client_available():
+    _import_structure['utils.qdrant_utils.qdrant_utils'] =  ['QdrantUtils']
+else:
+    from ._dummy_objects import qdrant_client_dummy
+
+    _import_structure["_dummy_objects.qdrant_client_dummy"] = [
+        name for name in dir(qdrant_client_dummy) if not name.startswith("_")
+    ]
 
 if is_requests_available():
     _import_structure["utils.download_utils.download_utils"] = ["DownloadUtils"]
@@ -178,6 +187,7 @@ if TYPE_CHECKING:
     from .utils.lr_scheduler_utils.warmup import cosine_reduce, warmup_cosine
     from .utils.py_utils.py_utils import PyUtils
     from .utils.json_utils.json_utils import JsonUtils
+    from .utils.qdrant_utils.qdrant_utils import QdrantUtils
 else:
     import sys
 
