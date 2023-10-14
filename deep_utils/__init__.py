@@ -35,14 +35,14 @@ _import_structure = {
                                   "split_segmentation_dirs",
                                   "find_file",
                                   "combine_directory_of_directories"],
-    "utils.pickle_utils.pickle_utils": ["dump_pickle", "load_pickle"],
     "utils.logging_utils.logging_utils": ["get_logger"],
     "utils.lr_scheduler_utils.warmup": ["cosine_reduce", "warmup_cosine"],
     "utils.py_utils.py_utils": ["PyUtils"],
-    "utils.json_utils.json_utils": ["JsonUtils"]
+    "utils.json_utils.json_utils": ["JsonUtils"],
+    "utils.pickle_utils.pickle_utils": ["PickleUtils"]
 }
 if is_qdrant_client_available():
-    _import_structure['utils.qdrant_utils.qdrant_utils'] =  ['QdrantUtils']
+    _import_structure['utils.qdrant_utils.qdrant_utils'] = ['QdrantUtils']
 else:
     from ._dummy_objects import qdrant_client_dummy
 
@@ -188,6 +188,7 @@ if TYPE_CHECKING:
     from .utils.py_utils.py_utils import PyUtils
     from .utils.json_utils.json_utils import JsonUtils
     from .utils.qdrant_utils.qdrant_utils import QdrantUtils
+    from .utils.pickle_utils.pickle_utils import PickleUtils
 else:
     import sys
 

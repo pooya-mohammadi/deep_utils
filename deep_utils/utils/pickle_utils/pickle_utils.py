@@ -1,12 +1,14 @@
-def dump_pickle(file_path: str, file, mode: str = "wb"):
-    import pickle
-
-    with open(file_path, mode=mode) as f:
-        pickle.dump(file, f)
+import pickle
 
 
-def load_pickle(file_path: str, mode: str = "rb", encoding=""):
-    import pickle
+class PickleUtils:
 
-    with open(file_path, mode=mode) as f:
-        return pickle.load(f, encoding=encoding)
+    @staticmethod
+    def dump_pickle(file_path: str, file, mode: str = "wb"):
+        with open(file_path, mode=mode) as f:
+            pickle.dump(file, f)
+
+    @staticmethod
+    def load_pickle(file_path: str, mode: str = "rb", encoding=""):
+        with open(file_path, mode=mode) as f:
+            return pickle.load(f, encoding=encoding)
