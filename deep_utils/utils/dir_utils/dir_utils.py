@@ -595,7 +595,7 @@ class DirUtils:
         return [join(directory, name) for name in os.listdir(directory)]
 
     @staticmethod
-    def remove_create(dir_: str, remove=True, logger=None, verbose=1) -> str:
+    def remove_create(dir_: str, remove=True, logger=None, verbose=0) -> str:
         """
     Removes and creates the input directory!
     :param dir_:
