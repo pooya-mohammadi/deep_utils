@@ -16,7 +16,7 @@ from deep_utils._dummy_objects.dummy_framework.dummy_framework import (
 )
 
 # Deep Utils version number
-__version__ = "1.2.10"
+__version__ = "1.2.11"
 
 # no third-party python libraries are required for the following classes
 _import_structure = {
