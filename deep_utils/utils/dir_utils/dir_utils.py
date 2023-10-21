@@ -593,3 +593,15 @@ class DirUtils:
         :return:
         """
         return [join(directory, name) for name in os.listdir(directory)]
+
+    @staticmethod
+    def remove_create(dir_: str, remove=True, logger=None, verbose=1) -> str:
+        """
+    Removes and creates the input directory!
+    :param dir_:
+    :param remove: whether to remove the directory or not
+    :param logger:
+    :param verbose:
+    :return:
+    """
+        return remove_create(dir_=dir_, remove=remove, logger=logger, verbose=verbose)
