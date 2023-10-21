@@ -16,7 +16,7 @@ from deep_utils._dummy_objects.dummy_framework.dummy_framework import (
 )
 
 # Deep Utils version number
-__version__ = "1.2.9"
+__version__ = "1.2.10"
 
 # no third-party python libraries are required for the following classes
 _import_structure = {
@@ -34,12 +34,13 @@ _import_structure = {
                                   "cp_mv_all",
                                   "split_segmentation_dirs",
                                   "find_file",
-                                  "combine_directory_of_directories"],
+                                  "combine_directory_of_directories",
+                                  "DirUtils"],
     "utils.logging_utils.logging_utils": ["get_logger"],
     "utils.lr_scheduler_utils.warmup": ["cosine_reduce", "warmup_cosine"],
     "utils.py_utils.py_utils": ["PyUtils"],
     "utils.json_utils.json_utils": ["JsonUtils"],
-    "utils.pickle_utils.pickle_utils": ["PickleUtils"]
+    "utils.pickle_utils.pickle_utils": ["PickleUtils"],
 }
 if is_qdrant_client_available():
     _import_structure['utils.qdrant_utils.qdrant_utils'] = ['QdrantUtils']
@@ -165,7 +166,7 @@ if TYPE_CHECKING:
     from .utils.dir_utils.dir_utils import (transfer_directory_items, dir_train_test_split, split_dir_of_dir,
                                             split_xy_dir, crawl_directory_dataset, remove_create, mkdir_incremental,
                                             file_incremental, cp_mv_all, split_segmentation_dirs, find_file,
-                                            combine_directory_of_directories)
+                                            combine_directory_of_directories, DirUtils)
     from .preprocessing.monai.monai_segmentation import MonaiChannelBasedContrastEnhancementD
     from .utils.torch_utils.torch_utils import TorchUtils
     from .utils.tf_utils.main import TFUtils
