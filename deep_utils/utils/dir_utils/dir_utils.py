@@ -10,13 +10,13 @@ from deep_utils.utils.os_utils.os_path import split_extension
 
 
 def transfer_directory_items(
-    in_dir,
-    out_dir,
-    transfer_list,
-    mode="cp",
-    remove_out_dir=False,
-    skip_transfer=False,
-    remove_in_dir=False,
+        in_dir,
+        out_dir,
+        transfer_list,
+        mode="cp",
+        remove_out_dir=False,
+        skip_transfer=False,
+        remove_in_dir=False,
 ):
     """
 
@@ -61,18 +61,18 @@ def transfer_directory_items(
 
 
 def dir_train_test_split(
-    in_dir,
-    train_dir="./train",
-    val_dir="./val",
-    test_size=0.1,
-    mode="cp",
-    remove_out_dir=False,
-    skip_transfer=False,
-    remove_in_dir=False,
-    skip_error=True,
-    ignore_list: List[str] = None,
-    logger=None,
-    verbose=1
+        in_dir,
+        train_dir="./train",
+        val_dir="./val",
+        test_size=0.1,
+        mode="cp",
+        remove_out_dir=False,
+        skip_transfer=False,
+        remove_in_dir=False,
+        skip_error=True,
+        ignore_list: List[str] = None,
+        logger=None,
+        verbose=1
 ):
     """
 
@@ -128,13 +128,13 @@ def dir_train_test_split(
 
 
 def split_dir_of_dir(
-    in_dir,
-    train_dir="./train",
-    val_dir="./val",
-    test_size=0.1,
-    mode="cp",
-    remove_out_dir=False,
-    remove_in_dir=False,
+        in_dir,
+        train_dir="./train",
+        val_dir="./val",
+        test_size=0.1,
+        mode="cp",
+        remove_out_dir=False,
+        remove_in_dir=False,
 ):
     """
 
@@ -179,17 +179,17 @@ def split_dir_of_dir(
 
 
 def split_xy_dir(
-    x_in_dir,
-    y_in_dir,
-    x_train_dir="train/samples",
-    y_train_dir="train/targets",
-    x_val_dir="val/samples",
-    y_val_dir="val/targets",
-    mode="cp",
-    val_size=0.1,
-    skip_transfer=False,
-    remove_out_dir=False,
-    remove_in_dir=False,
+        x_in_dir,
+        y_in_dir,
+        x_train_dir="train/samples",
+        y_train_dir="train/targets",
+        x_val_dir="val/samples",
+        y_val_dir="val/targets",
+        mode="cp",
+        val_size=0.1,
+        skip_transfer=False,
+        remove_out_dir=False,
+        remove_in_dir=False,
 ):
     train_names, val_names = dir_train_test_split(
         x_in_dir,
@@ -223,12 +223,12 @@ def split_xy_dir(
 
 
 def crawl_directory_dataset(
-    dir_: str,
-    ext_filter: list = None,
-    map_labels=False,
-    label_map_dict: dict = None,
-    logger=None,
-    verbose=1,
+        dir_: str,
+        ext_filter: list = None,
+        map_labels=False,
+        label_map_dict: dict = None,
+        logger=None,
+        verbose=1,
 ) -> Union[Tuple[List[str], List[int]], Tuple[List[str], List[int], Dict]]:
     """
     crawls a directory of classes and returns the full path of the items paths and their class names
@@ -369,16 +369,16 @@ def file_incremental(file_path, artifact_type="prefix", artifact_value=0, extra_
 
 
 def cp_mv_all(
-    input_dir,
-    res_dir,
-    mode="cp",
-    filter_ext: Union[list, tuple, str, None] = None,
-    artifact_type="prefix",
-    artifact_value=0,
-    extra_punctuation="_",
-    add_artifact_value=False,
-    logger=None,
-    verbose=1,
+        input_dir,
+        res_dir,
+        mode="cp",
+        filter_ext: Union[list, tuple, str, None] = None,
+        artifact_type="prefix",
+        artifact_value=0,
+        extra_punctuation="_",
+        add_artifact_value=False,
+        logger=None,
+        verbose=1,
 
 ):
     """
@@ -411,19 +411,19 @@ def cp_mv_all(
 
 
 def split_segmentation_dirs(
-    in_images,
-    in_masks,
-    out_train="./train",
-    out_val="./val",
-    image_dir_name="images",
-    mask_dir_name="masks",
-    img_ext=None,
-    mask_ext=None,
-    mode="cp",
-    test_size=0.2,
-    remove_out_dir=False,
-    remove_in_dir=False,
-    skip_transfer=False,
+        in_images,
+        in_masks,
+        out_train="./train",
+        out_val="./val",
+        image_dir_name="images",
+        mask_dir_name="masks",
+        img_ext=None,
+        mask_ext=None,
+        mode="cp",
+        test_size=0.2,
+        remove_out_dir=False,
+        remove_in_dir=False,
+        skip_transfer=False,
 ):
     from sklearn.model_selection import train_test_split
 
@@ -535,3 +535,61 @@ def combine_directory_of_directories(dataset_dir, result_dir, remove_result_dir=
         if os.path.isdir(directory):
             os.system(f'cp {directory}/* {result_dir}')
             log_print(logger, f'Successfully moved {directory} to {result_dir}!', verbose=verbose)
+
+
+class DirUtils:
+    @staticmethod
+    def split_extension(path,
+                        extension: Union[str, None] = None,
+                        suffix: Union[str, None] = None,
+                        prefix: Union[str, None] = None,
+                        artifact_type: Union[str, None] = None,
+                        artifact_value: Union[str, int, None] = None,
+                        extra_punctuation: Union[str, None] = None,
+                        current_extension: Optional[str] = None
+                        ):
+        """
+        split extension or add new suffix, prefix, or extension
+        :param path:
+        :param extension:
+        :param suffix:
+        :param prefix:
+        :param artifact_type: prefix or suffix
+        :param artifact_value: value for defined prefix or suffix
+        :param extra_punctuation: the punctuation to be used before suffix or after prefix
+        :param current_extension: the current extension of the file.
+        :return:
+
+        >>> split_extension("image.jpg", suffix="_res")
+        'image_res.jpg'
+        >>> split_extension("image.jpg")
+        ('image', '.jpg')
+        >>> split_extension("image.jpg", extension=".png")
+        'image.png'
+        >>> split_extension("image.jpg", extension="png")
+        'image.png'
+        >>> split_extension("image.jpg", extension="png", prefix="0_")
+        '0_image.png'
+        >>> split_extension("image.jpg", extension="png", suffix="_res", prefix="0_")
+        '0_image_res.png'
+        >>> split_extension("image.nii.gz", current_extension=".nii.gz", suffix="_crop")
+        'image_crop.nii.gz'
+        """
+
+        return split_extension(path=path,
+                               extension=extension,
+                               suffix=suffix,
+                               prefix=prefix,
+                               artifact_type=artifact_type,
+                               artifact_value=artifact_value,
+                               extra_punctuation=extra_punctuation,
+                               current_extension=current_extension, )
+
+    @staticmethod
+    def list_dir_full_path(directory: str) -> List[str]:
+        """
+        Returns the full path objects in a directory
+        :param directory:
+        :return:
+        """
+        return [join(directory, name) for name in os.listdir(directory)]
