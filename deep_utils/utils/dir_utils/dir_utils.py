@@ -10,13 +10,13 @@ from deep_utils.utils.os_utils.os_path import split_extension
 
 
 def transfer_directory_items(
-        in_dir,
-        out_dir,
-        transfer_list,
-        mode="cp",
-        remove_out_dir=False,
-        skip_transfer=False,
-        remove_in_dir=False,
+    in_dir,
+    out_dir,
+    transfer_list,
+    mode="cp",
+    remove_out_dir=False,
+    skip_transfer=False,
+    remove_in_dir=False,
 ):
     """
 
@@ -61,18 +61,18 @@ def transfer_directory_items(
 
 
 def dir_train_test_split(
-        in_dir,
-        train_dir="./train",
-        val_dir="./val",
-        test_size=0.1,
-        mode="cp",
-        remove_out_dir=False,
-        skip_transfer=False,
-        remove_in_dir=False,
-        skip_error=True,
-        ignore_list: List[str] = None,
-        logger=None,
-        verbose=1
+    in_dir,
+    train_dir="./train",
+    val_dir="./val",
+    test_size=0.1,
+    mode="cp",
+    remove_out_dir=False,
+    skip_transfer=False,
+    remove_in_dir=False,
+    skip_error=True,
+    ignore_list: List[str] = None,
+    logger=None,
+    verbose=1
 ):
     """
 
@@ -128,13 +128,13 @@ def dir_train_test_split(
 
 
 def split_dir_of_dir(
-        in_dir,
-        train_dir="./train",
-        val_dir="./val",
-        test_size=0.1,
-        mode="cp",
-        remove_out_dir=False,
-        remove_in_dir=False,
+    in_dir,
+    train_dir="./train",
+    val_dir="./val",
+    test_size=0.1,
+    mode="cp",
+    remove_out_dir=False,
+    remove_in_dir=False,
 ):
     """
 
@@ -179,17 +179,17 @@ def split_dir_of_dir(
 
 
 def split_xy_dir(
-        x_in_dir,
-        y_in_dir,
-        x_train_dir="train/samples",
-        y_train_dir="train/targets",
-        x_val_dir="val/samples",
-        y_val_dir="val/targets",
-        mode="cp",
-        val_size=0.1,
-        skip_transfer=False,
-        remove_out_dir=False,
-        remove_in_dir=False,
+    x_in_dir,
+    y_in_dir,
+    x_train_dir="train/samples",
+    y_train_dir="train/targets",
+    x_val_dir="val/samples",
+    y_val_dir="val/targets",
+    mode="cp",
+    val_size=0.1,
+    skip_transfer=False,
+    remove_out_dir=False,
+    remove_in_dir=False,
 ):
     train_names, val_names = dir_train_test_split(
         x_in_dir,
@@ -223,12 +223,12 @@ def split_xy_dir(
 
 
 def crawl_directory_dataset(
-        dir_: str,
-        ext_filter: list = None,
-        map_labels=False,
-        label_map_dict: dict = None,
-        logger=None,
-        verbose=1,
+    dir_: str,
+    ext_filter: list = None,
+    map_labels=False,
+    label_map_dict: dict = None,
+    logger=None,
+    verbose=1,
 ) -> Union[Tuple[List[str], List[int]], Tuple[List[str], List[int], Dict]]:
     """
     crawls a directory of classes and returns the full path of the items paths and their class names
@@ -369,16 +369,16 @@ def file_incremental(file_path, artifact_type="prefix", artifact_value=0, extra_
 
 
 def cp_mv_all(
-        input_dir,
-        res_dir,
-        mode="cp",
-        filter_ext: Union[list, tuple, str, None] = None,
-        artifact_type="prefix",
-        artifact_value=0,
-        extra_punctuation="_",
-        add_artifact_value=False,
-        logger=None,
-        verbose=1,
+    input_dir,
+    res_dir,
+    mode="cp",
+    filter_ext: Union[list, tuple, str, None] = None,
+    artifact_type="prefix",
+    artifact_value=0,
+    extra_punctuation="_",
+    add_artifact_value=False,
+    logger=None,
+    verbose=1,
 
 ):
     """
@@ -411,19 +411,19 @@ def cp_mv_all(
 
 
 def split_segmentation_dirs(
-        in_images,
-        in_masks,
-        out_train="./train",
-        out_val="./val",
-        image_dir_name="images",
-        mask_dir_name="masks",
-        img_ext=None,
-        mask_ext=None,
-        mode="cp",
-        test_size=0.2,
-        remove_out_dir=False,
-        remove_in_dir=False,
-        skip_transfer=False,
+    in_images,
+    in_masks,
+    out_train="./train",
+    out_val="./val",
+    image_dir_name="images",
+    mask_dir_name="masks",
+    img_ext=None,
+    mask_ext=None,
+    mode="cp",
+    test_size=0.2,
+    remove_out_dir=False,
+    remove_in_dir=False,
+    skip_transfer=False,
 ):
     from sklearn.model_selection import train_test_split
 
@@ -586,13 +586,17 @@ class DirUtils:
                                current_extension=current_extension, )
 
     @staticmethod
-    def list_dir_full_path(directory: str) -> List[str]:
+    def list_dir_full_path(directory: str, filter_directories: bool = True) -> List[str]:
         """
         Returns the full path objects in a directory
         :param directory:
+        :param filter_directories: If set to True, return on objects and not directories
         :return:
         """
-        return [join(directory, name) for name in os.listdir(directory)]
+        if filter_directories:
+            return [join(directory, name) for name in os.listdir(directory) if not os.path.isdir(join(directory, name))]
+        else:
+            return [join(directory, name) for name in os.listdir(directory)]
 
     @staticmethod
     def remove_create(dir_: str, remove=True, logger=None, verbose=0) -> str:
