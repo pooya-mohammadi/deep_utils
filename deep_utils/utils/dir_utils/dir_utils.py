@@ -586,17 +586,24 @@ class DirUtils:
                                current_extension=current_extension, )
 
     @staticmethod
-    def list_dir_full_path(directory: str, filter_directories: bool = True) -> List[str]:
+    def list_dir_full_path(directory: str, filter_directories: bool = True,
+                           interest_extensions: Optional[List[str]] = None) -> List[str]:
         """
         Returns the full path objects in a directory
         :param directory:
         :param filter_directories: If set to True, return on objects and not directories
+        :param interest_extensions: If provided, files that have this extension will be chosen!
         :return:
         """
-        if filter_directories:
-            return [join(directory, name) for name in os.listdir(directory) if not os.path.isdir(join(directory, name))]
-        else:
-            return [join(directory, name) for name in os.listdir(directory)]
+        output = []
+        for filename in os.listdir(directory):
+            file_path = join(directory, filename)
+            if filter_directories and os.path.isdir(file_path):
+                continue
+            if interest_extensions and DirUtils.split_extension(file_path)[1] not in interest_extensions:
+                continue
+            output.append(file_path)
+        return output
 
     @staticmethod
     def remove_create(dir_: str, remove=True, logger=None, verbose=0) -> str:
