@@ -587,7 +587,7 @@ class DirUtils:
 
     @staticmethod
     def list_dir_full_path(directory: str, filter_directories: bool = True,
-                           interest_extensions: Optional[str, List[str]] = None,
+                           interest_extensions: Optional[Union[str, List[str]]] = None,
                            only_directories: bool = False) -> List[str]:
         """
         Returns the full path objects in a directory
