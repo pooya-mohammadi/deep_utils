@@ -61,34 +61,48 @@ class SITKUtils:
         return input_array
 
     @staticmethod
-    def save_sample(sample, org_sitk, save_path: str, time_array_index=-1):
+    def swap_seg_value_file(input_file: str, swap_seg: Dict[int, int], output_file:str):
         """
-        Since we use three dimension, we should get the origin and spacing of the first 3 dimensions
+        """
+        array, image = SITKUtils.get_array_img(input_file)
+        swaped_array = SITKUtils.swap_seg_value(array, swap_seg)
+        SITKUtils.save_sample(swaped_array, image, output_file)
+
+    @staticmethod
+    def save_sample(input_sample, org_sitk_img, save_path: str, time_array_index=-1):
+        """
+
+        :param input_sample:
+        :param org_sitk_img:
+        :param save_path:
+        :param time_array_index: This is for 4D data
+        :return:
         """
         slices = []
-        if len(sample.shape) == 4:
-            for t in range(sample.shape[time_array_index]):
-                sample_sitk = sitk.GetImageFromArray(sample[..., t] if time_array_index else sample[t], False)
+        if len(input_sample.shape) == 4:
+            for t in range(input_sample.shape[time_array_index]):
+                sample_sitk = sitk.GetImageFromArray(input_sample[..., t] if time_array_index else input_sample[t],
+                                                     False)
                 slices.append(sample_sitk)
             sample_sitk = sitk.JoinSeries(slices)
-            org_origin = org_sitk.GetOrigin()
+            org_origin = org_sitk_img.GetOrigin()
             sample_sitk.SetOrigin((*org_origin, 1.0) if len(org_origin) == 3 else org_origin)
-            org_spacing = org_sitk.GetSpacing()
+            org_spacing = org_sitk_img.GetSpacing()
             sample_sitk.SetSpacing((*org_spacing, 1.0) if len(org_spacing) == 3 else org_spacing)
-            org_direction = np.array(org_sitk.GetDirection())
+            org_direction = np.array(org_sitk_img.GetDirection())
             if org_direction.size == 9:
                 org_direction = org_direction.reshape(3, 3)
                 org_direction = np.pad(org_direction, [(0, 1), (0, 1)], mode='constant', constant_values=1).flatten()
             sample_sitk.SetDirection(org_direction)
         else:
-            sample_sitk = sitk.GetImageFromArray(sample, False)
+            sample_sitk = sitk.GetImageFromArray(input_sample, False)
             # sample_sitk.SetOrigin(org_sitk.GetOrigin())
             # sample_sitk.SetSpacing(org_sitk.GetSpacing())
-            sample_sitk.SetOrigin(org_sitk.GetOrigin()[:3])
-            sample_sitk.SetSpacing(org_sitk.GetSpacing()[:3])
+            sample_sitk.SetOrigin(org_sitk_img.GetOrigin()[:3])
+            sample_sitk.SetSpacing(org_sitk_img.GetSpacing()[:3])
 
             # Extract the 3x3 sub-matrix from the original 4x4 direction matrix
-            org_flat_direction = np.array(org_sitk.GetDirection())
+            org_flat_direction = np.array(org_sitk_img.GetDirection())
             if len(org_flat_direction) == 9:
                 original_direction = org_flat_direction.reshape(3, 3)
             elif len(org_flat_direction) == 16:
