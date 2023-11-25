@@ -1,7 +1,7 @@
 import os
 from enum import Enum
 
-DUMMY_PATH = "_dummy_objects.dummies"
+DUMMY_PATH = "dummy_objects.dummies"
 LIB_NAME = "deep_utils"
 
 
