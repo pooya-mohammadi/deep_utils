@@ -587,19 +587,27 @@ class DirUtils:
 
     @staticmethod
     def list_dir_full_path(directory: str, filter_directories: bool = True,
-                           interest_extensions: Optional[List[str]] = None) -> List[str]:
+                           interest_extensions: Optional[List[str]] = None,
+                           only_directories: bool = False) -> List[str]:
         """
         Returns the full path objects in a directory
         :param directory:
-        :param filter_directories: If set to True, return on objects and not directories
+        :param filter_directories: If set to True, return on objects and not directories. This won't work,
+        if only_directories is set to True,
         :param interest_extensions: If provided, files that have this extension will be chosen!
+        :param only_directories: If set to True, only directories are extracted and filter_directories is ignored.
         :return:
         """
+
         output = []
         for filename in os.listdir(directory):
             file_path = join(directory, filename)
-            if filter_directories and os.path.isdir(file_path):
-                continue
+            if not only_directories:
+                if filter_directories and os.path.isdir(file_path):
+                    continue
+            else:
+                if not os.path.isdir(file_path):
+                    continue
             if interest_extensions and DirUtils.split_extension(file_path)[1] not in interest_extensions:
                 continue
             output.append(file_path)
