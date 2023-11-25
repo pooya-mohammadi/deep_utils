@@ -57,7 +57,7 @@ import_lazy_module('ColorRecognitionCNNTorchPrediction',
                    'vision.color_recognition.cnn_color.torch.color_cnn_torch_pred')
 import_lazy_module("CRNNInferenceTorch", "vision.ocr.crnn.torch.crnn_inference")
 import_lazy_module("CRNNModelTorch", "vision.ocr.crnn.torch.crnn_model")
-import_lazy_module("vision.face_detection.mtcnn.tf.mtcnn_tf_face_detection", "MTCNNTFFaceDetector")
+import_lazy_module("MTCNNTFFaceDetector", "vision.face_detection.mtcnn.tf.mtcnn_tf_face_detection")
 
 if TYPE_CHECKING:
     from .utils.box_utils.boxes import Box, Point
