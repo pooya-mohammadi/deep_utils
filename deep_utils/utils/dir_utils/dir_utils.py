@@ -605,11 +605,12 @@ class DirUtils:
             if not only_directories:
                 if filter_directories and os.path.isdir(file_path):
                     continue
+                if interest_extensions and DirUtils.split_extension(file_path)[1] not in interest_extensions:
+                    continue
             else:
                 if not os.path.isdir(file_path):
                     continue
-            if interest_extensions and DirUtils.split_extension(file_path)[1] not in interest_extensions:
-                continue
+
             output.append(file_path)
         return output
 
