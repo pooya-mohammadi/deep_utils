@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING
 
-from deep_utils.dummy_objects.dummy_framework import LazyModule, is_groundingdino_available
+from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.1"
+__version__ = "1.3.2"
 
 from .utils.constants import DUMMY_PATH, Backends
 
