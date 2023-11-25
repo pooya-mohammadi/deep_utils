@@ -627,5 +627,12 @@ class DirUtils:
         return remove_create(dir_=dir_, remove=remove, logger=logger, verbose=verbose)
 
     @staticmethod
-    def get_filename(file_path: str) -> str:
-        return os.path.split(file_path)[-1]
+    def get_filename(file_path: str, remove_extension: Union[bool, str]) -> str:
+        name: str = os.path.split(file_path)[-1]
+        if remove_extension:
+            if isinstance(remove_extension, str):
+                name = name.rstrip(remove_extension)
+            else:
+                name, _ = DirUtils.split_extension(name)
+
+        return name
