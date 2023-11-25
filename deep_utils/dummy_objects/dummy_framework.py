@@ -1,6 +1,7 @@
 import importlib.util
 import importlib.util
 import os
+import traceback
 from itertools import chain
 from types import ModuleType
 from typing import Any, List, Union
@@ -116,7 +117,7 @@ class LazyModule(ModuleType):
         except Exception as e:
             raise RuntimeError(
                 f"Failed to import {self.__name__}.{module_name} because of the following error (look up to see its"
-                f" traceback):\n{e}"
+                f" traceback):\n{e}\n{traceback.format_exc()}"
             ) from e
 
     def __reduce__(self):
