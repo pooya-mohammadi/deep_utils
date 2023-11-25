@@ -625,3 +625,7 @@ class DirUtils:
     :return:
     """
         return remove_create(dir_=dir_, remove=remove, logger=logger, verbose=verbose)
+
+    @staticmethod
+    def get_filename(file_path: str) -> str:
+        return os.path.split(file_path)[-1]
