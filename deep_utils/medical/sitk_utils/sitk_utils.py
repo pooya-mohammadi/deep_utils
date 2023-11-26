@@ -22,11 +22,12 @@ class SITKUtils:
         return array, image
 
     @staticmethod
-    def swap_seg_value(input_array: np.ndarray, swap_seg: Dict[int, int]) -> np.ndarray:
+    def swap_seg_value(input_array: np.ndarray, swap_seg: Dict[int, int], max_val: int = 256) -> np.ndarray:
         """
 
         :param input_array:
         :param swap_seg:
+        :param max_val:
         :return:
 
         >>> array = np.array([[1, 3, 1, 2, 1], [1, 3, 2, 2, 1]])
@@ -40,9 +41,9 @@ class SITKUtils:
                [3, 1, 1, 1, 3]])
         """
 
-        def random_val(values: List[Union[int, float]]) -> float:
+        def random_val(values: List[Union[int, float]], max_val_: int = 256) -> float:
             import random
-            val = random.randint(max(values + [1]), sys.maxsize)
+            val = random.randint(max(values + [1]), max_val_)
             while val in values:
                 val = random.random()
             return val
@@ -51,7 +52,7 @@ class SITKUtils:
         reverse_swap = dict()
         for source, target in swap_seg.items():
             source = reverse_swap.pop(source, source)
-            random_target = random_val(unique_values + list(reverse_swap.keys()))
+            random_target = random_val(unique_values + list(reverse_swap.keys()), max_val_=max_val)
             input_array[input_array == target] = random_target
             input_array[input_array == source] = target
             reverse_swap[target] = random_target
@@ -61,7 +62,7 @@ class SITKUtils:
         return input_array
 
     @staticmethod
-    def swap_seg_value_file(input_file: str, swap_seg: Dict[int, int], output_file:str):
+    def swap_seg_value_file(input_file: str, swap_seg: Dict[int, int], output_file: str):
         """
         """
         array, image = SITKUtils.get_array_img(input_file)
