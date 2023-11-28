@@ -1,4 +1,3 @@
-import sys
 from typing import Tuple, Union, Dict, List, Optional
 
 import SimpleITK as sitk  # noqa
@@ -74,7 +73,7 @@ class SITKUtils:
 
     @staticmethod
     def save_sample(input_sample, org_sitk_img, save_path: str, time_array_index=-1,
-                    direction:Optional[list] = None):
+                    direction: Optional[list] = None):
         """
 
         :param input_sample:
