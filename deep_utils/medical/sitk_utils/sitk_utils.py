@@ -1,5 +1,5 @@
 import sys
-from typing import Tuple, Union, Dict, List
+from typing import Tuple, Union, Dict, List, Optional
 
 import SimpleITK as sitk  # noqa
 import numpy as np
@@ -62,21 +62,26 @@ class SITKUtils:
         return input_array
 
     @staticmethod
-    def swap_seg_value_file(input_file: str, swap_seg: Dict[int, int], output_file: str):
+    def swap_seg_value_file(input_file: str,
+                            swap_seg: Dict[int, int],
+                            output_file: str,
+                            **kwarg):
         """
         """
         array, image = SITKUtils.get_array_img(input_file)
         swaped_array = SITKUtils.swap_seg_value(array, swap_seg)
-        SITKUtils.save_sample(swaped_array, image, output_file)
+        SITKUtils.save_sample(swaped_array, image, output_file, **kwarg)
 
     @staticmethod
-    def save_sample(input_sample, org_sitk_img, save_path: str, time_array_index=-1):
+    def save_sample(input_sample, org_sitk_img, save_path: str, time_array_index=-1,
+                    direction:Optional[list] = None):
         """
 
         :param input_sample:
         :param org_sitk_img:
         :param save_path:
         :param time_array_index: This is for 4D data
+        :param direction:
         :return:
         """
         slices = []
@@ -103,15 +108,18 @@ class SITKUtils:
             sample_sitk.SetSpacing(org_sitk_img.GetSpacing()[:3])
 
             # Extract the 3x3 sub-matrix from the original 4x4 direction matrix
-            org_flat_direction = np.array(org_sitk_img.GetDirection())
-            if len(org_flat_direction) == 9:
-                original_direction = org_flat_direction.reshape(3, 3)
-            elif len(org_flat_direction) == 16:
-                original_direction = org_flat_direction.reshape(4, 4)
+            if direction is not None:
+                sample_sitk.SetDirection(np.array(direction).flatten())
             else:
-                raise ValueError()
-            submatrix_direction = original_direction[:3, :3].flatten()
-            sample_sitk.SetDirection(submatrix_direction)
+                org_flat_direction = np.array(org_sitk_img.GetDirection())
+                if len(org_flat_direction) == 9:
+                    original_direction = org_flat_direction.reshape(3, 3)
+                elif len(org_flat_direction) == 16:
+                    original_direction = org_flat_direction.reshape(4, 4)
+                else:
+                    raise ValueError()
+                submatrix_direction = original_direction[:3, :3].flatten()
+                sample_sitk.SetDirection(submatrix_direction)
         sitk.WriteImage(sample_sitk, save_path)
 
 
