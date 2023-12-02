@@ -20,3 +20,4 @@ remove.py
 to_be_removed.py
 to_remove.py
 *.nii.gz
+*.zip
