@@ -66,6 +66,7 @@ class SITKUtils:
                             output_file: str,
                             **kwarg):
         """
+        Swap class value over a sample!
         """
         array, image = SITKUtils.get_array_img(input_file)
         swaped_array = SITKUtils.swap_seg_value(array, swap_seg)
@@ -73,7 +74,7 @@ class SITKUtils:
 
     @staticmethod
     def save_sample(input_sample, org_sitk_img, save_path: str, time_array_index=-1,
-                    direction: Optional[list] = None):
+                    direction: Optional[list] = None, spacing: Optional[list] = None):
         """
 
         :param input_sample:
@@ -81,6 +82,7 @@ class SITKUtils:
         :param save_path:
         :param time_array_index: This is for 4D data
         :param direction:
+        :param spacing: if provided will be used in the save
         :return:
         """
         slices = []
@@ -104,7 +106,10 @@ class SITKUtils:
             # sample_sitk.SetOrigin(org_sitk.GetOrigin())
             # sample_sitk.SetSpacing(org_sitk.GetSpacing())
             sample_sitk.SetOrigin(org_sitk_img.GetOrigin()[:3])
-            sample_sitk.SetSpacing(org_sitk_img.GetSpacing()[:3])
+            if spacing is not None:
+                sample_sitk.SetSpacing(spacing)
+            else:
+                sample_sitk.SetSpacing(org_sitk_img.GetSpacing()[:3])
 
             # Extract the 3x3 sub-matrix from the original 4x4 direction matrix
             if direction is not None:
@@ -120,6 +125,26 @@ class SITKUtils:
                 submatrix_direction = original_direction[:3, :3].flatten()
                 sample_sitk.SetDirection(submatrix_direction)
         sitk.WriteImage(sample_sitk, save_path)
+
+    @staticmethod
+    def update_file(file_path: str, target_path: Optional[str] = None,
+                    spacing_x: Optional[float] = None,
+                    spacing_y: Optional[float] = None,
+                    spacing_z: Optional[float] = None,
+                    spacing_t: Optional[float] = None
+                    ):
+        target_path = target_path or file_path
+        if not spacing_x and not spacing_y and not spacing_z and not spacing_t:
+            raise ValueError("spacing cannot be empty for all dimensions")
+
+        array, img = SITKUtils.get_array_img(file_path)
+        spacing = list(img.GetSpacing())
+        spacing[0] = spacing_x or spacing[0]
+        spacing[1] = spacing_y or spacing[1]
+        spacing[2] = spacing_z or spacing[2]
+        if len(spacing) > 3:
+            spacing[3] = spacing_t or spacing[3]
+        SITKUtils.save_sample(array, img, spacing=spacing, save_path=target_path)
 
 
 if __name__ == '__main__':
