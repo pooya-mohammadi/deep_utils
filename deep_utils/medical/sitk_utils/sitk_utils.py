@@ -146,6 +146,26 @@ class SITKUtils:
             spacing[3] = spacing_t or spacing[3]
         SITKUtils.save_sample(array, img, spacing=spacing, save_path=target_path)
 
+    @staticmethod
+    def get_largest_size(*files, mood: str = "monai"):
+        """
+        Get the largest size for a group of datasets.
+        :param files:
+        :param mood: Mood that datasets are in that format. Supported format is monai.
+        :return:
+        """
+        if mood == "monai":
+            largest_size = list(SITKUtils.get_array_img(files[0][0]['image'], just_array=True).shape)
+            for batch_file in files:
+                for file in batch_file:
+                    img = SITKUtils.get_array_img(file['image'], just_array=True)
+                    for index, (l_s, i_s) in enumerate(zip(largest_size, img.shape)):
+                        if i_s > l_s:
+                            largest_size[index] = i_s
+        else:
+            raise ValueError(f"input mood: {mood} is not supported!")
+        return largest_size
+
 
 if __name__ == '__main__':
     array = np.array([[1, 3, 1, 2, 1], [1, 3, 2, 2, 1]])
