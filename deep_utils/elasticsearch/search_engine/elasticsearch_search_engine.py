@@ -1,9 +1,10 @@
 import os
-import random
 from typing import Dict, Union, List
+
 from elasticsearch import Elasticsearch, NotFoundError
+
+from deep_utils.utils.json_utils.json_utils import JsonUtils
 from deep_utils.utils.logging_utils.logging_utils import value_error_log
-from deep_utils.utils.json_utils.json_utils import dump_json
 
 
 class ElasticsearchEngin:
@@ -112,7 +113,7 @@ class ElasticsearchEngin:
             province = value['province_name']
             city_name = value['name']
             os.makedirs("equals", exist_ok=True)
-            dump_json(f"equals/{province}_{city_name}.json", hits, ensure_ascii=False)
+            JsonUtils.dump_json(f"equals/{province}_{city_name}.json", hits, ensure_ascii=False)
             print(f"There are two objects with the same characteristics with the same name, {hits}")
             hits = [hits[0]]
 
