@@ -35,6 +35,7 @@ class Backends(str, Enum):
     TORCHVISION = "torchvision"
     TIMM = "timm"
     FAIRSCALE = "fairscale"
+    ELASTICSEARCH = "elasticsearch"
 
     def __str__(self):
         return str(self.value)

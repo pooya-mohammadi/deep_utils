@@ -93,3 +93,7 @@ class BlipTorchImageCaption(metaclass=DummyObject):
                 Backends.TRANSFORMERS,
                 Backends.FAIRSCALE
                 ]
+
+
+class ElasticsearchEngin(metaclass=DummyObject):
+    _backend = [Backends.ELASTICSEARCH]
