@@ -31,6 +31,7 @@ _import_structure = {
     "utils.py_utils.py_utils": ["PyUtils"],
     "utils.json_utils.json_utils": ["JsonUtils"],
     "utils.pickle_utils.pickle_utils": ["PickleUtils"],
+    "utils.fa_nlp_utils.fa_nlp_utils": ['FaNLPUtils'],
     DUMMY_PATH: [],
 }
 
