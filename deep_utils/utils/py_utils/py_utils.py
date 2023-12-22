@@ -63,7 +63,8 @@ class PyUtils:
             "bold": "\033[1m",
             "underline": "\033[4m",
         }
-        return (colors[color.lower()] if color is not None else "") + ("".join(colors[m.lower()] for m in mode) if mode is not None else "") + text + \
+        return (colors[color.lower()] if color is not None else "") + (
+            "".join(colors[m.lower()] for m in mode) if mode is not None else "") + text + \
             colors["end"]
 
     @staticmethod
