@@ -96,6 +96,7 @@ if TYPE_CHECKING:
     from .utils.qdrant_utils.qdrant_utils import QdrantUtils
     from .utils.pickle_utils.pickle_utils import PickleUtils
     from .medical.sitk_utils.sitk_utils import SITKUtils
+    from .utils.fa_nlp_utils.fa_nlp_utils import FaNLPUtils
 else:
     import sys
 
