@@ -387,15 +387,18 @@ class ElasticsearchEngin:
         return hits
 
     @staticmethod
-    def get_hits(results):
+    def get_hits(results, return_source: bool = False):
         """
         This is a simple method to extract hits or return none when the output of the search has no hits
         :param results:
+        :param return_source: If set to true the _source keyword will be returned!
         :return:
         """
         hits = results['hits']['hits']
         if len(hits) == 0:
             hits = None
+        elif return_source:
+            hits = [hit["_source"] for hit in hits]
         return hits
 
     def search_bool_must_fuzzy_query_geo_sort(self,
@@ -535,10 +538,29 @@ class ElasticsearchEngin:
             raise ValueError(f"keyword: {keyword} is not valid!")
         return query
 
-    def search_match_query(self, index_name, field_name="", field_value="", keyword="match", size=None):
+    def search_match_query(self, index_name, field_name="", field_value="", keyword="match", size=None,
+                           return_source: bool = False):
+        """
+        A simple match search
+        {
+        "query": {
+            "keyword": {
+                "field_name": "field_value"
+                     }
+                 }
+         }
+        :param index_name:
+        :param field_name:
+        :param field_value:
+        :param keyword:
+        :param size:
+        :param return_source:
+        :return:
+
+        """
         query = self.get_match_query(field_name=field_name, field_value=field_value, keyword=keyword)
         results = self.es.search(index=index_name, query=query, size=size).body
-        hits = ElasticsearchEngin.get_hits(results)
+        hits = ElasticsearchEngin.get_hits(results, return_source=return_source)
         return hits
 
     def search_by_id(self, index_name, id_value, id_field_name="_id") -> Union[dict, None]:
