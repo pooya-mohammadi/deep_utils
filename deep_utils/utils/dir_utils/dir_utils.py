@@ -599,6 +599,7 @@ class DirUtils:
         :return:
         """
         interest_extensions = [interest_extensions] if isinstance(interest_extensions, str) else interest_extensions
+        interest_extensions = [f".{ext}" if not ext.startswith(".") else ext  for ext in interest_extensions]
         output = []
         for filename in os.listdir(directory):
             file_path = join(directory, filename)
