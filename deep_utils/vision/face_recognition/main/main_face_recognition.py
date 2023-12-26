@@ -1,7 +1,7 @@
 import os
 import numpy as np
 from abc import abstractmethod
-from deep_utils.utils.pickle_utils.pickle_utils import dump_pickle
+from deep_utils.utils.pickle_utils.pickle_utils import PickleUtils
 from deep_utils.main_abs.main import MainClass
 from deep_utils.utils.dict_named_tuple_utils import dictnamedtuple
 from deep_utils.utils.dir_utils.dir_utils import remove_create
@@ -42,14 +42,14 @@ class FaceRecognition(MainClass):
                 print(f'{img_path}: time= {result["elapsed_time"]}')
 
                 if res_dir and not get_mean:
-                    dump_pickle(os.path.join(res_dir, split_extension(item_name, extension=".pkl")), result.encodings)
+                    PickleUtils.dump_pickle(os.path.join(res_dir, split_extension(item_name, extension=".pkl")), result.encodings)
                 results[img_path] = result['encodings']
         if get_mean:
 
             encode = np.sum(np.array(list(results.values())), axis=0)
             encode = self.normalizer.transform(np.expand_dims(encode, axis=0))[0]
             results['mean-encoding'] = encode
-            dump_pickle(os.path.join(res_dir, "mean-encoding.pkl"), encode)
+            PickleUtils.dump_pickle(os.path.join(res_dir, "mean-encoding.pkl"), encode)
         return results
 
     def extract_dir_of_dir(
@@ -77,7 +77,7 @@ class FaceRecognition(MainClass):
         if get_mean:
             results = {k: v['mean-encoding'] for k, v in results.items()}
             encoding_name = os.path.split(input_directory)[-1]
-            dump_pickle(os.path.join(input_directory, encoding_name + ".pkl"), results)
+            PickleUtils.dump_pickle(os.path.join(input_directory, encoding_name + ".pkl"), results)
         return results
 
     @staticmethod
