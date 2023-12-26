@@ -97,3 +97,8 @@ class BlipTorchImageCaption(metaclass=DummyObject):
 
 class ElasticsearchEngin(metaclass=DummyObject):
     _backend = [Backends.ELASTICSEARCH]
+
+
+class VggFace2TorchFaceRecognition(metaclass=DummyObject):
+    # ["torch", "cv2", "albumentations", "sklearn"]
+    _backend = [Backends.TORCH, Backends.CV2, Backends.ALBUMENTATIONS, Backends.SCIKIT]

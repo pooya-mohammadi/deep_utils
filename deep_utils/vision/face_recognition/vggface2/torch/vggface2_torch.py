@@ -10,7 +10,7 @@ from deep_utils.utils.lib_utils.lib_decorators import (
     get_from_config,
     lib_rgb2bgr
 )
-from deep_utils.utils.pickle_utils.pickle_utils import load_pickle
+from deep_utils.utils.pickle_utils.pickle_utils import PickleUtils
 from deep_utils.vision.face_recognition.main.main_face_recognition import FaceRecognition, OUTPUT_CLASS
 from .config import Config
 from .src import load_model
@@ -59,7 +59,7 @@ class VggFace2TorchFaceRecognition(FaceRecognition):
             model: model
             weight_path: file name of parameters converted from a Caffe model, assuming the file format is Pickle.
         """
-        weights = load_pickle(weight_path, mode="rb", encoding='latin1')
+        weights = PickleUtils.load_pickle(weight_path, mode="rb", encoding='latin1')
         own_state = model.state_dict()
         for name, param in weights.items():
             if name in own_state:

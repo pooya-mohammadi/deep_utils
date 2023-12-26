@@ -60,6 +60,7 @@ import_lazy_module("CRNNInferenceTorch", "vision.ocr.crnn.torch.crnn_inference")
 import_lazy_module("CRNNModelTorch", "vision.ocr.crnn.torch.crnn_model")
 import_lazy_module("MTCNNTFFaceDetector", "vision.face_detection.mtcnn.tf.mtcnn_tf_face_detection")
 import_lazy_module("ElasticsearchEngin", "elasticsearch.search_engine.elasticsearch_search_engine")
+import_lazy_module("VggFace2TorchFaceRecognition", "vision.face_recognition.vggface2.torch.vggface2_torch")
 
 if TYPE_CHECKING:
     from .utils.box_utils.boxes import Box, Point
@@ -99,6 +100,7 @@ if TYPE_CHECKING:
     from .medical.sitk_utils.sitk_utils import SITKUtils
     from .utils.fa_nlp_utils.fa_nlp_utils import FaNLPUtils
     from .elasticsearch.search_engine.elasticsearch_search_engine import ElasticsearchEngin
+    from .vision.face_recognition.vggface2.torch.vggface2_torch import VggFace2TorchFaceRecognition
 else:
     import sys
 
