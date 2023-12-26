@@ -102,3 +102,7 @@ class ElasticsearchEngin(metaclass=DummyObject):
 class VggFace2TorchFaceRecognition(metaclass=DummyObject):
     # ["torch", "cv2", "albumentations", "sklearn"]
     _backend = [Backends.TORCH, Backends.CV2, Backends.ALBUMENTATIONS, Backends.SCIKIT]
+
+class UltralightTorchFaceDetector(metaclass=DummyObject):
+    # ["torch", "cv2", "albumentations", "sklearn"]
+    _backend = [Backends.TORCH, Backends.CV2, Backends.ALBUMENTATIONS, Backends.SCIKIT]
