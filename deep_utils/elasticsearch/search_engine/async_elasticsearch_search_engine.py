@@ -1,9 +1,10 @@
 from elasticsearch import AsyncElasticsearch
 
 from deep_utils.utils.logging_utils.logging_utils import value_error_log
+from deep_utils.elasticsearch.search_engine.abs_elasticsearch_search_engine import ElasticSearchABS
 
 
-class AsyncElasticsearchEngin:
+class AsyncElasticsearchEngin(ElasticSearchABS):
     def __init__(self, elastic_url="http://localhost:9200", es: AsyncElasticsearch = None, timeout=10, logger=None,
                  verbose=1):
         if es is None:
@@ -27,48 +28,6 @@ class AsyncElasticsearchEngin:
             size=size,
         )
         return resp
-
-    @staticmethod
-    def get_match_query(field_name="",
-                        field_value="",
-                        keyword="match",
-                        ):
-        """
-        This function is used to get query-match. It will simply return query-match json
-        :param field_name:
-        :param field_value:
-        :param keyword:
-        :return:
-        """
-        if keyword == "match":
-
-            query = {
-                keyword: {
-                    field_name: field_value
-                }
-            }
-        elif keyword == "match_all":
-            query = {
-                keyword: {}
-            }
-        else:
-            raise ValueError(f"keyword: {keyword} is not valid!")
-        return query
-
-    @staticmethod
-    def get_hits(results, return_source: bool = False):
-        """
-        This is a simple method to extract hits or return none when the output of the search has no hits
-        :param results:
-        :param return_source: If set to true the _source keyword will be returned!
-        :return:
-        """
-        hits = results['hits']['hits']
-        if len(hits) == 0:
-            hits = None
-        elif return_source:
-            hits = [hit["_source"] for hit in hits]
-        return hits
 
     async def search_match_query(self, index_name, field_name="", field_value="", keyword="match", size=None,
                                  return_source: bool = False):
