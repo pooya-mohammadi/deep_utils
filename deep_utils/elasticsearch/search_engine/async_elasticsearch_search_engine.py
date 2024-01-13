@@ -29,27 +29,48 @@ class AsyncElasticsearchEngin(ElasticSearchABS):
         )
         return resp
 
-    async def search_match_query(self, index_name, field_name="", field_value="", keyword="match", size=None,
+    async def search_match_query(self, index, field="", value="", keyword="match", size=None,
                                  return_source: bool = False):
         """
         A simple match search
         {
         "query": {
             "keyword": {
-                "field_name": "field_value"
+                "field": "value"
                      }
                  }
          }
-        :param index_name:
-        :param field_name:
-        :param field_value:
+        :param index:
+        :param field:
+        :param value:
         :param keyword:
         :param size:
         :param return_source:
         :return:
 
         """
-        query = self.get_match_query(field_name=field_name, field_value=field_value, keyword=keyword)
-        results = await self.es.search(index=index_name, query=query, size=size)
+        query = self.get_match_query(field_name=field, field_value=value, keyword=keyword)
+        results = await self.es.search(index=index, query=query, size=size)
+        hits = AsyncElasticsearchEngin.get_hits(results.body, return_source=return_source)
+        return hits
+
+    async def prefix(self, index: str, field: str, value: str, size: int = 10,
+                     return_source: bool = True):
+        """
+        GET /_search
+            {
+              "query": {
+                "prefix" : { field : value }
+              }
+            }
+        :param index:
+        :param field:
+        :param value:
+        :param size:
+        :param return_source:
+        :return:
+        """
+        query = {"prefix": {field: value}}
+        results = await self.es.search(index=index, query=query, size=size)
         hits = AsyncElasticsearchEngin.get_hits(results.body, return_source=return_source)
         return hits
