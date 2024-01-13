@@ -1,6 +1,6 @@
 import setuptools
 
-VERSION = "1.3.10"
+VERSION = "1.3.11"
 
 long_description = open("Readme.md", mode="r", encoding="utf-8").read()
 
@@ -15,9 +15,7 @@ requirements = [
 
 cv_requirements = ["opencv-python>=4.5.5.58"]
 
-tf_requirements = [
-                      "tensorflow>=2.6.0",
-                  ] + cv_requirements
+tf_requirements = ["tensorflow>=2.6.0"] + cv_requirements
 
 torch_requirements = [
     "torch>=1.8.0,<1.12.0",

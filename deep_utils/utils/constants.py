@@ -37,6 +37,7 @@ class Backends(str, Enum):
     FAIRSCALE = "fairscale"
     ELASTICSEARCH = "elasticsearch"
     ALBUMENTATIONS = 'albumentations'
+    AIOHTTP = "aiohttp"
 
     def __str__(self):
         return str(self.value)

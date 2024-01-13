@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.10"
+__version__ = "1.3.11"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -60,8 +60,10 @@ import_lazy_module("CRNNInferenceTorch", "vision.ocr.crnn.torch.crnn_inference")
 import_lazy_module("CRNNModelTorch", "vision.ocr.crnn.torch.crnn_model")
 import_lazy_module("MTCNNTFFaceDetector", "vision.face_detection.mtcnn.tf.mtcnn_tf_face_detection")
 import_lazy_module("ElasticsearchEngin", "elasticsearch.search_engine.elasticsearch_search_engine")
+import_lazy_module("AsyncElasticsearchEngin", "elasticsearch.search_engine.async_elasticsearch_search_engine")
 import_lazy_module("VggFace2TorchFaceRecognition", "vision.face_recognition.vggface2.torch.vggface2_torch")
-import_lazy_module("UltralightTorchFaceDetector", "vision.face_detection.ultralight.torch.ultralight_torch_face_detection")
+import_lazy_module("UltralightTorchFaceDetector",
+                   "vision.face_detection.ultralight.torch.ultralight_torch_face_detection")
 
 if TYPE_CHECKING:
     from .utils.box_utils.boxes import Box, Point
@@ -101,6 +103,7 @@ if TYPE_CHECKING:
     from .medical.sitk_utils.sitk_utils import SITKUtils
     from .utils.fa_nlp_utils.fa_nlp_utils import FaNLPUtils
     from .elasticsearch.search_engine.elasticsearch_search_engine import ElasticsearchEngin
+    from .elasticsearch.search_engine.async_elasticsearch_search_engine import AsyncElasticsearchEngin
     from .vision.face_recognition.vggface2.torch.vggface2_torch import VggFace2TorchFaceRecognition
     from .vision.face_detection.ultralight.torch.ultralight_torch_face_detection import UltralightTorchFaceDetector
 else:
