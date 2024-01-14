@@ -16,7 +16,7 @@ class MedMetricsTorch:
         y_pred_f = torch.flatten(y_pred)
         intersection = torch.sum(y_true_f * y_pred_f)
         score = (2. * intersection + smooth) / (torch.sum(y_true_f) + torch.sum(y_pred_f) + smooth)
-        return score
+        return score.item()
 
 
 if __name__ == '__main__':
