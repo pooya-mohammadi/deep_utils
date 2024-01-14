@@ -62,6 +62,7 @@ import_lazy_module("MTCNNTFFaceDetector", "vision.face_detection.mtcnn.tf.mtcnn_
 import_lazy_module("ElasticsearchEngin", "elasticsearch.search_engine.elasticsearch_search_engine")
 import_lazy_module("AsyncElasticsearchEngin", "elasticsearch.search_engine.async_elasticsearch_search_engine")
 import_lazy_module("VggFace2TorchFaceRecognition", "vision.face_recognition.vggface2.torch.vggface2_torch")
+import_lazy_module("MedMetricsTorch", "medical.metrics.metrics")
 import_lazy_module("UltralightTorchFaceDetector",
                    "vision.face_detection.ultralight.torch.ultralight_torch_face_detection")
 
@@ -106,6 +107,7 @@ if TYPE_CHECKING:
     from .elasticsearch.search_engine.async_elasticsearch_search_engine import AsyncElasticsearchEngin
     from .vision.face_recognition.vggface2.torch.vggface2_torch import VggFace2TorchFaceRecognition
     from .vision.face_detection.ultralight.torch.ultralight_torch_face_detection import UltralightTorchFaceDetector
+    from .medical.metrics.metrics import MedMetricsTorch
 else:
     import sys
 

@@ -99,6 +99,10 @@ class ElasticsearchEngin(metaclass=DummyObject):
     _backend = [Backends.ELASTICSEARCH]
 
 
+class MedMetricsTorch(metaclass=DummyObject):
+    _backend = [Backends.TORCH]
+
+
 class AsyncElasticsearchEngin(metaclass=DummyObject):
     _backend = [Backends.ELASTICSEARCH, Backends.AIOHTTP]
 
