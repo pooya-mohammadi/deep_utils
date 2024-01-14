@@ -2,6 +2,7 @@ import torch
 
 
 class MedMetricsTorch:
+    @staticmethod
     def dice_score(y_true: torch.Tensor, y_pred: torch.Tensor, smooth: float = 1.0) -> float:
         """
         Dice score for binary segmentation!
