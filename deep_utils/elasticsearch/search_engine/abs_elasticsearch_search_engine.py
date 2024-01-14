@@ -1,8 +1,17 @@
+from enum import Enum
+from typing import Union
+
+
 class ElasticSearchABS:
+    class QueryKeyword(str, Enum):
+        MATCH = "match"
+        MATCH_ALL = "match_all"
+        MATCH_PHRASE = "match_phrase"
+
     @staticmethod
-    def get_match_query(field_name="",
-                        field_value="",
-                        keyword="match",
+    def get_match_query(field_name: str = "",
+                        field_value: str = "",
+                        keyword: Union[QueryKeyword, str] = "match",
                         ):
         """
         This function is used to get query-match. It will simply return query-match json
@@ -11,16 +20,22 @@ class ElasticSearchABS:
         :param keyword:
         :return:
         """
-        if keyword == "match":
+        if keyword == ElasticSearchABS.QueryKeyword.MATCH:
 
             query = {
                 keyword: {
                     field_name: field_value
                 }
             }
-        elif keyword == "match_all":
+        elif keyword == ElasticSearchABS.QueryKeyword.MATCH_ALL:
             query = {
                 keyword: {}
+            }
+        elif keyword == ElasticSearchABS.QueryKeyword.MATCH_PHRASE:
+            query = {
+                keyword: {
+                    field_name: field_value
+                }
             }
         else:
             raise ValueError(f"keyword: {keyword} is not valid!")
