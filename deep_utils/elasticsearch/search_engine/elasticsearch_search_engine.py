@@ -132,9 +132,7 @@ class ElasticsearchEngin(ElasticSearchABS):
 
     @staticmethod
     def term_search(es_client, field_term_dict: dict, index_name: str):
-
         query = ElasticsearchEngin.get_bool_must_constant_score_query(field_term_dict)
-
         results = es_client.search(index=index_name, query=query)
         return results.body
 
