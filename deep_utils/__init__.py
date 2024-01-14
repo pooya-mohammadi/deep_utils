@@ -32,7 +32,8 @@ _import_structure = {
     "utils.json_utils.json_utils": ["JsonUtils"],
     "utils.pickle_utils.pickle_utils": ["PickleUtils"],
     "utils.fa_nlp_utils.fa_nlp_utils": ['FaNLPUtils'],
-    DUMMY_PATH: [],
+    "utils.str_utils.str_utils": ["StringUtils"],
+    DUMMY_PATH: [],  # this is required for dummy check!
 }
 
 import_lazy_module("SITKUtils", "medical/sitk_utils/sitk_utils")
@@ -108,6 +109,7 @@ if TYPE_CHECKING:
     from .vision.face_recognition.vggface2.torch.vggface2_torch import VggFace2TorchFaceRecognition
     from .vision.face_detection.ultralight.torch.ultralight_torch_face_detection import UltralightTorchFaceDetector
     from .medical.metrics.metrics import MedMetricsTorch
+    from .utils.str_utils.str_utils import StringUtils
 else:
     import sys
 
