@@ -17,3 +17,10 @@ class MedMetricsTorch:
         intersection = torch.sum(y_true_f * y_pred_f)
         score = (2. * intersection + smooth) / (torch.sum(y_true_f) + torch.sum(y_pred_f) + smooth)
         return score
+
+
+if __name__ == '__main__':
+    t = torch.randint(0, 2, (10, 3, 3))
+    p = torch.randint(0, 2, (10, 3, 3))
+    print(t, "\n", p)
+    print(MedMetricsTorch.dice_score(t, p))
