@@ -48,12 +48,9 @@ class DummyObject(type):
     _module: str
 
     def __call__(cls, *args, **kwargs):
-        self = super().__call__(*args, **kwargs)
+        self = super().__call__()
         requires_backends(self, self._backend, module_name=self._module, cls_name=self.__class__.__name__)
         return self
-
-    # def __getattr__(cls, key):
-    #     cls()
 
 
 class LazyModule(ModuleType):
