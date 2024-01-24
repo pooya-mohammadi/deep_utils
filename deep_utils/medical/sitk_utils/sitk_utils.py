@@ -74,7 +74,9 @@ class SITKUtils:
 
     @staticmethod
     def save_sample(input_sample, org_sitk_img, save_path: str, time_array_index=-1,
-                    direction: Optional[list] = None, spacing: Optional[list] = None):
+                    direction: Optional[list] = None,
+                    spacing: Optional[list] = None,
+                    remove_index: int = None):
         """
 
         :param input_sample:
@@ -119,6 +121,8 @@ class SITKUtils:
                 if len(org_flat_direction) == 9:
                     original_direction = org_flat_direction.reshape(3, 3)
                 elif len(org_flat_direction) == 16:
+                    original_direction = org_flat_direction.reshape(4, 4)
+                elif len(org_flat_direction) == 25:
                     original_direction = org_flat_direction.reshape(4, 4)
                 else:
                     raise ValueError()
