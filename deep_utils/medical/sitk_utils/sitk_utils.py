@@ -123,7 +123,7 @@ class SITKUtils:
                 elif len(org_flat_direction) == 16:
                     original_direction = org_flat_direction.reshape(4, 4)
                 elif len(org_flat_direction) == 25:
-                    original_direction = org_flat_direction.reshape(4, 4)
+                    original_direction = org_flat_direction.reshape(5, 5)
                 else:
                     raise ValueError()
                 submatrix_direction = original_direction[:3, :3].flatten()
