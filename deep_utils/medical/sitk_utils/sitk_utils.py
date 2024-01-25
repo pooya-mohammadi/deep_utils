@@ -97,11 +97,26 @@ class SITKUtils:
             org_origin = org_sitk_img.GetOrigin()
             sample_sitk.SetOrigin((*org_origin, 1.0) if len(org_origin) == 3 else org_origin)
             org_spacing = org_sitk_img.GetSpacing()
-            sample_sitk.SetSpacing((*org_spacing, 1.0) if len(org_spacing) == 3 else org_spacing)
+            if len(org_spacing) == 5:
+                if remove_index is None:
+                    raise ValueError("remove index should be provided for 5 samples")
+                org_spacing = list(org_spacing)
+                del org_spacing[remove_index]
+                org_spacing = tuple(org_spacing)
+            else:
+                org_spacing = (*org_spacing, 1.0) if len(org_spacing) == 3 else org_spacing
+            sample_sitk.SetSpacing(org_spacing)
             org_direction = np.array(org_sitk_img.GetDirection())
             if org_direction.size == 9:
                 org_direction = org_direction.reshape(3, 3)
                 org_direction = np.pad(org_direction, [(0, 1), (0, 1)], mode='constant', constant_values=1).flatten()
+            if org_direction.size == 25:
+                org_direction = org_direction.reshape((5,5))
+                if remove_index is None:
+                    raise ValueError("remove index should be provided for 5,5 samples")
+                org_direction = np.delete(org_direction, remove_index, 0)
+                org_direction = np.delete(org_direction, remove_index, 1)
+
             sample_sitk.SetDirection(org_direction)
         else:
             sample_sitk = sitk.GetImageFromArray(input_sample, False)
