@@ -76,7 +76,8 @@ class SITKUtils:
     def save_sample(input_sample, org_sitk_img, save_path: str, time_array_index=-1,
                     direction: Optional[list] = None,
                     spacing: Optional[list] = None,
-                    remove_index: int = None):
+                    remove_index: int = None,
+                    slice_index: int = None):
         """
 
         :param input_sample:
@@ -121,13 +122,15 @@ class SITKUtils:
             sample_sitk.SetDirection(org_direction)
         else:
             sample_sitk = sitk.GetImageFromArray(input_sample, False)
-            # sample_sitk.SetOrigin(org_sitk.GetOrigin())
-            # sample_sitk.SetSpacing(org_sitk.GetSpacing())
-            sample_sitk.SetOrigin(org_sitk_img.GetOrigin()[:3])
             if spacing is not None:
                 sample_sitk.SetSpacing(spacing)
             else:
-                sample_sitk.SetSpacing(org_sitk_img.GetSpacing()[:3])
+                spacing = list(org_sitk_img.GetOrigin())
+                if remove_index:
+                    del spacing[remove_index]
+                if slice_index:
+                    del spacing[slice_index]
+                sample_sitk.SetSpacing(org_sitk_img.GetSpacing())
 
             # Extract the 3x3 sub-matrix from the original 4x4 direction matrix
             if direction is not None:
@@ -142,8 +145,15 @@ class SITKUtils:
                     original_direction = org_flat_direction.reshape(5, 5)
                 else:
                     raise ValueError()
-                submatrix_direction = original_direction[:3, :3].flatten()
-                sample_sitk.SetDirection(submatrix_direction)
+                if remove_index:
+                    original_direction = np.delete(original_direction, remove_index, 0)
+                    original_direction = np.delete(original_direction, remove_index, 1)
+                if slice_index:
+                    original_direction = np.delete(original_direction, slice_index, 0)
+                    original_direction = np.delete(original_direction, slice_index, 1)
+
+                # submatrix_direction = original_direction[:3, :3].flatten()
+                sample_sitk.SetDirection(original_direction.flatten())
         sitk.WriteImage(sample_sitk, save_path)
 
     @staticmethod
