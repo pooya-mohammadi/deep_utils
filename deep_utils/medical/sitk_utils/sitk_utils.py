@@ -106,7 +106,10 @@ class SITKUtils:
                 org_spacing = tuple(org_spacing)
             else:
                 org_spacing = (*org_spacing, 1.0) if len(org_spacing) == 3 else org_spacing
-            sample_sitk.SetSpacing(org_spacing)
+            if spacing:
+                sample_sitk.SetSpacing(spacing)
+            else:
+                sample_sitk.SetSpacing(org_spacing)
             org_direction = np.array(org_sitk_img.GetDirection())
             if org_direction.size == 9:
                 org_direction = org_direction.reshape(3, 3)
