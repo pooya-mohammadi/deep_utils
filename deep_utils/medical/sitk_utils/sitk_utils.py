@@ -116,6 +116,7 @@ class SITKUtils:
                     raise ValueError("remove index should be provided for 5,5 samples")
                 org_direction = np.delete(org_direction, remove_index, 0)
                 org_direction = np.delete(org_direction, remove_index, 1)
+                org_direction = org_direction.flatten()
 
             sample_sitk.SetDirection(org_direction)
         else:
