@@ -7,18 +7,21 @@ from SimpleITK import Image
 
 class SITKUtils:
     @staticmethod
-    def get_array_img(sample_path: str, just_array: bool = False, just_sitk_img: bool = False) -> Union[
-        Image, np.ndarray, Tuple[np.ndarray, Image]]:
+    def get_array(sample_path: str) -> np.ndarray:
         image = sitk.ReadImage(sample_path)
         array = sitk.GetArrayFromImage(image)
-        if just_array and just_sitk_img:
-            raise ValueError("Both just keywords cannot be set to True!")
-        if just_array:
-            return array
-        if just_sitk_img:
-            return image
+        return array
 
-        return array, image
+    @staticmethod
+    def get_img(sample_path: str) -> Image:
+        image = sitk.ReadImage(sample_path)
+        return image
+
+    @staticmethod
+    def get_array_img(sample_path: str) -> Tuple[np.ndarray, Image]:
+        image = sitk.ReadImage(sample_path)
+        arr = sitk.GetArrayFromImage(image)
+        return arr, image
 
     @staticmethod
     def swap_seg_value(input_array: np.ndarray, swap_seg: Dict[int, int], max_val: int = 256) -> np.ndarray:
@@ -115,7 +118,7 @@ class SITKUtils:
                 org_direction = org_direction.reshape(3, 3)
                 org_direction = np.pad(org_direction, [(0, 1), (0, 1)], mode='constant', constant_values=1).flatten()
             if org_direction.size == 25:
-                org_direction = org_direction.reshape((5,5))
+                org_direction = org_direction.reshape((5, 5))
                 if remove_index is None:
                     raise ValueError("remove index should be provided for 5,5 samples")
                 org_direction = np.delete(org_direction, remove_index, 0)
