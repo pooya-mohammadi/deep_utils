@@ -588,7 +588,10 @@ class DirUtils:
     @staticmethod
     def list_dir_full_path(directory: str, filter_directories: bool = True,
                            interest_extensions: Optional[Union[str, List[str]]] = None,
-                           only_directories: bool = False) -> List[str]:
+                           only_directories: bool = False,
+                           get_full_path: bool = True,
+                           sort: bool = True,
+                           ) -> List[str]:
         """
         Returns the full path objects in a directory
         :param directory:
@@ -596,6 +599,8 @@ class DirUtils:
         if only_directories is set to True,
         :param interest_extensions: If provided, files that have this extension will be chosen!
         :param only_directories: If set to True, only directories are extracted and filter_directories is ignored.
+        :param get_full_path: If set to False, only the name is returned
+        :param sort: If set to True, the directory will be sorted first!
         :return:
         """
         interest_extensions = interest_extensions or []
@@ -603,7 +608,7 @@ class DirUtils:
         interest_extensions = [f".{ext}" if not ext.startswith(".") else ext for ext in
                                interest_extensions]
         output = []
-        for filename in os.listdir(directory):
+        for filename in sorted(os.listdir(directory)) if sort else os.listdir(directory):
             file_path = join(directory, filename)
             if not only_directories:
                 if filter_directories and os.path.isdir(file_path):
@@ -614,7 +619,7 @@ class DirUtils:
                 if not os.path.isdir(file_path):
                     continue
 
-            output.append(file_path)
+            output.append(file_path if get_full_path else filename)
         return output
 
     @staticmethod
