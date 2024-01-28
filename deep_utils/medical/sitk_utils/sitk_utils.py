@@ -1,3 +1,4 @@
+import math
 from typing import Tuple, Union, Dict, List, Optional
 
 import SimpleITK as sitk  # noqa
@@ -126,7 +127,7 @@ class SITKUtils:
                 org_direction = org_direction.flatten()
 
             sample_sitk.SetDirection(org_direction)
-        else:
+        elif len(input_sample.shape) == 3:
             sample_sitk = sitk.GetImageFromArray(input_sample, False)
             if spacing is not None:
                 sample_sitk.SetSpacing(spacing)
@@ -143,18 +144,12 @@ class SITKUtils:
                 sample_sitk.SetDirection(np.array(direction).flatten())
             else:
                 org_flat_direction = np.array(org_sitk_img.GetDirection())
-                if len(org_flat_direction) == 9:
-                    original_direction = org_flat_direction.reshape(3, 3)
-                elif len(org_flat_direction) == 16:
-                    original_direction = org_flat_direction.reshape(4, 4)
-                elif len(org_flat_direction) == 25:
-                    original_direction = org_flat_direction.reshape(5, 5)
-                else:
-                    raise ValueError()
-                if remove_index:
+                direction_size = int(math.sqrt(len(org_flat_direction)))
+                original_direction = org_flat_direction.reshape(direction_size, direction_size)
+                if remove_index and direction_size > 3:
                     original_direction = np.delete(original_direction, remove_index, 0)
                     original_direction = np.delete(original_direction, remove_index, 1)
-                if slice_index:
+                if slice_index and direction_size > 3:
                     original_direction = np.delete(original_direction, slice_index, 0)
                     original_direction = np.delete(original_direction, slice_index, 1)
 
