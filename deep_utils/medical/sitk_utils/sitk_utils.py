@@ -80,6 +80,7 @@ class SITKUtils:
     def save_sample(input_sample, org_sitk_img, save_path: str, time_array_index=-1,
                     direction: Optional[list] = None,
                     spacing: Optional[list] = None,
+                    origin: Optional[list] = None,
                     remove_index: int = None,
                     slice_index: int = None):
         """
@@ -99,8 +100,11 @@ class SITKUtils:
                                                      False)
                 slices.append(sample_sitk)
             sample_sitk = sitk.JoinSeries(slices)
-            org_origin = org_sitk_img.GetOrigin()
-            sample_sitk.SetOrigin((*org_origin, 1.0) if len(org_origin) == 3 else org_origin)
+            # if origin is None:
+            #     org_origin = org_sitk_img.GetOrigin()
+            #     sample_sitk.SetOrigin((*org_origin, 1.0) if len(org_origin) == 3 else org_origin)
+            # else:
+            #     sample_sitk.SetOrigin(tuple(origin))
             org_spacing = org_sitk_img.GetSpacing()
             if len(org_spacing) == 5:
                 if remove_index is None:
@@ -132,12 +136,12 @@ class SITKUtils:
             if spacing is not None:
                 sample_sitk.SetSpacing(spacing)
             else:
-                spacing = list(org_sitk_img.GetOrigin())
-                if remove_index:
+                spacing = list(org_sitk_img.GetSpacing())
+                if remove_index and spacing > 3:
                     del spacing[remove_index]
-                if slice_index:
+                if slice_index and spacing > 3:
                     del spacing[slice_index]
-                sample_sitk.SetSpacing(org_sitk_img.GetSpacing())
+                sample_sitk.SetSpacing(spacing)
 
             # Extract the 3x3 sub-matrix from the original 4x4 direction matrix
             if direction is not None:
