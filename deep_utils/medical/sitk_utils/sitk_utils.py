@@ -137,9 +137,9 @@ class SITKUtils:
                 sample_sitk.SetSpacing(spacing)
             else:
                 spacing = list(org_sitk_img.GetSpacing())
-                if remove_index and spacing > 3:
+                if remove_index and len(spacing) > 3:
                     del spacing[remove_index]
-                if slice_index and spacing > 3:
+                if slice_index and len(spacing) > 3:
                     del spacing[slice_index]
                 sample_sitk.SetSpacing(spacing)
 
@@ -190,10 +190,10 @@ class SITKUtils:
         :return:
         """
         if mood == "monai":
-            largest_size = list(SITKUtils.get_array_img(files[0][0]['image'], just_array=True).shape)
+            largest_size = list(SITKUtils.get_array(files[0][0]['image']).shape)
             for batch_file in files:
                 for file in batch_file:
-                    img = SITKUtils.get_array_img(file['image'], just_array=True)
+                    img = SITKUtils.get_array(file['image'])
                     for index, (l_s, i_s) in enumerate(zip(largest_size, img.shape)):
                         if i_s > l_s:
                             largest_size[index] = i_s
