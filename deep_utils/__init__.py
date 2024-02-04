@@ -64,6 +64,7 @@ import_lazy_module("ElasticsearchEngin", "elasticsearch.search_engine.elasticsea
 import_lazy_module("AsyncElasticsearchEngin", "elasticsearch.search_engine.async_elasticsearch_search_engine")
 import_lazy_module("VggFace2TorchFaceRecognition", "vision.face_recognition.vggface2.torch.vggface2_torch")
 import_lazy_module("MedMetricsTorch", "medical.metrics.metrics")
+import_lazy_module("SoundFileUtils", "audio.audio_utils.soundfile_utils")
 import_lazy_module("UltralightTorchFaceDetector",
                    "vision.face_detection.ultralight.torch.ultralight_torch_face_detection")
 
@@ -110,6 +111,7 @@ if TYPE_CHECKING:
     from .vision.face_detection.ultralight.torch.ultralight_torch_face_detection import UltralightTorchFaceDetector
     from .medical.metrics.metrics import MedMetricsTorch
     from .utils.str_utils.str_utils import StringUtils
+    from .audio.audio_utils.soundfile_utils import SoundFileUtils
 else:
     import sys
 

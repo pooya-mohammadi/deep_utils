@@ -113,3 +113,7 @@ class VggFace2TorchFaceRecognition(metaclass=DummyObject):
 
 class UltralightTorchFaceDetector(metaclass=DummyObject):
     _backend = [Backends.TORCH, Backends.CV2, Backends.ALBUMENTATIONS, Backends.SCIKIT]
+
+
+class SoundFileUtils(metaclass=DummyObject):
+    _backend = [Backends.SOUNDFILE]
