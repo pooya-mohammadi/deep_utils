@@ -130,7 +130,10 @@ class SITKUtils:
                 org_direction = np.delete(org_direction, remove_index, 1)
                 org_direction = org_direction.flatten()
 
-            sample_sitk.SetDirection(org_direction)
+            try:
+                sample_sitk.SetDirection(org_direction)
+            except:
+                print("[WARNING] Couldn't set the direction. Skipping....")
         elif len(input_sample.shape) == 3:
             sample_sitk = sitk.GetImageFromArray(input_sample, False)
             if spacing is not None:
