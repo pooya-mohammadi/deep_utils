@@ -18,7 +18,7 @@ class NIBUtils:
         return array
 
     @staticmethod
-    def get_img_array(filepath: str) -> Union[np.ndarray, FileBasedImage]:
+    def get_array_img(filepath: str) -> Union[np.ndarray, FileBasedImage]:
         img = NIBUtils.get_img(filepath)
         array = img.get_fdata()
         return array, img
