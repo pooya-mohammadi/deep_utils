@@ -170,11 +170,9 @@ class SITKUtils:
                 original_origin = list(org_sitk_img.GetOrigin())
                 org_size = len(original_origin)
                 if remove_index and org_size > 3:
-                    original_origin = np.delete(original_origin, remove_index, 0)
-                    original_origin = np.delete(original_origin, remove_index, 1)
+                    del original_origin[remove_index]
                 if slice_index and org_size > 3:
-                    original_origin = np.delete(original_origin, slice_index, 0)
-                    original_origin = np.delete(original_origin, slice_index, 1)
+                    del original_origin[slice_index]
 
                 # submatrix_direction = original_direction[:3, :3].flatten()
                 sample_sitk.SetOrigin(original_origin)
