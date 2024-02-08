@@ -2,7 +2,6 @@ from typing import Union
 
 import numpy as np
 import nibabel as nib
-from deep_utils import SITKUtils
 from nibabel.filebasedimages import FileBasedImage
 
 

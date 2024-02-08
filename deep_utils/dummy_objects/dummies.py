@@ -6,6 +6,10 @@ class SITKUtils(metaclass=DummyObject):
     _backend = [Backends.SIMPLE_ITK]
 
 
+class NIBUtils(metaclass=DummyObject):
+    _backend = [Backends.NIBABEL]
+
+
 class TFUtils(metaclass=DummyObject):
     _backend = [Backends.TENSORFLOW]
 

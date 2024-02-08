@@ -38,6 +38,7 @@ class Backends(str, Enum):
     ELASTICSEARCH = "elasticsearch"
     ALBUMENTATIONS = 'albumentations'
     AIOHTTP = "aiohttp"
+    NIBABEL = "nibabel"
 
     def __str__(self):
         return str(self.value)
