@@ -177,7 +177,7 @@ class SITKUtils:
                     original_origin = np.delete(original_origin, slice_index, 1)
 
                 # submatrix_direction = original_direction[:3, :3].flatten()
-                sample_sitk.SetDirection(original_origin)
+                sample_sitk.SetOrigin(original_origin)
 
         sitk.WriteImage(sample_sitk, save_path)
 
