@@ -77,7 +77,8 @@ class SITKUtils:
         SITKUtils.save_sample(swaped_array, image, output_file, **kwarg)
 
     @staticmethod
-    def save_sample(input_sample, org_sitk_img, save_path: str, time_array_index=-1,
+    def save_sample(input_sample:np.ndarray, org_sitk_img:Image,
+                    save_path: str, time_array_index=-1,
                     direction: Optional[list] = None,
                     spacing: Optional[list] = None,
                     origin: Optional[list] = None,
@@ -162,6 +163,22 @@ class SITKUtils:
 
                 # submatrix_direction = original_direction[:3, :3].flatten()
                 sample_sitk.SetDirection(original_direction.flatten())
+
+            if origin is not None:
+                sample_sitk.SetDirection(org_sitk_img.GetOrigin())
+            else:
+                original_origin = list(org_sitk_img.GetOrigin())
+                org_size = len(original_origin)
+                if remove_index and org_size > 3:
+                    original_origin = np.delete(original_origin, remove_index, 0)
+                    original_origin = np.delete(original_origin, remove_index, 1)
+                if slice_index and org_size > 3:
+                    original_origin = np.delete(original_origin, slice_index, 0)
+                    original_origin = np.delete(original_origin, slice_index, 1)
+
+                # submatrix_direction = original_direction[:3, :3].flatten()
+                sample_sitk.SetDirection(original_origin)
+
         sitk.WriteImage(sample_sitk, save_path)
 
     @staticmethod
