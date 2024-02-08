@@ -92,6 +92,9 @@ class SITKUtils:
         :param time_array_index: This is for 4D data
         :param direction:
         :param spacing: if provided will be used in the save
+        :param origin:
+        :param remove_index:
+        :param slice_index:
         :return:
         """
         slices = []
@@ -101,11 +104,11 @@ class SITKUtils:
                                                      False)
                 slices.append(sample_sitk)
             sample_sitk = sitk.JoinSeries(slices)
-            # if origin is None:
-            #     org_origin = org_sitk_img.GetOrigin()
-            #     sample_sitk.SetOrigin((*org_origin, 1.0) if len(org_origin) == 3 else org_origin)
-            # else:
-            #     sample_sitk.SetOrigin(tuple(origin))
+            if origin is None:
+                org_origin = org_sitk_img.GetOrigin()
+                sample_sitk.SetOrigin((*org_origin, 1.0) if len(org_origin) == 3 else org_origin)
+            else:
+                sample_sitk.SetOrigin(tuple(origin))
             org_spacing = org_sitk_img.GetSpacing()
             if len(org_spacing) == 5:
                 if remove_index is None:
@@ -176,7 +179,8 @@ class SITKUtils:
 
                 # submatrix_direction = original_direction[:3, :3].flatten()
                 sample_sitk.SetOrigin(original_origin)
-
+        else:
+            raise ValueError()
         sitk.WriteImage(sample_sitk, save_path)
 
     @staticmethod
