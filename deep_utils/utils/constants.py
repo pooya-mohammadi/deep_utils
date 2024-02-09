@@ -39,6 +39,7 @@ class Backends(str, Enum):
     ALBUMENTATIONS = 'albumentations'
     AIOHTTP = "aiohttp"
     NIBABEL = "nibabel"
+    TORCHAUDIO = "torchaudio"
 
     def __str__(self):
         return str(self.value)

@@ -66,6 +66,7 @@ import_lazy_module("VggFace2TorchFaceRecognition", "vision.face_recognition.vggf
 import_lazy_module("MedMetricsTorch", "medical.metrics.metrics")
 import_lazy_module("SoundFileUtils", "audio.audio_utils.soundfile_utils")
 import_lazy_module("NIBUtils", "medical.nib_utils.nib_utils")
+import_lazy_module("TorchAudioUtils", "audio.audio_utils.torchaudio_utils")
 import_lazy_module("UltralightTorchFaceDetector",
                    "vision.face_detection.ultralight.torch.ultralight_torch_face_detection")
 
@@ -114,6 +115,7 @@ if TYPE_CHECKING:
     from .utils.str_utils.str_utils import StringUtils
     from .audio.audio_utils.soundfile_utils import SoundFileUtils
     from .medical.nib_utils.nib_utils import NIBUtils
+    from .audio.audio_utils.torchaudio_utils import TorchAudioUtils
 else:
     import sys
 
