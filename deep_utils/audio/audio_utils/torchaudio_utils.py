@@ -2,6 +2,7 @@ import math
 from pathlib import Path
 from typing import Union, List, Optional
 
+import numpy as np
 import torch
 import torchaudio
 from torchaudio import transforms as T
@@ -74,6 +75,8 @@ class TorchAudioUtils:
                 )
                 return waveform, sample_rate, wave_path
         else:
+            if isinstance(wave, np.ndarray):
+                wave = torch.tensor(wave)
             waveform = wave
             sample_rate = sr
             if save:
@@ -96,7 +99,7 @@ class TorchAudioUtils:
         :param verbose:
         :return:
         """
-        waveform, _ = TorchAudioUtils.load(wave, sr=sr)
+        wave, _ = TorchAudioUtils.load(wave, sr=sr)
 
         wave_duration = TorchAudioUtils.get_duration(wave, sr)
         if max_seconds is None or wave_duration < max_seconds:
