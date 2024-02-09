@@ -1,12 +1,12 @@
 import math
 from pathlib import Path
-from typing import Union, List
+from typing import Union, List, Optional
 
 import torch
 import torchaudio
 from torchaudio import transforms as T
 
-from deep_utils.utils.logging_utils import log_print
+from deep_utils.utils.logging_utils.logging_utils import log_print
 from deep_utils.utils.os_utils.os_path import split_extension
 
 
@@ -33,19 +33,7 @@ class TorchAudioUtils:
         :return:
         """
 
-        if isinstance(wave, str) or isinstance(wave, Path):
-            waveform, sample_rate = torchaudio.load(wave)
-            if save:
-                wave_path = (
-                    split_extension(wave, suffix=f"_{resample_rate}")
-                    if resampled_path is None
-                    else resampled_path
-                )
-        else:
-            waveform = wave
-            sample_rate = sr
-            if save:
-                wave_path = resampled_path
+        sample_rate, wave_path, waveform = TorchAudioUtils.load(wave, sr, resample_rate, resampled_path, save)
 
         if sr != resample_rate:
             resampler = T.Resample(sample_rate, resample_rate, dtype=waveform.dtype)
@@ -75,8 +63,27 @@ class TorchAudioUtils:
             return resampled_waveform
 
     @staticmethod
+    def load(wave: Union[str, Path], sr: int, resample_rate: int = 0, resampled_path: str = "", save: bool = False):
+        if isinstance(wave, str) or isinstance(wave, Path):
+            waveform, sample_rate = torchaudio.load(wave)
+            if save:
+                wave_path = (
+                    split_extension(wave, suffix=f"_{resample_rate}")
+                    if resampled_path is None
+                    else resampled_path
+                )
+                return waveform, sample_rate, wave_path
+        else:
+            waveform = wave
+            sample_rate = sr
+            if save:
+                wave_path = resampled_path
+                return waveform, sample_rate, wave_path
+        return waveform, sample_rate
+
+    @staticmethod
     def split(
-            wave, sr, max_seconds: float = 10, min_seconds=1, logger=None, verbose=1
+            wave, sr: Optional[int] = None, max_seconds: float = 10, min_seconds=1, logger=None, verbose=1
     ) -> List[torch.Tensor]:
         """
         Splits a wave to mini-waves based on input max_seconds. If the last segment's duration is less than min_seconds
@@ -89,6 +96,8 @@ class TorchAudioUtils:
         :param verbose:
         :return:
         """
+        waveform, _ = TorchAudioUtils.load(wave, sr=sr)
+
         wave_duration = TorchAudioUtils.get_duration(wave, sr)
         if max_seconds is None or wave_duration < max_seconds:
             return [wave]
