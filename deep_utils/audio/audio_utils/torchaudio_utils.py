@@ -109,6 +109,8 @@ class TorchAudioUtils:
         if len(wave.shape) == 2:
             wave = wave.squeeze(0)
             unsqueeze = True
+        elif len(wave.shape) == 1:
+            unsqueeze = True
         n_intervals = math.ceil(wave_duration / max_seconds)
         waves = []
 
