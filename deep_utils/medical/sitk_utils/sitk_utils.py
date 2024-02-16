@@ -104,6 +104,9 @@ class SITKUtils:
                                                      False)
                 slices.append(sample_sitk)
             sample_sitk = sitk.JoinSeries(slices)
+            if org_sitk_img is None:
+                org_sitk_img = sample_sitk
+
             if origin is None:
                 org_origin = org_sitk_img.GetOrigin()
                 sample_sitk.SetOrigin((*org_origin, 1.0) if len(org_origin) == 3 else org_origin)
@@ -140,6 +143,8 @@ class SITKUtils:
                 print("[WARNING] Couldn't set the direction. Skipping....")
         elif len(input_sample.shape) == 3:
             sample_sitk = sitk.GetImageFromArray(input_sample, False)
+            if org_sitk_img is None:
+                org_sitk_img = sample_sitk
             if spacing is not None:
                 sample_sitk.SetSpacing(spacing)
             else:
