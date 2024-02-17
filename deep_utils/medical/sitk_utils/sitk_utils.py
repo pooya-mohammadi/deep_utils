@@ -8,6 +8,14 @@ from SimpleITK import Image
 
 class SITKUtils:
     @staticmethod
+    def get_array_img_properties(filepath: str):
+        arr, img = SITKUtils.get_array_img(filepath)
+        spacing = img.GetSpacing()
+        origin = img.GetOrigin()
+        direction = img.GetDirection()
+        return arr, dict(spacing=spacing, origin=origin, direction=direction)
+
+    @staticmethod
     def get_array(sample_path: str) -> np.ndarray:
         image = sitk.ReadImage(sample_path)
         array = sitk.GetArrayFromImage(image)
@@ -77,7 +85,7 @@ class SITKUtils:
         SITKUtils.save_sample(swaped_array, image, output_file, **kwarg)
 
     @staticmethod
-    def save_sample(input_sample:np.ndarray, org_sitk_img:Image,
+    def save_sample(input_sample: np.ndarray, org_sitk_img: Image,
                     save_path: str, time_array_index=-1,
                     direction: Optional[list] = None,
                     spacing: Optional[list] = None,
