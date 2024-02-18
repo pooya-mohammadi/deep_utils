@@ -57,3 +57,11 @@ class CRNNModelTorch(nn.Module):
             return output, F.softmax(cls, 2)
 
         return output
+
+
+if __name__ == '__main__':
+    model = CRNNModelTorch(32, 1, 40, 128)
+    print(model)
+    sample = torch.rand(2, 1, 32, 256)
+    output = model(sample)
+    print(output.shape)
