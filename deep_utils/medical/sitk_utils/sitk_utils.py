@@ -85,7 +85,7 @@ class SITKUtils:
         SITKUtils.save_sample(swaped_array, image, output_file, **kwarg)
 
     @staticmethod
-    def save_sample(input_sample: np.ndarray, org_sitk_img: Image,
+    def save_sample(input_sample: np.ndarray, org_sitk_img: Optional[Image],
                     save_path: str, time_array_index=-1,
                     direction: Optional[list] = None,
                     spacing: Optional[list] = None,

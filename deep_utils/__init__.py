@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.19"
+__version__ = "1.3.20"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -33,6 +33,7 @@ _import_structure = {
     "utils.pickle_utils.pickle_utils": ["PickleUtils"],
     "utils.fa_nlp_utils.fa_nlp_utils": ['FaNLPUtils'],
     "utils.str_utils.str_utils": ["StringUtils"],
+    "medical.nnunet_utils.nnunet_utils": ["NNUnetUtils"],
     DUMMY_PATH: [],  # this is required for dummy check!
 }
 
@@ -116,6 +117,7 @@ if TYPE_CHECKING:
     from .audio.audio_utils.soundfile_utils import SoundFileUtils
     from .medical.nib_utils.nib_utils import NIBUtils
     from .audio.audio_utils.torchaudio_utils import TorchAudioUtils
+    from .medical.nnunet_utils.nnunet_utils import NNUnetUtils
 else:
     import sys
 
