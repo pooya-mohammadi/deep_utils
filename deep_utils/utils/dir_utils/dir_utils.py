@@ -644,3 +644,63 @@ class DirUtils:
                 name, _ = DirUtils.split_extension(name)
 
         return name
+
+    @staticmethod
+    def crawl_directory_dataset(
+            dir_: str,
+            ext_filter: list = None,
+            map_labels=False,
+            label_map_dict: dict = None,
+            logger=None,
+            verbose=1,
+    ) -> Union[Tuple[List[str], List[int]], Tuple[List[str], List[int], Dict]]:
+        """
+        crawls a directory of classes and returns the full path of the items paths and their class names
+        :param dir_: path to directory of classes
+        :param ext_filter: extensions that will be passed and others will be dropped
+        :param map_labels: This map the labels to indices
+        :param label_map_dict: A map which is used for filtering and also mapping the labels!
+        :param logger: A logger
+        :param verbose: whether print logs or not!
+        :return: Tuple[List[str], List[int], Dict], x_list containing the paths, y_list containing the class_names, and
+        label_map dictionary.
+        """
+        print(f"[INFO] beginning to crawl {dir_}")
+        x, y = [], []
+        label_map = dict()
+        for cls_name in os.listdir(dir_):
+            cls_path = join(dir_, cls_name)
+            if not os.path.isdir(cls_path):
+                continue
+            for item_name in os.listdir(cls_path):
+                item_path = join(cls_path, item_name)
+                name, ext = os.path.splitext(item_name)
+                if ext_filter is not None and ext not in ext_filter:
+                    log_print(
+                        logger,
+                        f"{item_path} with {ext} is not in ext_filtering: {ext_filter}",
+                        verbose=verbose,
+                    )
+                    continue
+
+                if label_map_dict is not None:
+                    if cls_name in label_map_dict:
+                        y.append(label_map_dict[cls_name])
+                    else:
+                        log_print(logger, f"Skipping cls_name:{cls_name}, x: {x}")
+                        continue
+                elif map_labels:
+                    if cls_name not in label_map:
+                        cls_index = len(label_map)
+                        label_map[cls_name] = cls_index
+                    else:
+                        cls_index = label_map[cls_name]
+                    y.append(cls_index)
+                else:
+                    y.append(cls_name)
+                x.append(item_path)
+        log_print(logger, f"successfully crawled {dir_}", verbose=verbose)
+        if map_labels:
+            return x, y, label_map
+        else:
+            return x, y
