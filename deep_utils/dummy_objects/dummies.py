@@ -14,6 +14,10 @@ class TFUtils(metaclass=DummyObject):
     _backend = [Backends.TENSORFLOW]
 
 
+class CutMixTF(metaclass=DummyObject):
+    _backend = [Backends.TENSORFLOW]
+
+
 class TorchAudioUtils(metaclass=DummyObject):
     _backend = [Backends.TORCHAUDIO]
 
