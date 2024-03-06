@@ -2,8 +2,8 @@ import os
 import shutil
 from abc import ABC
 from os.path import join, split
-from typing import Dict, List, Union, Type
-
+from typing import Dict, List, Union, Type, Literal
+from deep_utils.utils.dir_utils.dir_utils import DirUtils
 from tqdm import tqdm
 import cv2
 from deep_utils.main_abs.main import MainClass
@@ -200,6 +200,52 @@ class YOLOObjectDetector(MainClass, ABC):
                 shape_source=shape_source,
             )
         return boxes, labels
+
+    @staticmethod
+    def extract_save_label(label_path, image_path, output_path: str, remove_output_path: bool = False):
+        """
+        Extract box images and save them!
+        :param label_path:
+        :param image_path:
+        :param output_path:
+        :param remove_output_path:
+        :return:
+        """
+        from deep_utils.utils.box_utils.boxes import Box
+        boxes, labels = YOLOObjectDetector.extract_label(label_path, image_path)
+        img = cv2.imread(image_path)
+        output = Box.get_box_img(img, boxes)
+        DirUtils.remove_create(output_path, remove=remove_output_path)
+        output_img = join(output_path, split(image_path)[-1])
+        for index, (box_img, lbl) in enumerate(zip(output, labels)):
+            cv2.imwrite(DirUtils.split_extension(output_img, suffix=f"_{lbl}_{index}"), box_img)
+
+    @staticmethod
+    def get_labels_images_list(label_dir: str, image_dir: str) -> List[Dict[Literal["image", "label"], str]]:
+
+        label_names = {DirUtils.split_extension(name)[0]: name for name in os.listdir(label_dir)}
+        image_names = {DirUtils.split_extension(name)[0]: name for name in os.listdir(image_dir)}
+        output = [{"label": join(label_dir, name), "image": join(image_dir, image_names[key])} for key, name in
+                  label_names.items() if key in image_names]
+        return output
+
+    @staticmethod
+    def extract_save_directory(label_dir: str, image_dir: str, output_path, remove_output_path: bool = True):
+        """
+        Extracts image boxes of a directory
+        :param label_dir:
+        :param image_dir:
+        :param output_path:
+        :param remove_output_path:
+        :return:
+        """
+        data = YOLOObjectDetector.get_labels_images_list(label_dir, image_dir)
+        DirUtils.remove_create(output_path, remove=remove_output_path)
+        for pair in data:
+            label_path = pair['label']
+            image_path = pair['image']
+            YOLOObjectDetector.extract_save_label(label_path, image_path, output_path,
+                                                  remove_output_path=False)
 
     @staticmethod
     def clean_samples(label_path, img_path, logger=None, verbose=1):
