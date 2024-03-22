@@ -63,6 +63,7 @@ import_lazy_module("CRNNModelTorch", "vision.ocr.crnn.torch.crnn_model")
 import_lazy_module("MTCNNTFFaceDetector", "vision.face_detection.mtcnn.tf.mtcnn_tf_face_detection")
 import_lazy_module("ElasticsearchEngin", "elasticsearch.search_engine.elasticsearch_search_engine")
 import_lazy_module("AsyncElasticsearchEngin", "elasticsearch.search_engine.async_elasticsearch_search_engine")
+import_lazy_module("ElasticSearchABS", "elasticsearch.search_engine.abs_elasticsearch_search_engine")
 import_lazy_module("VggFace2TorchFaceRecognition", "vision.face_recognition.vggface2.torch.vggface2_torch")
 import_lazy_module("MedMetricsTorch", "medical.metrics.metrics")
 import_lazy_module("SoundFileUtils", "audio.audio_utils.soundfile_utils")
@@ -71,7 +72,6 @@ import_lazy_module("TorchAudioUtils", "audio.audio_utils.torchaudio_utils")
 import_lazy_module("UltralightTorchFaceDetector",
                    "vision.face_detection.ultralight.torch.ultralight_torch_face_detection")
 import_lazy_module("CutMixTF", "augmentation.cutmix.cutmix_tf")
-
 
 if TYPE_CHECKING:
     from .utils.box_utils.boxes import Box, Point
@@ -112,6 +112,7 @@ if TYPE_CHECKING:
     from .utils.fa_nlp_utils.fa_nlp_utils import FaNLPUtils
     from .elasticsearch.search_engine.elasticsearch_search_engine import ElasticsearchEngin
     from .elasticsearch.search_engine.async_elasticsearch_search_engine import AsyncElasticsearchEngin
+    from .elasticsearch.search_engine.abs_elasticsearch_search_engine import ElasticSearchABS
     from .vision.face_recognition.vggface2.torch.vggface2_torch import VggFace2TorchFaceRecognition
     from .vision.face_detection.ultralight.torch.ultralight_torch_face_detection import UltralightTorchFaceDetector
     from .medical.metrics.metrics import MedMetricsTorch
@@ -121,6 +122,7 @@ if TYPE_CHECKING:
     from .audio.audio_utils.torchaudio_utils import TorchAudioUtils
     from .medical.nnunet_utils.nnunet_utils import NNUnetUtils
     from .augmentation.cutmix.cutmix_tf import CutMixTF
+
 else:
     import sys
 

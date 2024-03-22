@@ -111,6 +111,10 @@ class ElasticsearchEngin(metaclass=DummyObject):
     _backend = [Backends.ELASTICSEARCH]
 
 
+class ElasticSearchABS(metaclass=DummyObject):
+    _backend = [Backends.ELASTICSEARCH]
+
+
 class MedMetricsTorch(metaclass=DummyObject):
     _backend = [Backends.TORCH]
 
