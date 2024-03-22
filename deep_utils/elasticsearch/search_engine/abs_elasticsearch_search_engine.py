@@ -113,18 +113,16 @@ class ElasticSearchABS:
         match_keyword = match_keyword.value if isinstance(match_keyword,
                                                           ElasticSearchABS.QueryKeyword) else match_keyword
         query = {
-            "query": {
-                "bool": {
-                    "should": [
-                        {
-                            match_keyword: {
-                                field_name: field_value
-                            }
+            "bool": {
+                "should": [
+                    {
+                        match_keyword: {
+                            field_name: field_value
                         }
-                    ],
-                    "filter": {
-                        "term": {filter_name: filter_value}
                     }
+                ],
+                "filter": {
+                    "term": {filter_name: filter_value}
                 }
             }
         }
