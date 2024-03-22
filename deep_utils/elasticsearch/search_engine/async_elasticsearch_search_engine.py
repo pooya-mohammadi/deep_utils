@@ -1,7 +1,9 @@
+from typing import Any
+
 from elasticsearch import AsyncElasticsearch
 
-from deep_utils.utils.logging_utils.logging_utils import value_error_log
 from deep_utils.elasticsearch.search_engine.abs_elasticsearch_search_engine import ElasticSearchABS
+from deep_utils.utils.logging_utils.logging_utils import value_error_log
 
 
 class AsyncElasticsearchEngin(ElasticSearchABS):
@@ -71,6 +73,36 @@ class AsyncElasticsearchEngin(ElasticSearchABS):
         :return:
         """
         query = {"prefix": {field: value}}
+        results = await self.es.search(index=index, query=query, size=size)
+        hits = AsyncElasticsearchEngin.get_hits(results.body, return_source=return_source)
+        return hits
+
+    async def search_match_and_filter(self,
+                                      index: str,
+                                      field_name: str,
+                                      field_value: str,
+                                      filter_name: str,
+                                      filter_value: str,
+                                      size: int = 20,
+                                      return_source=True,
+                                      match_keyword=ElasticSearchABS.QueryKeyword.MATCH
+                                      ) -> list[dict[str, Any]]:
+        """
+
+        :param index:
+        :param field_name:
+        :param field_value:
+        :param filter_name:
+        :param filter_value:
+        :param size:
+        :param return_source:
+        :param match_keyword:
+        :return:
+        """
+        query = self.get_match_and_fileter_query(field_name, field_value,
+                                                 filter_name, filter_value,
+                                                 match_keyword=match_keyword)
+
         results = await self.es.search(index=index, query=query, size=size)
         hits = AsyncElasticsearchEngin.get_hits(results.body, return_source=return_source)
         return hits

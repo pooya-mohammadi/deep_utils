@@ -171,25 +171,7 @@ class ElasticsearchEngin(ElasticSearchABS):
             sort = []
         return sort
 
-    @staticmethod
-    def get_bool_must_constant_score_query(field_term_dict: dict):
-        must_list = []
-        for field, term in field_term_dict.items():
-            if term is None:
-                continue
-            inner_query = {
-                "constant_score": {
-                    "filter": {
-                        "term": {
-                            field: term
-                        }
-                    }
-                }
-            }
-            must_list.append(inner_query)
 
-        query = {"bool": {"must": must_list}}
-        return query
 
     @staticmethod
     def get_bool_must_fuzzy_query(field_term_dict: Dict[str, str]):
