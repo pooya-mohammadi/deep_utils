@@ -1,8 +1,9 @@
 from torch import nn
 from .senet_model import SENet
-
+from .inception_resnet_v1 import InceptionResnetV1
 MODELS = {
-    "senet50": SENet
+    "senet50": SENet,
+    "inception_resnet_v1": InceptionResnetV1
 }
 
 

@@ -26,23 +26,23 @@ class FaceRecognition(MainClass):
             self,
             image_directory,
             extensions=(".png", ".jpg", ".jpeg"),
-            res_dir=None,
+            cropped_encoding_dir=None,
             remove_res_dir=False,
             get_mean=False,
     ):
         import cv2
         results = dict()
-        remove_create(res_dir, remove=remove_res_dir)
+        remove_create(cropped_encoding_dir, remove=remove_res_dir)
         for item_name in os.listdir(image_directory):
             _, extension = os.path.splitext(item_name)
             if extension in extensions:
                 img_path = os.path.join(image_directory, item_name)
                 img = cv2.imread(img_path)
-                result = self.extract_embeddings(img, is_rgb=False, get_time=True, )
+                result = self.extract_embeddings(img, is_rgb=False, get_time=True)
                 print(f'{img_path}: time= {result["elapsed_time"]}')
 
-                if res_dir and not get_mean:
-                    PickleUtils.dump_pickle(os.path.join(res_dir, split_extension(item_name, extension=".pkl")),
+                if cropped_encoding_dir and not get_mean:
+                    PickleUtils.dump_pickle(os.path.join(cropped_encoding_dir, split_extension(item_name, extension=".pkl")),
                                             result.encodings)
                 results[img_path] = result['encodings']
         if get_mean:
@@ -50,7 +50,7 @@ class FaceRecognition(MainClass):
             encode = np.sum(np.array(list(results.values())), axis=0)
             encode = self.normalizer.transform(np.expand_dims(encode, axis=0))[0]
             results['mean-encoding'] = encode
-            PickleUtils.dump_pickle(os.path.join(res_dir, "mean-encoding.pkl"), encode)
+            PickleUtils.dump_pickle(os.path.join(cropped_encoding_dir, "mean-encoding.pkl"), encode)
         return results
 
     def extract_dir_of_dir(
@@ -66,12 +66,12 @@ class FaceRecognition(MainClass):
         for directory_name in sorted(os.listdir(input_directory)):
             directory_path = os.path.join(input_directory, directory_name)
             images_dir = os.path.join(directory_path, image_dir_name)
-            cropped_dir = os.path.join(directory_path, encoding_dir_name)
+            cropped_encoding_dir = os.path.join(directory_path, encoding_dir_name)
             if not os.path.isdir(directory_path) or not os.path.isdir(images_dir):
                 log_print(None, f"Skip {directory_path}...")
                 continue
-            remove_create(cropped_dir, remove=remove_encoding)
-            dir_result = self.extract_dir(images_dir, extensions=extensions, res_dir=cropped_dir,
+            remove_create(cropped_encoding_dir, remove=remove_encoding)
+            dir_result = self.extract_dir(images_dir, extensions=extensions, cropped_encoding_dir=cropped_encoding_dir,
                                           remove_res_dir=remove_encoding,
                                           get_mean=get_mean)
             results[directory_name] = dir_result

@@ -12,27 +12,42 @@ from deep_utils.utils.lib_utils.lib_decorators import (
 )
 from deep_utils.utils.pickle_utils.pickle_utils import PickleUtils
 from deep_utils.vision.face_recognition.main.main_face_recognition import FaceRecognition, OUTPUT_CLASS
-from .config import Config
+from .config import Config, ModelName
 from .src import load_model
 
 
 class VggFace2TorchFaceRecognition(FaceRecognition):
-    def __init__(self, **kwargs):
+    def __init__(self,
+                 model_name: str = "inception_resnet_v1",
+                 normalizer_name: str = "l2_normalizer",
+                 device: str = "cpu", **kwargs):
         super().__init__(
             name=self.__class__.__name__,
             file_path=__file__,
             download_variables=("model",),
+            model_name=model_name,
+            normalizer=normalizer_name,
+            device=device,
             **kwargs
         )
         self.config: Config
 
     @download_decorator
     def load_model(self):
-        # LOAD MODELS
+        """
+        load models
+        :return:
+        """
+
         model = load_model(self.config.model_name)
-        self.load_state_dict(model, self.config.model)
-        model = model.eval()
+        if self.config.model_name == ModelName.InceptionResnetV1:
+            state_dict = torch.load(self.config.model)
+            model.load_state_dict(state_dict)
+        elif self.config.model_name == ModelName.SENet50:
+            self.load_state_dict(model, self.config.model)
+
         self.model = model
+        self.model.eval()
 
     @expand_input(3)
     @get_elapsed_time
@@ -41,11 +56,13 @@ class VggFace2TorchFaceRecognition(FaceRecognition):
         img = torch.cat(
             [self.config.transform(image=lib_rgb2bgr(img_, target_type="bgr", is_rgb=False))["image"].unsqueeze(0) for
              img_ in img], dim=0)
-
+        if self.config.model_name == ModelName.InceptionResnetV1:
+            img = img.to(torch.float32)
         with torch.no_grad():
             img = img.to(self.config.device)
             output = self.model(img).cpu().numpy()
-            output = self.normalizer.transform(output)
+            if self.config.normalizer:
+                output = self.normalizer.transform(output)
         output = OUTPUT_CLASS(encodings=output, )
         return output
 
