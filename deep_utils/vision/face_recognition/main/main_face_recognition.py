@@ -19,7 +19,7 @@ class FaceRecognition(MainClass):
         self.normalizer = self.load_normalizer(self.config.normalizer)
 
     @abstractmethod
-    def extract_faces(self, img, is_rgb, get_time=False) -> OUTPUT_CLASS:
+    def extract_embeddings(self, img, is_rgb, get_time=False) -> OUTPUT_CLASS:
         pass
 
     def extract_dir(
@@ -38,11 +38,12 @@ class FaceRecognition(MainClass):
             if extension in extensions:
                 img_path = os.path.join(image_directory, item_name)
                 img = cv2.imread(img_path)
-                result = self.extract_faces(img, is_rgb=False, get_time=True, )
+                result = self.extract_embeddings(img, is_rgb=False, get_time=True, )
                 print(f'{img_path}: time= {result["elapsed_time"]}')
 
                 if res_dir and not get_mean:
-                    PickleUtils.dump_pickle(os.path.join(res_dir, split_extension(item_name, extension=".pkl")), result.encodings)
+                    PickleUtils.dump_pickle(os.path.join(res_dir, split_extension(item_name, extension=".pkl")),
+                                            result.encodings)
                 results[img_path] = result['encodings']
         if get_mean:
 

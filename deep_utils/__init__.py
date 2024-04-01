@@ -34,6 +34,7 @@ _import_structure = {
     "utils.fa_nlp_utils.fa_nlp_utils": ['FaNLPUtils'],
     "utils.str_utils.str_utils": ["StringUtils"],
     "medical.nnunet_utils.nnunet_utils": ["NNUnetUtils"],
+    "utils.encodes.b64": ["BinaryUtils"],
     DUMMY_PATH: [],  # this is required for dummy check!
 }
 
@@ -122,7 +123,7 @@ if TYPE_CHECKING:
     from .audio.audio_utils.torchaudio_utils import TorchAudioUtils
     from .medical.nnunet_utils.nnunet_utils import NNUnetUtils
     from .augmentation.cutmix.cutmix_tf import CutMixTF
-
+    from .utils.encodes.b64 import BinaryUtils
 else:
     import sys
 

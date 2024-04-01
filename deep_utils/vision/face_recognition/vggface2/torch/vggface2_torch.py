@@ -37,7 +37,7 @@ class VggFace2TorchFaceRecognition(FaceRecognition):
     @expand_input(3)
     @get_elapsed_time
     @get_from_config
-    def extract_faces(self, img: Union[List[np.ndarray], np.ndarray], is_rgb, get_time=False) -> OUTPUT_CLASS:
+    def extract_embeddings(self, img: Union[List[np.ndarray], np.ndarray], is_rgb, get_time=False) -> OUTPUT_CLASS:
         img = torch.cat(
             [self.config.transform(image=lib_rgb2bgr(img_, target_type="bgr", is_rgb=False))["image"].unsqueeze(0) for
              img_ in img], dim=0)
