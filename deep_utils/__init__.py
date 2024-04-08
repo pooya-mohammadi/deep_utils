@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.26"
+__version__ = "1.3.27"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -26,7 +26,7 @@ _import_structure = {
                                   "find_file",
                                   "combine_directory_of_directories",
                                   "DirUtils"],
-    "utils.logging_utils.logging_utils": ["get_logger"],
+    "utils.logging_utils.logging_utils": ["get_logger", "log_print"],
     "utils.lr_scheduler_utils.warmup": ["cosine_reduce", "warmup_cosine"],
     "utils.py_utils.py_utils": ["PyUtils"],
     "utils.json_utils.json_utils": ["JsonUtils"],
