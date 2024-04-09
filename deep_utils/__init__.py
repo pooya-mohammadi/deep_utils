@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.27"
+__version__ = "1.3.28"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -70,6 +70,7 @@ import_lazy_module("MedMetricsTorch", "medical.metrics.metrics")
 import_lazy_module("SoundFileUtils", "audio.audio_utils.soundfile_utils")
 import_lazy_module("NIBUtils", "medical.nib_utils.nib_utils")
 import_lazy_module("TorchAudioUtils", "audio.audio_utils.torchaudio_utils")
+import_lazy_module("AugmentTorch", "augmentation.torch.augmentation_torch")
 import_lazy_module("UltralightTorchFaceDetector",
                    "vision.face_detection.ultralight.torch.ultralight_torch_face_detection")
 import_lazy_module("CutMixTF", "augmentation.cutmix.cutmix_tf")
@@ -124,6 +125,7 @@ if TYPE_CHECKING:
     from .medical.nnunet_utils.nnunet_utils import NNUnetUtils
     from .augmentation.cutmix.cutmix_tf import CutMixTF
     from .utils.encodes.b64 import BinaryUtils
+    from .augmentation.torch.augmentation_torch import AugmentTorch
 else:
     import sys
 

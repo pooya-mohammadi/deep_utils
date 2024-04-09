@@ -21,6 +21,9 @@ class CutMixTF(metaclass=DummyObject):
 class TorchAudioUtils(metaclass=DummyObject):
     _backend = [Backends.TORCHAUDIO]
 
+class AugmentTorch(metaclass=DummyObject):
+    _backend = [Backends.TORCHVISION, Backends.CV2]
+
 
 class QdrantUtils(metaclass=DummyObject):
     _backend = [Backends.QDRANT_CLIENT]

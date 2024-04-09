@@ -1,4 +1,4 @@
-from deep_utils.utils.opencv_utils.main import show_destroy_cv2
+from deep_utils.utils.opencv_utils.opencv_utils import CVUtils
 
 
 class AugmentTorch:
@@ -219,47 +219,47 @@ class AugmentTorch:
             transformations.append(transform)
         return transforms.Compose(transformations)
 
+    @staticmethod
+    def visualize_data_loader(data_loader, mean, std):
+        """
+        This function is used to convert tensor images to numpy images that will be shown by opencv!
+        :param data_loader:
+        :param mean:
+        :param std:
+        :return:
+        """
+        for x_data, *_ in data_loader:
+            for image_tensor in x_data:
+                cv2_image = AugmentTorch.tensor_to_image(image_tensor, mean, std)
+                CVUtils.show_destroy_cv2(cv2_image)
 
-def tensor_to_image(tensor, mean=None, std=None, return_array=True):
-    """
-    Note: Whenever the std is 255 the code returns wrong answers because converting to PIL format by default convert the
-     image to type uint8 which has 255 in it as well.
-    :param tensor:
-    :param mean:
-    :param std:
-    :param return_array:
-    :return:
-    """
-    import numpy as np
-    import torch
-    from torchvision import transforms
+    @staticmethod
+    def tensor_to_image(tensor, mean=None, std=None, return_array=True):
+        """
+        Note: Whenever the std is 255 the code returns wrong answers because converting to PIL format by default convert the
+         image to type uint8 which has 255 in it as well.
+        :param tensor:
+        :param mean:
+        :param std:
+        :param return_array:
+        :return:
+        """
+        import numpy as np
+        import torch
+        from torchvision import transforms
 
-    if mean is not None or std is not None:
-        c = tensor.size()[0]
-        if std is None:
-            std = torch.ones(c)
-        elif mean is None:
-            mean = torch.zeros(c)
+        if mean is not None or std is not None:
+            c = tensor.size()[0]
+            if std is None:
+                std = torch.ones(c)
+            elif mean is None:
+                mean = torch.zeros(c)
 
-        tensor = transforms.Normalize(
-            mean=[-m / s for m, s in zip(mean, std)], std=[1 / s for s in std]
-        )(tensor)
+            tensor = transforms.Normalize(
+                mean=[-m / s for m, s in zip(mean, std)], std=[1 / s for s in std]
+            )(tensor)
 
-    image = transforms.ToPILImage()(tensor)
-    if return_array:
-        image = np.array(image)
-    return image
-
-
-def visualize_data_loader(data_loader, mean, std):
-    """
-    This function is used to convert tensor images to numpy images that will be shown by opencv!
-    :param data_loader:
-    :param mean:
-    :param std:
-    :return:
-    """
-    for x_data, *_ in data_loader:
-        for image_tensor in x_data:
-            cv2_image = tensor_to_image(image_tensor, mean, std)
-            show_destroy_cv2(cv2_image)
+        image = transforms.ToPILImage()(tensor)
+        if return_array:
+            image = np.array(image)
+        return image
