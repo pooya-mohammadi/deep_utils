@@ -591,6 +591,7 @@ class DirUtils:
                            only_directories: bool = False,
                            get_full_path: bool = True,
                            sort: bool = True,
+                           not_exists_is_ok: bool = False,
                            ) -> List[str]:
         """
         Returns the full path objects in a directory
@@ -601,6 +602,8 @@ class DirUtils:
         :param only_directories: If set to True, only directories are extracted and filter_directories is ignored.
         :param get_full_path: If set to False, only the name is returned
         :param sort: If set to True, the directory will be sorted first!
+        :param not_exists_is_ok: If set the True, and directory does not exist just returns an empty list,
+         otherwise raises error.
         :return:
         """
         interest_extensions = interest_extensions or []
@@ -608,6 +611,11 @@ class DirUtils:
         interest_extensions = [f".{ext}" if not ext.startswith(".") else ext for ext in
                                interest_extensions]
         output = []
+        if not os.path.exists(directory):
+            if not_exists_is_ok:
+                return output
+            else:
+                raise ValueError(f"Directory: {directory} does not exist!")
         for filename in sorted(os.listdir(directory)) if sort else os.listdir(directory):
             file_path = join(directory, filename)
             if not only_directories:
