@@ -679,6 +679,7 @@ class DirUtils:
             y_val_dir="val/targets",
             mode="cp",
             val_size=0.1,
+            label_extension: str = None,
             skip_transfer=False,
             remove_out_dir=False,
             remove_in_dir=False,
@@ -691,8 +692,12 @@ class DirUtils:
             remove_out_dir=remove_out_dir,
             test_size=val_size,
         )
-        train_labels = [os.path.splitext(name)[0] + ".txt" for name in train_names]
-        val_labels = [os.path.splitext(name)[0] + ".txt" for name in val_names]
+        if label_extension is None:
+            train_labels = [name for name in train_names]
+            val_labels = [name for name in val_names]
+        else:
+            train_labels = [os.path.splitext(name)[0] + label_extension for name in train_names]
+            val_labels = [os.path.splitext(name)[0] + label_extension for name in val_names]
 
         transfer_directory_items(
             y_in_dir,
