@@ -178,50 +178,6 @@ def split_dir_of_dir(
         shutil.rmtree(in_dir)
 
 
-def split_xy_dir(
-        x_in_dir,
-        y_in_dir,
-        x_train_dir="train/samples",
-        y_train_dir="train/targets",
-        x_val_dir="val/samples",
-        y_val_dir="val/targets",
-        mode="cp",
-        val_size=0.1,
-        skip_transfer=False,
-        remove_out_dir=False,
-        remove_in_dir=False,
-):
-    train_names, val_names = dir_train_test_split(
-        x_in_dir,
-        train_dir=x_train_dir,
-        val_dir=x_val_dir,
-        mode=mode,
-        remove_out_dir=remove_out_dir,
-        test_size=val_size,
-    )
-    train_labels = [os.path.splitext(name)[0] + ".txt" for name in train_names]
-    val_labels = [os.path.splitext(name)[0] + ".txt" for name in val_names]
-
-    transfer_directory_items(
-        y_in_dir,
-        y_train_dir,
-        train_labels,
-        mode=mode,
-        remove_out_dir=remove_out_dir,
-        skip_transfer=skip_transfer,
-        remove_in_dir=remove_in_dir,
-    )
-    transfer_directory_items(
-        y_in_dir,
-        y_val_dir,
-        val_labels,
-        mode=mode,
-        remove_out_dir=remove_out_dir,
-        skip_transfer=skip_transfer,
-        remove_in_dir=remove_in_dir,
-    )
-
-
 def crawl_directory_dataset(
         dir_: str,
         ext_filter: list = None,
@@ -712,3 +668,47 @@ class DirUtils:
             return x, y, label_map
         else:
             return x, y
+
+    @staticmethod
+    def split_xy_dir(
+            x_in_dir,
+            y_in_dir,
+            x_train_dir="train/samples",
+            y_train_dir="train/targets",
+            x_val_dir="val/samples",
+            y_val_dir="val/targets",
+            mode="cp",
+            val_size=0.1,
+            skip_transfer=False,
+            remove_out_dir=False,
+            remove_in_dir=False,
+    ):
+        train_names, val_names = dir_train_test_split(
+            x_in_dir,
+            train_dir=x_train_dir,
+            val_dir=x_val_dir,
+            mode=mode,
+            remove_out_dir=remove_out_dir,
+            test_size=val_size,
+        )
+        train_labels = [os.path.splitext(name)[0] + ".txt" for name in train_names]
+        val_labels = [os.path.splitext(name)[0] + ".txt" for name in val_names]
+
+        transfer_directory_items(
+            y_in_dir,
+            y_train_dir,
+            train_labels,
+            mode=mode,
+            remove_out_dir=remove_out_dir,
+            skip_transfer=skip_transfer,
+            remove_in_dir=remove_in_dir,
+        )
+        transfer_directory_items(
+            y_in_dir,
+            y_val_dir,
+            val_labels,
+            mode=mode,
+            remove_out_dir=remove_out_dir,
+            skip_transfer=skip_transfer,
+            remove_in_dir=remove_in_dir,
+        )
