@@ -680,6 +680,8 @@ class DirUtils:
             mode="cp",
             val_size=0.1,
             label_extension: str = None,
+            img_suffix: str = None,
+            lbl_suffix: str = None,
             skip_transfer=False,
             remove_out_dir=False,
             remove_in_dir=False,
@@ -692,12 +694,17 @@ class DirUtils:
             remove_out_dir=remove_out_dir,
             test_size=val_size,
         )
+        if not img_suffix or not lbl_suffix:
+            img_suffix, lbl_suffix = "", ""
+
         if label_extension is None:
-            train_labels = [name for name in train_names]
-            val_labels = [name for name in val_names]
+            train_labels = [name.replace(img_suffix, lbl_suffix) for name in train_names]
+            val_labels = [name.replace(img_suffix, lbl_suffix) for name in val_names]
         else:
-            train_labels = [os.path.splitext(name)[0] + label_extension for name in train_names]
-            val_labels = [os.path.splitext(name)[0] + label_extension for name in val_names]
+            train_labels = [os.path.splitext(name.replace(img_suffix, lbl_suffix))[0] + label_extension for name in
+                            train_names]
+            val_labels = [os.path.splitext(name.replace(img_suffix, lbl_suffix))[0] + label_extension for name in
+                          val_names]
 
         transfer_directory_items(
             y_in_dir,
