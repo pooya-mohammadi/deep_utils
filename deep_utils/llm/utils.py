@@ -13,4 +13,3 @@ class LLMUtils:
             max_length = 1024
             print(f"Using default max length: {max_length}")
         return max_length
-
