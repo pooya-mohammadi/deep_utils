@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.30"
+__version__ = "1.3.31"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -74,6 +74,7 @@ import_lazy_module("AugmentTorch", "augmentation.torch.augmentation_torch")
 import_lazy_module("UltralightTorchFaceDetector",
                    "vision.face_detection.ultralight.torch.ultralight_torch_face_detection")
 import_lazy_module("CutMixTF", "augmentation.cutmix.cutmix_tf")
+import_lazy_module("LLMUtils", "llm.utils")
 
 if TYPE_CHECKING:
     from .utils.box_utils.boxes import Box, Point
@@ -126,6 +127,7 @@ if TYPE_CHECKING:
     from .augmentation.cutmix.cutmix_tf import CutMixTF
     from .utils.encodes.b64 import BinaryUtils
     from .augmentation.torch.augmentation_torch import AugmentTorch
+    from .llm.utils import LLMUtils
 else:
     import sys
 

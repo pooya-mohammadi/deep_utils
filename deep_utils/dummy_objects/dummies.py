@@ -136,3 +136,7 @@ class UltralightTorchFaceDetector(metaclass=DummyObject):
 
 class SoundFileUtils(metaclass=DummyObject):
     _backend = [Backends.SOUNDFILE]
+
+
+class LLMUtils(metaclass=DummyObject):
+    _backend = [Backends.TORCH]
