@@ -21,6 +21,7 @@ class CutMixTF(metaclass=DummyObject):
 class TorchAudioUtils(metaclass=DummyObject):
     _backend = [Backends.TORCHAUDIO]
 
+
 class AugmentTorch(metaclass=DummyObject):
     _backend = [Backends.TORCHVISION, Backends.CV2]
 
@@ -140,3 +141,7 @@ class SoundFileUtils(metaclass=DummyObject):
 
 class LLMUtils(metaclass=DummyObject):
     _backend = [Backends.TORCH]
+
+
+class NumpyUtils(metaclass=DummyObject):
+    _backend = [Backends.NUMPY]

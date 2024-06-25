@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.31"
+__version__ = "1.3.32"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -75,8 +75,10 @@ import_lazy_module("UltralightTorchFaceDetector",
                    "vision.face_detection.ultralight.torch.ultralight_torch_face_detection")
 import_lazy_module("CutMixTF", "augmentation.cutmix.cutmix_tf")
 import_lazy_module("LLMUtils", "llm.utils")
+import_lazy_module("NumpyUtils", "utils.numpy_utils.numpy_utils")
 
 if TYPE_CHECKING:
+    from utils.numpy_utils.numpy_utils import NumpyUtils
     from .utils.box_utils.boxes import Box, Point
     from .vision.face_detection.haarcascade.cv2_.haarcascade_cv2_face_detection import HaarcascadeCV2FaceDetector
     from .vision.face_detection.mtcnn.tf.mtcnn_tf_face_detection import MTCNNTFFaceDetector
