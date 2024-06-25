@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Literal
 
 
 class NumpyUtils:
