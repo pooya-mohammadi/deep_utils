@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.32"
+__version__ = "1.3.33"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -76,6 +76,8 @@ import_lazy_module("UltralightTorchFaceDetector",
 import_lazy_module("CutMixTF", "augmentation.cutmix.cutmix_tf")
 import_lazy_module("LLMUtils", "llm.utils")
 import_lazy_module("NumpyUtils", "utils.numpy_utils.numpy_utils")
+import_lazy_module("AIOHttpRequests", "utils.requests_utils.requests_utils")
+
 
 if TYPE_CHECKING:
     from utils.numpy_utils.numpy_utils import NumpyUtils
@@ -130,6 +132,7 @@ if TYPE_CHECKING:
     from .utils.encodes.b64 import BinaryUtils
     from .augmentation.torch.augmentation_torch import AugmentTorch
     from .llm.utils import LLMUtils
+    from .utils.requests_utils.requests_utils import AIOHttpRequests
 else:
     import sys
 

@@ -1,5 +1,5 @@
 import json
-from typing import Union, Optional, Dict, Any, Callable, List
+from typing import Optional, Dict, Any, Callable, List, Literal
 
 import aiohttp
 
@@ -73,21 +73,29 @@ async def post_form_upload(input_url, data_key: str, upload_file):
         return response.json()
 
 
-class Requests:
-    def __init__(self, json_serialize: Callable = json.dumps):
-        """
+class AIOHttpRequests:
 
-        :param json_serialize:  ujson.dumps is also acceptable which is a bit faster but might be incompatible!
-        """
-        self.session = aiohttp.ClientSession(json_serialize=json_serialize)  # creating session
+    @staticmethod
+    async def _encoding(response, encoding: str | None):
+        if encoding == "content":
+            return await response.content.read()
+        elif encoding == "text":
+            return await response.text()
+        elif encoding == "json":
+            return await response.json()
+        elif encoding is None:
+            return response
+        else:
+            raise ValueError(f"encoding: {encoding} is not supported!")
 
+    @staticmethod
     async def form_post_async(
-            self,
             url: str,
             data: Optional[Dict[str, Any]],
             files: Optional[List[Dict[str, Any]]] = None,
             ssl: bool = False,
-            encoding: Optional[str] = None
+            encoding: Optional[str] = None,
+            json_serialize: Callable = json.dumps
     ):
         """
         The files should have the following items:
@@ -100,14 +108,31 @@ class Requests:
         :param encoding:
         :return:
         """
-        form_data = aiohttp.FormData()
-        if data is not None:
-            for key, value in data.items():
-                form_data.add_field(key, str(value))
-        if files is not None:
-            for file_obj in files:
-                form_data.add_field(file_obj.get("name", "file"), file_obj["value"],
-                               filename=file_obj.get("filename"),
-                               content_type=file_obj.get("content_type", 'multipart/form-data'))
-        output = await self.session.post(url, data=data)
+        async with aiohttp.ClientSession(json_serialize=json_serialize) as session:
+            form_data = aiohttp.FormData()
+            if data is not None:
+                for key, value in data.items():
+                    form_data.add_field(key, str(value))
+            if files is not None:
+                for file_obj in files:
+                    form_data.add_field(file_obj.get("name", "file"), file_obj["value"],
+                                        filename=file_obj.get("filename"),
+                                        content_type=file_obj.get("content_type", 'multipart/form-data'))
+            output = await session.post(url, data=data, ssl=ssl)
+            output = AIOHttpRequests._encoding(output, encoding)
         return output
+
+    @staticmethod
+    async def get_async(url, encoding: Optional[Literal['content', 'text', 'json']] = None):
+        """
+        Asynchronous get
+        :param url:
+        :param encoding:
+        :return:
+        """
+        async with aiohttp.ClientSession() as session:
+            response = await session.get(url)
+            response.raise_for_status()
+            if response.status == 200:
+                output = await AIOHttpRequests._encoding(response, encoding=encoding)
+                return output

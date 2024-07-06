@@ -6,6 +6,10 @@ class SITKUtils(metaclass=DummyObject):
     _backend = [Backends.SIMPLE_ITK]
 
 
+class AIOHttpRequests(metaclass=DummyObject):
+    _backend = [Backends.AIOHTTP]
+
+
 class NIBUtils(metaclass=DummyObject):
     _backend = [Backends.NIBABEL]
 
