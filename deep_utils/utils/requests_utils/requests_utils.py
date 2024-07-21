@@ -2,6 +2,7 @@ import json
 from typing import Optional, Dict, Any, Callable, List, Literal
 
 import aiohttp
+import requests
 
 
 def get_request(ip, down_key, down_message="Down") -> dict:
@@ -136,3 +137,22 @@ class AIOHttpRequests:
             if response.status == 200:
                 output = await AIOHttpRequests._encoding(response, encoding=encoding)
                 return output
+
+
+class RequestsUtils:
+    @staticmethod
+    def post_file(url: str, key_name: str, filepath: str, **kwargs):
+        files = {key_name: open(filepath, 'rb')}
+
+        output = requests.post(url, files=files, data=kwargs)
+        output.raise_for_status()
+        return output.json()
+
+
+if __name__ == '__main__':
+    url = "http://ai.8001.kookaat.ir/predict/single?model_name=word"
+    filepath = "/home/ai/Desktop/sample-ocr.png"
+    output = RequestsUtils.post_file(url, "image", filepath)
+    print(output)
+
+

@@ -10,6 +10,10 @@ class AIOHttpRequests(metaclass=DummyObject):
     _backend = [Backends.AIOHTTP]
 
 
+class RequestsUtils(metaclass=DummyObject):
+    _backend = [Backends.AIOHTTP]
+
+
 class NIBUtils(metaclass=DummyObject):
     _backend = [Backends.NIBABEL]
 
