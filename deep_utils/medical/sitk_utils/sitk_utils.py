@@ -85,6 +85,16 @@ class SITKUtils:
         SITKUtils.save_sample(swaped_array, image, output_file, **kwarg)
 
     @staticmethod
+    def write(sitk_img, save_path: str):
+        """
+        write sitk image!
+        :param sitk_img:
+        :param save_path:
+        :return:
+        """
+        sitk.WriteImage(sitk_img, save_path)
+
+    @staticmethod
     def save_sample(input_sample: np.ndarray, org_sitk_img: Optional[Image],
                     save_path: str, time_array_index=-1,
                     direction: Optional[list] = None,
