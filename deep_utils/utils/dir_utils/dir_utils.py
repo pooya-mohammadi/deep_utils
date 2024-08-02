@@ -495,6 +495,124 @@ def combine_directory_of_directories(dataset_dir, result_dir, remove_result_dir=
 
 class DirUtils:
     @staticmethod
+    def split_dir_of_dir(
+            in_dir,
+            train_dir="./train",
+            val_dir="./val",
+            test_size=0.1,
+            mode="cp",
+            remove_out_dir=False,
+            remove_in_dir=False,
+    ):
+        """
+
+        Args:
+            in_dir:
+            train_dir:
+            val_dir:
+            test_size:
+            mode:
+            remove_out_dir:
+            remove_in_dir: if mode is mv and this is set to true the in_dir will be removed!
+
+        Returns:
+
+        """
+        if remove_out_dir:
+            remove_create(train_dir)
+            remove_create(val_dir)
+        for data in os.listdir(in_dir):
+            dir_ = join(in_dir, data)
+            if dir_ in [train_dir, val_dir]:
+                print(
+                    f"[INFO] {dir_} is equal to {val_dir} or {train_dir}, Skipping ...")
+                continue
+            if not os.path.isdir(dir_):
+                print(f"[INFO] {dir_} is not a directory, Skipping ...")
+                continue
+            if len(os.listdir(dir_)) == 0:
+                print(f"[INFO] {dir_} is empty, Skipping ...")
+                continue
+            dir_train_test_split(
+                dir_,
+                train_dir=join(train_dir, data),
+                val_dir=join(val_dir, data),
+                mode=mode,
+                test_size=test_size,
+                remove_out_dir=remove_out_dir,
+                remove_in_dir=remove_in_dir,
+            )
+        if mode == "mv" and remove_in_dir:
+            shutil.rmtree(in_dir)
+
+
+    @staticmethod
+    def dir_train_test_split(
+            in_dir,
+            train_dir="./train",
+            val_dir="./val",
+            test_size=0.1,
+            mode="cp",
+            remove_out_dir=False,
+            skip_transfer=False,
+            remove_in_dir=False,
+            skip_error=True,
+            ignore_list: List[str] = None,
+            logger=None,
+            verbose=1
+    ):
+        """
+        :param in_dir:
+        :param train_dir:
+        :param val_dir:
+        :param test_size:
+        :param mode:
+        :param remove_out_dir:
+        :param skip_transfer: If the file does not exist, skip and do not raise Error
+        :param remove_in_dir: if mode is mv and this is set to true the in_dir will be removed!
+        :param skip_error: If set to True, skips the train_test_split error and returns empty lists
+        :param ignore_list: a list of names that are ignored
+        :param logger:
+        :param verbose:
+        :return:
+        """
+        from sklearn.model_selection import train_test_split
+        log_print(logger, f"Starting to split dir: {in_dir}", verbose=verbose)
+        if ignore_list is not None:
+            list_ = [n for n in os.listdir(in_dir) if n not in ignore_list]
+        else:
+            list_ = os.listdir(in_dir)
+        try:
+            train_name, val_name = train_test_split(list_, test_size=test_size)
+        except ValueError as e:
+            message = f"Couldn't split the data in {in_dir}: {e}"
+            if skip_error:
+                log_print(logger, message=message, log_type="error")
+                return [], []
+            else:
+                value_error_log(logger, message=message)
+        transfer_directory_items(
+            in_dir,
+            train_dir,
+            train_name,
+            mode=mode,
+            remove_out_dir=remove_out_dir,
+            skip_transfer=skip_transfer,
+            remove_in_dir=False,
+        )
+        transfer_directory_items(
+            in_dir,
+            val_dir,
+            val_name,
+            mode=mode,
+            remove_out_dir=remove_out_dir,
+            skip_transfer=skip_transfer,
+            remove_in_dir=remove_in_dir,
+        )
+        log_print(logger, f"Finished splitting dir: {in_dir}", verbose=verbose)
+        return train_name, val_name
+
+    @staticmethod
     def split_extension(path,
                         extension: Union[str, None] = None,
                         suffix: Union[str, None] = None,
