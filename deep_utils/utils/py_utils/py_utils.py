@@ -1,5 +1,9 @@
+import inspect
+from argparse import Namespace
 from re import sub
 from typing import Union, Optional
+
+from deep_utils.utils.logging_utils.logging_utils import log_print
 
 
 class PyUtils:
@@ -32,7 +36,7 @@ class PyUtils:
         return static_upper_case.lower()
 
     @staticmethod
-    def color_str(text: str, color: Optional[str], mode: Union[str, list]):
+    def color_str(text: str, color: Optional[str] = "yellow", mode: Union[str, list] = "bold"):
         """
         colorful texts!
         :param text: input text
@@ -81,6 +85,30 @@ class PyUtils:
         """
         args = [PyUtils.color_str(str(arg), color=color, mode=mode) for arg in args]
         print(*args, sep=sep, end=end, file=file)
+
+    @staticmethod
+    def print_args(args: Optional[Union[dict, Namespace]] = None, show_file=True, show_func=False):
+        """
+        Prints arguments in a parser!
+        :param args:
+        :param show_file:
+        :param show_func:
+        :return:
+        """
+        # Print function arguments (optional args dict)
+        x = inspect.currentframe().f_back  # previous frame
+        file, _, func, _, _ = inspect.getframeinfo(x)
+        if args is None:  # get args automatically
+            args, _, _, frm = inspect.getargvalues(x)
+            args = {k: v for k, v in frm.items() if k in args}
+        else:
+            args = dict(vars(args))
+        # try:
+        #     file = Path(file).resolve().relative_to(ROOT).with_suffix('')
+        # except ValueError:
+        #     file = Path(file).stem
+        s = (f'{file}: ' if show_file else '') + (f'{func}: ' if show_func else '')
+        log_print(None, message=PyUtils.color_str(s + ', '.join(f'{k}={v}' for k, v in args.items())))
 
 
 if __name__ == '__main__':

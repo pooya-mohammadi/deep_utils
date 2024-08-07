@@ -44,10 +44,10 @@ def start_end_logger_decorator(func) -> Callable:
 
 
 def get_logger(
-    name: str,
-    log_path: Union[str, Path, None] = None,
-    remove_previous_handlers=True,
-    logging_format: str = "basic",
+        name: str,
+        log_path: Union[str, Path, None] = None,
+        remove_previous_handlers=True,
+        logging_format: str = "basic",
 ) -> logging.Logger:
     """
     Creates a logger for a given name,
@@ -97,12 +97,12 @@ def func_log(message, roll_back=1):
 
 
 def log_print(
-    logger: Union[None, logging.Logger],
-    message: str,
-    log_type="info",
-    verbose=1,
-    get_func_name=True,
-    roll_back=2,
+        logger: Union[None, logging.Logger] = None,
+        message: str = "",
+        log_type="info",
+        verbose=1,
+        get_func_name=True,
+        roll_back=2,
 ):
     """
     Logs the input messages with the given log_type. In case the logger object is not provided, prints the message.
@@ -166,13 +166,13 @@ def save_params(param_path, args, logger=None):
 
 
 def get_conf_matrix(
-    class_name_map,
-    y_pred,
-    y_true,
-    save_path=None,
-    conf_csv_name="conf_matrix.csv",
-    conf_jpg_name="conf_matrix.jpg",
-    logger=None,
+        class_name_map,
+        y_pred,
+        y_true,
+        save_path=None,
+        conf_csv_name="conf_matrix.csv",
+        conf_jpg_name="conf_matrix.jpg",
+        logger=None,
 ):
     """
     Computes config matrix and saves the csv and jpg file if the save_path is provided!
