@@ -95,6 +95,13 @@ class SITKUtils:
         sitk.WriteImage(sitk_img, save_path)
 
     @staticmethod
+    def save_sample_with_img(filepath: str, sample_array: np.ndarray, sitk_img: sitk.Image):
+        img_ = sitk.GetImageFromArray(sample_array)
+        img_.CopyInformation(sitk_img)
+        img = sitk.Cast(img_, sitk_img.GetPixelID())
+        sitk.WriteImage(sitk_img, filepath)
+
+    @staticmethod
     def save_sample(input_sample: np.ndarray, org_sitk_img: Optional[Image],
                     save_path: str, time_array_index=-1,
                     direction: Optional[list] = None,

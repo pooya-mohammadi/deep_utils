@@ -25,7 +25,10 @@ class NIBUtils:
         return array, img
 
     @staticmethod
-    def save_sample(filepath: str, sample_array, affine, header):
+    def save_sample(filepath: str, sample_array: np.ndarray, affine=None, header=None, nib_img: nib.Nifti1Image = None):
+        if nib_img:
+            affine = nib_img.affine
+            header = nib_img.header
         clipped_img = nib.Nifti1Image(sample_array, affine, header)
         nib.save(clipped_img, filepath)
 
@@ -35,8 +38,8 @@ class NIBUtils:
 
     @staticmethod
     def resize_nifti(input_path: str, output_path: Optional[str],
-                     target_shape: Union[Tuple[int,...], List[int]],
-                     keep_values_in_reshape: bool=True):
+                     target_shape: Union[Tuple[int, ...], List[int]],
+                     keep_values_in_reshape: bool = True):
         """
         Resize nifti file
         :param input_path:
@@ -55,6 +58,7 @@ class NIBUtils:
                 resized_images[..., i] = cv2.resize(images[..., i], target_shape, interpolation=interpolation_flag)
 
             return resized_images
+
         nii_data, nii_img = NIBUtils.get_array_img(input_path)
         resized_data = resize_batch_images(nii_data, target_shape[:2])
 
@@ -65,4 +69,3 @@ class NIBUtils:
         if output_path:
             nib.save(new_img, output_path)
         return resized_data, new_img
-
