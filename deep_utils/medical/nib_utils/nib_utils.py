@@ -30,6 +30,10 @@ class NIBUtils:
         nib.save(clipped_img, filepath)
 
     @staticmethod
+    def save(img, filepath: str):
+        nib.save(img, filepath)
+
+    @staticmethod
     def resize_nifti(input_path: str, output_path: Optional[str],
                      target_shape: Union[Tuple[int,...], List[int]],
                      keep_values_in_reshape: bool=True):
