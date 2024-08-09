@@ -25,7 +25,7 @@ class NIBUtils:
         return array, img
 
     @staticmethod
-    def save_sample(filepath: str, sample_array: np.ndarray, affine=None, header=None, nib_img: nib.Nifti1Image = None):
+    def save_sample(filepath: str, sample_array: np.ndarray, *, affine=None, header=None, nib_img: nib.Nifti1Image = None):
         if nib_img:
             affine = nib_img.affine
             header = nib_img.header
