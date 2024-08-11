@@ -92,7 +92,7 @@ class AIOHttpRequests:
     @staticmethod
     async def form_post_async(
             url: str,
-            data: Optional[Dict[str, Any]],
+            data: Optional[Dict[str, Any]] = None,
             files: Optional[List[Dict[str, Any]]] = None,
             ssl: bool = False,
             encoding: Optional[str] = None,
@@ -102,6 +102,7 @@ class AIOHttpRequests:
         The files should have the following items:
         [{'name': variable_name, 'value': file_content, 'content_type': multipart/form-data||application/vnd.ms-excel||etc,
         }, {...}]
+        data or files one of them should be filled!
         :param url:
         :param data:
         :param files:
@@ -109,6 +110,8 @@ class AIOHttpRequests:
         :param encoding:
         :return:
         """
+        if data is None and files is None:
+            raise ValueError("Both data and files cannot be ")
         async with aiohttp.ClientSession(json_serialize=json_serialize) as session:
             form_data = aiohttp.FormData()
             if data is not None:
@@ -119,8 +122,8 @@ class AIOHttpRequests:
                     form_data.add_field(file_obj.get("name", "file"), file_obj["value"],
                                         filename=file_obj.get("filename"),
                                         content_type=file_obj.get("content_type", 'multipart/form-data'))
-            output = await session.post(url, data=data, ssl=ssl)
-            output = AIOHttpRequests._encoding(output, encoding)
+            output = await session.post(url, data=form_data, ssl=ssl)
+            output = await AIOHttpRequests._encoding(output, encoding)
         return output
 
     @staticmethod
@@ -150,9 +153,25 @@ class RequestsUtils:
 
 
 if __name__ == '__main__':
-    url = "http://ai.8001.kookaat.ir/predict/single?model_name=word"
-    filepath = "/home/ai/Desktop/sample-ocr.png"
-    output = RequestsUtils.post_file(url, "image", filepath)
-    print(output)
+    async def port():
+        import cv2
+        url = "http://ai.8001.kookaat.ir/predict/single?model_name=word"
+        cropped_img = cv2.imread("/home/ai/Desktop/sample-ocr.png")
+        _, buffer = cv2.imencode('.jpg', cropped_img)
+        file_bytes = buffer.tobytes()
+        files = [{'name': "image", 'value': file_bytes,
+                  # 'content_type': "multipart / form - data | | application / vnd.ms - excel | | etc,
+                  }]
+        data = []
+        output = await AIOHttpRequests.form_post_async(url=url, files=files, encoding="json")
+        print(output)
+        return output
 
 
+    # url = "http://ai.8001.kookaat.ir/predict/single?model_name=word"
+    # filepath = "/home/ai/Desktop/sample-ocr.png"
+    # output = RequestsUtils.post_file(url, "image", filepath)
+    # print(output)
+    import asyncio
+
+    asyncio.run(port())
