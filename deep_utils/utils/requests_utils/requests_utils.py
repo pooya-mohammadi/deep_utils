@@ -108,6 +108,7 @@ class AIOHttpRequests:
         :param files:
         :param ssl:
         :param encoding:
+        :param json_serialize:
         :return:
         """
         if data is None and files is None:
