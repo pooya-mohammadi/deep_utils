@@ -583,12 +583,15 @@ The LICENSE of each model is located inside its corresponding directory.
         </sub>
       </a>
     </td align="center">
+    <td align="center">
 	<a href="https://github.com/ParnianNazari">
           <img src="https://avatars.githubusercontent.com/u/166519931?v=4" width="100px;" alt="Parnian Nazari"/><br>
 	  <sub>	
 	    <b>Parnian Nazari</b>
 	  <sub>	
        </a>
+    </td>
+	
   </tr>
 </table>
 
