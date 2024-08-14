@@ -34,8 +34,8 @@ class VideoWriterCV:
 class CVUtils:
     @staticmethod
     def rotate(
-            img,
-            rotation_degree,
+            img: np.ndarray,
+            rotation_degree: int,
             center_point=None,
             scale=1.0,
             dsize=None,
