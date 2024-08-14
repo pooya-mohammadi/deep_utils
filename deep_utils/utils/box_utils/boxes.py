@@ -211,6 +211,24 @@ class Point:
         down_right = max(pts, key=lambda l: l[1])
         return top_left, top_right, down_right, down_left
 
+    @staticmethod
+    def rotate_point(target_p: tuple[int, int], center_p: tuple[int, int], degree: float):
+        """
+        :param target_p:
+        :param center_p:
+        :param degree:
+        :return:
+        """
+        degree = - degree  # to make it aligned with cv2 rotation direction
+        rad = degree * np.pi / 180
+        t_x, t_y = target_p
+        c_x, c_y = center_p
+        delta_x = (t_x - c_x)
+        delta_y = (t_y - c_y)
+        x = np.cos(rad) * delta_x - np.sin(rad) * delta_y + c_x
+        y = np.sin(rad) * delta_x + np.cos(rad) * delta_y + c_y
+        return int(x), int(y)
+
 
 class Box:
     class BoxFormat(Enum):
