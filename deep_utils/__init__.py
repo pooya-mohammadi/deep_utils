@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.40"
+__version__ = "1.3.41"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -35,6 +35,7 @@ _import_structure = {
     "utils.str_utils.str_utils": ["StringUtils"],
     "medical.nnunet_utils.nnunet_utils": ["NNUnetUtils"],
     "utils.encodes.b64": ["BinaryUtils"],
+    "nlp.utils.persian.utils": ["PersianUtils"],
     DUMMY_PATH: [],  # this is required for dummy check!
 }
 
@@ -78,7 +79,6 @@ import_lazy_module("LLMUtils", "llm.utils")
 import_lazy_module("NumpyUtils", "utils.numpy_utils.numpy_utils")
 import_lazy_module("AIOHttpRequests", "utils.requests_utils.requests_utils")
 import_lazy_module("RequestsUtils", "utils.requests_utils.requests_utils")
-
 
 if TYPE_CHECKING:
     from utils.numpy_utils.numpy_utils import NumpyUtils
