@@ -198,7 +198,7 @@ class SITKUtils:
                 sample_sitk.SetDirection(original_direction.flatten())
 
             if origin is not None:
-                sample_sitk.SetDirection(org_sitk_img.GetOrigin())
+                sample_sitk.SetOrigin(tuple(origin))
             else:
                 original_origin = list(org_sitk_img.GetOrigin())
                 org_size = len(original_origin)
