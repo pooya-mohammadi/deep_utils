@@ -158,7 +158,7 @@ show_destroy_cv2(img)
 
 The result:
 
-<img src="https://raw.githubusercontent.com/pooya-mohammadi/deep_utils/master/examples/vision/data/movie-starts-mtccn-torch.jpg" alt="Logo" >
+<img src="https://raw.githubusercontent.com/pooya-mohammadi/deep_utils/main/examples/vision/data/movie-starts-mtccn-torch.jpg" alt="Logo" >
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ## Object Detection
