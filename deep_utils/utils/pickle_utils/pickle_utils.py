@@ -15,6 +15,16 @@ class PickleUtils:
         with open(file_path, mode=mode) as f:
             return pickle.load(f, encoding=encoding)
 
+    @staticmethod
+    @method_deprecated
+    def load_pickle(file_path: str, mode: str = "rb", encoding=""):
+        return PickleUtils.load(file_path=file_path, mode=mode, encoding=encoding)
 
-PickleUtils.load_pickle = method_deprecated(PickleUtils.load)
-PickleUtils.dump_pickle = method_deprecated(PickleUtils.dump)
+    @staticmethod
+    @method_deprecated
+    def dump_pickle(file_path: str, file, mode: str = "wb"):
+        return PickleUtils.dump(file_path=file_path, file=file, mode=mode)
+
+
+if __name__ == '__main__':
+    PickleUtils.dump_pickle("i.pkl", {1: 1})

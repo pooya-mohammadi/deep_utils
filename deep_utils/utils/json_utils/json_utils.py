@@ -6,6 +6,12 @@ from deep_utils.utils.decorators.main import method_deprecated
 
 
 class JsonUtils:
+
+    @staticmethod
+    @method_deprecated
+    def load_json(json_path: Union[str, Path], encoding="utf-8") -> dict:
+        return JsonUtils.load(json_path=json_path, encoding=encoding)
+
     @staticmethod
     def load(json_path: Union[str, Path], encoding="utf-8") -> dict:
         """
@@ -38,6 +44,9 @@ class JsonUtils:
         with open(json_path, mode="w", encoding=encoding) as f:
             json.dump(json_object, f, ensure_ascii=ensure_ascii)
 
-
-JsonUtils.load_json = method_deprecated(JsonUtils.load)
-JsonUtils.dump_json = method_deprecated(JsonUtils.dump)
+    @staticmethod
+    @method_deprecated
+    def dump_json(
+            json_path: Union[str, Path], json_object: Union[list, dict], encoding="utf-8", ensure_ascii=True
+    ) -> None:
+        JsonUtils.dump(json_path=json_path, json_object=json_object, encoding=encoding, ensure_ascii=ensure_ascii)
