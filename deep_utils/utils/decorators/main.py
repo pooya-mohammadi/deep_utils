@@ -1,3 +1,4 @@
+import logging
 import time
 from functools import wraps
 from typing import Callable
@@ -19,6 +20,23 @@ def get_method_time(method) -> Callable:
         print(
             f"elapsed time for {self.__class__.__name__}.{method.__name__}: {elapsed_time}"
         )
+        return results
+
+    return wrapper
+
+
+def method_deprecated(method, version: str = "") -> Callable:
+    """
+    Add a deprecated warning
+    :param method: The method that will be measured
+    :param version: In which version it will be deprecated
+    :return:
+    """
+
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        logging.warning(f"This method: {method.__name__} is deprecated. {f'This will be removed in version: {version}!' if version else 'This will be removed in the upcoming releases!'}")
+        results = method(self, *args, **kwargs)
         return results
 
     return wrapper
