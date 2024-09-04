@@ -41,6 +41,7 @@ class Backends(str, Enum):
     AIOHTTP = "aiohttp"
     NIBABEL = "nibabel"
     TORCHAUDIO = "torchaudio"
+    TikToken = "tiktoken"
 
     def __str__(self):
         return str(self.value)

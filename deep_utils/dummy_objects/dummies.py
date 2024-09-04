@@ -153,3 +153,7 @@ class LLMUtils(metaclass=DummyObject):
 
 class NumpyUtils(metaclass=DummyObject):
     _backend = [Backends.NUMPY]
+
+
+class TikTokenUtils(metaclass=DummyObject):
+    _backend = [Backends.TikToken]

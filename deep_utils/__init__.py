@@ -79,6 +79,7 @@ import_lazy_module("LLMUtils", "llm.utils")
 import_lazy_module("NumpyUtils", "utils.numpy_utils.numpy_utils")
 import_lazy_module("AIOHttpRequests", "utils.requests_utils.requests_utils")
 import_lazy_module("RequestsUtils", "utils.requests_utils.requests_utils")
+import_lazy_module("TikTokenUtils", "utils.tiktoken_utils.tiktoken_utils")
 
 if TYPE_CHECKING:
     from utils.numpy_utils.numpy_utils import NumpyUtils
@@ -135,6 +136,7 @@ if TYPE_CHECKING:
     from .llm.utils import LLMUtils
     from .utils.requests_utils.requests_utils import AIOHttpRequests
     from .utils.requests_utils.requests_utils import RequestsUtils
+    from .utils.tiktoken_utils.tiktoken_utils import TikTokenUtils
 else:
     import sys
 
