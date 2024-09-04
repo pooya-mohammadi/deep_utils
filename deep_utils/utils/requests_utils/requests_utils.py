@@ -152,27 +152,37 @@ class RequestsUtils:
         output.raise_for_status()
         return output.json()
 
+    @staticmethod
+    def post(url: str, data: dict[str, Any]):
+        output = requests.post(url, json=data)
+        output.raise_for_status()
+        return output.json()
+
 
 if __name__ == '__main__':
-    async def port():
-        import cv2
-        url = "http://ai.8001.kookaat.ir/predict/single?model_name=word"
-        cropped_img = cv2.imread("/home/ai/Desktop/sample-ocr.png")
-        _, buffer = cv2.imencode('.jpg', cropped_img)
-        file_bytes = buffer.tobytes()
-        files = [{'name': "image", 'value': file_bytes,
-                  # 'content_type': "multipart / form - data | | application / vnd.ms - excel | | etc,
-                  }]
-        data = []
-        output = await AIOHttpRequests.form_post_async(url=url, files=files, encoding="json")
-        print(output)
-        return output
+    print(RequestsUtils.post("http://0.0.0.0:8001/llama", {
+        "messages": [{"role": "user", "content": "Who are you?"}]
+    }))
 
-
-    # url = "http://ai.8001.kookaat.ir/predict/single?model_name=word"
-    # filepath = "/home/ai/Desktop/sample-ocr.png"
-    # output = RequestsUtils.post_file(url, "image", filepath)
-    # print(output)
-    import asyncio
-
-    asyncio.run(port())
+    # async def port():
+    #     import cv2
+    #     url = "http://ai.8001.kookaat.ir/predict/single?model_name=word"
+    #     cropped_img = cv2.imread("/home/ai/Desktop/sample-ocr.png")
+    #     _, buffer = cv2.imencode('.jpg', cropped_img)
+    #     file_bytes = buffer.tobytes()
+    #     files = [{'name': "image", 'value': file_bytes,
+    #               # 'content_type': "multipart / form - data | | application / vnd.ms - excel | | etc,
+    #               }]
+    #     data = []
+    #     output = await AIOHttpRequests.form_post_async(url=url, files=files, encoding="json")
+    #     print(output)
+    #     return output
+    #
+    #
+    # # url = "http://ai.8001.kookaat.ir/predict/single?model_name=word"
+    # # filepath = "/home/ai/Desktop/sample-ocr.png"
+    # # output = RequestsUtils.post_file(url, "image", filepath)
+    # # print(output)
+    # import asyncio
+    #
+    # asyncio.run(port())
