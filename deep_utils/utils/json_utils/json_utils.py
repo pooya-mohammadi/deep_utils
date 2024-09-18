@@ -9,11 +9,11 @@ class JsonUtils:
 
     @staticmethod
     @method_deprecated
-    def load_json(json_path: Union[str, Path], encoding="utf-8") -> dict:
+    def load_json(json_path: Union[str, Path], encoding="utf-8") -> dict | list:
         return JsonUtils.load(json_path=json_path, encoding=encoding)
 
     @staticmethod
-    def load(json_path: Union[str, Path], encoding="utf-8") -> dict:
+    def load(json_path: Union[str, Path], encoding="utf-8") -> dict | list:
         """
         loads a json file
         :param json_path: Path to json file to load
