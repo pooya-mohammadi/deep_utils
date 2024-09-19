@@ -1,5 +1,5 @@
 from typing import Tuple, Union
-
+import subprocess as sp
 import torch
 
 
@@ -98,3 +98,15 @@ class MemoryUtilsTorch:
                 optimizer.step()
                 print("4 - After optimizer step",
                       torch.cuda.memory_allocated(device))
+
+    @staticmethod
+    def get_gpu_memory(device: int = None, consumed: bool = False):
+        if consumed:
+            command = "nvidia-smi --query-gpu=memory.used --format=csv"
+        else:
+            command = "nvidia-smi --query-gpu=memory.free --format=csv"
+        memory_free_info = sp.check_output(command.split()).decode('ascii').split('\n')[:-1][1:]
+        memory_free_values = [int(x.split()[0]) for i, x in enumerate(memory_free_info)]
+        if device:
+            return memory_free_values[device]
+        return memory_free_values
