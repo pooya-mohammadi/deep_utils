@@ -157,3 +157,7 @@ class NumpyUtils(metaclass=DummyObject):
 
 class TikTokenUtils(metaclass=DummyObject):
     _backend = [Backends.TikToken]
+
+
+class MemoryUtilsTorch(metaclass=DummyObject):
+    _backend = [Backends.TORCH]

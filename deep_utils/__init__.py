@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.44"
+__version__ = "1.3.45"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -80,6 +80,7 @@ import_lazy_module("NumpyUtils", "utils.numpy_utils.numpy_utils")
 import_lazy_module("AIOHttpRequests", "utils.requests_utils.requests_utils")
 import_lazy_module("RequestsUtils", "utils.requests_utils.requests_utils")
 import_lazy_module("TikTokenUtils", "utils.tiktoken_utils.tiktoken_utils")
+import_lazy_module("MemoryUtilsTorch", "utils.memory_utils.torch_memory_utils")
 
 if TYPE_CHECKING:
     from utils.numpy_utils.numpy_utils import NumpyUtils
@@ -137,6 +138,7 @@ if TYPE_CHECKING:
     from .utils.requests_utils.requests_utils import AIOHttpRequests
     from .utils.requests_utils.requests_utils import RequestsUtils
     from .utils.tiktoken_utils.tiktoken_utils import TikTokenUtils
+    from .utils.memory_utils.torch_memory_utils import MemoryUtilsTorch
 else:
     import sys
 
