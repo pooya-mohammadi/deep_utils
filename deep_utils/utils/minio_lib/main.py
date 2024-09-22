@@ -1,9 +1,15 @@
 from logging import Logger
 from typing import Union, Dict
-from deep_utils.utils.logging_utils import log_print, value_error_log
+from deep_utils.utils.logging_utils.logging_utils import log_print, value_error_log
+import minio
 
 
 class MinIOUtils:
+    @staticmethod
+    def get_client(endpoint, access_key, secret_key):
+        minio_client = minio.Minio(endpoint, access_key, secret_key)
+        return minio_client
+
     @staticmethod
     def minio_get(minio_client, bucket_name, object_name, logger: Union[None, Logger]):
         """
