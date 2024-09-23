@@ -96,34 +96,40 @@ class AIOHttpRequests:
             files: Optional[List[Dict[str, Any]]] = None,
             ssl: bool = False,
             encoding: Optional[str] = None,
-            json_serialize: Callable = json.dumps
+            json_serialize: Callable = json.dumps,
+            json: dict = None
     ):
         """
         The files should have the following items:
         [{'name': variable_name, 'value': file_content, 'content_type': multipart/form-data||application/vnd.ms-excel||etc,
         }, {...}]
         data or files one of them should be filled!
+        If you want to send a dictionary as json, set the json to True. in that case you cannot send files!
         :param url:
         :param data:
         :param files:
         :param ssl:
         :param encoding:
         :param json_serialize:
+        :param json: json data. Data alone is form format. But if you want to send a dict as json simply pass it to json
         :return:
         """
-        if data is None and files is None:
+        if json is None and data is None and files is None:
             raise ValueError("Both data and files cannot be ")
         async with aiohttp.ClientSession(json_serialize=json_serialize) as session:
-            form_data = aiohttp.FormData()
-            if data is not None:
-                for key, value in data.items():
-                    form_data.add_field(key, str(value))
-            if files is not None:
-                for file_obj in files:
-                    form_data.add_field(file_obj.get("name", "file"), file_obj["value"],
-                                        filename=file_obj.get("filename"),
-                                        content_type=file_obj.get("content_type", 'multipart/form-data'))
-            output = await session.post(url, data=form_data, ssl=ssl)
+            if not json:
+                form_data = aiohttp.FormData()
+                if data is not None:
+                    for key, value in data.items():
+                        form_data.add_field(key, str(value))
+                if files is not None:
+                    for file_obj in files:
+                        form_data.add_field(file_obj.get("name", "file"), file_obj["value"],
+                                            filename=file_obj.get("filename"),
+                                            content_type=file_obj.get("content_type", 'multipart/form-data'))
+                output = await session.post(url, data=form_data, ssl=ssl)
+            else:
+                output = await session.post(url, json=json, ssl=ssl)
             output = await AIOHttpRequests._encoding(output, encoding)
         return output
 
