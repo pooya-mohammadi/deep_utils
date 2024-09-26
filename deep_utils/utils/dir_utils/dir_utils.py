@@ -545,7 +545,6 @@ class DirUtils:
         if mode == "mv" and remove_in_dir:
             shutil.rmtree(in_dir)
 
-
     @staticmethod
     def dir_train_test_split(
             in_dir,
@@ -660,12 +659,15 @@ class DirUtils:
                                current_extension=current_extension, )
 
     @staticmethod
-    def list_dir_full_path(directory: str, filter_directories: bool = True,
+    def list_dir_full_path(directory: str,
+                           filter_directories: bool = True,
                            interest_extensions: Optional[Union[str, List[str]]] = None,
                            only_directories: bool = False,
                            get_full_path: bool = True,
                            sort: bool = True,
                            not_exists_is_ok: bool = False,
+                           dir_depth: int = -1,
+                           exact_depth: bool = False,
                            ) -> List[str]:
         """
         Returns the full path objects in a directory
@@ -678,6 +680,9 @@ class DirUtils:
         :param sort: If set to True, the directory will be sorted first!
         :param not_exists_is_ok: If set the True, and directory does not exist just returns an empty list,
          otherwise raises error.
+        :param dir_depth: How depth the code should search, default is -1 which means deactivated.
+        Only works when only_directories is set to True.
+        :param exact_depth: If set True, the exact depth should be matched and smaller ones are not accepted!
         :return:
         """
         interest_extensions = interest_extensions or []
@@ -690,18 +695,32 @@ class DirUtils:
                 return output
             else:
                 raise ValueError(f"Directory: {directory} does not exist!")
-        for filename in sorted(os.listdir(directory)) if sort else os.listdir(directory):
-            file_path = join(directory, filename)
-            if not only_directories:
-                if filter_directories and os.path.isdir(file_path):
-                    continue
-                if interest_extensions and DirUtils.split_extension(file_path)[1] not in interest_extensions:
-                    continue
-            else:
-                if not os.path.isdir(file_path):
-                    continue
+        if only_directories and dir_depth > 0:
+            directory = "./" if directory == "." else directory
+            for root, dirs, files in os.walk(directory):
+                for dir_name in dirs:
+                    current_dir_path = join(directory, root.replace(directory, ''), dir_name)
+                    relative_current_dir_path = join(root.replace(directory, ''), dir_name)
+                    current_depth = len(relative_current_dir_path.strip("/").split("/"))
+                    if exact_depth:
+                        if current_depth == dir_depth:
+                            output.append(current_dir_path)
+                    else:
+                        if current_depth <= dir_depth:
+                            output.append(current_dir_path)
+        else:
+            for filename in sorted(os.listdir(directory)) if sort else os.listdir(directory):
+                file_path = join(directory, filename)
+                if not only_directories:
+                    if filter_directories and os.path.isdir(file_path):
+                        continue
+                    if interest_extensions and DirUtils.split_extension(file_path)[1] not in interest_extensions:
+                        continue
+                else:
+                    if not os.path.isdir(file_path):
+                        continue
 
-            output.append(file_path if get_full_path else filename)
+                output.append(file_path if get_full_path else filename)
         return output
 
     @staticmethod
