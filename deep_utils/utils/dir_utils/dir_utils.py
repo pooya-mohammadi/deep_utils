@@ -1,6 +1,6 @@
 import os
 import shutil
-from os.path import join
+from os.path import join, split
 from pathlib import Path
 from typing import Dict, List, Tuple, Union, Optional
 
@@ -247,7 +247,6 @@ def remove_create(dir_: str, remove=True, logger=None, verbose=1):
     :param verbose:
     :return:
     """
-    import os
     import shutil
 
     if os.path.exists(dir_) and remove:
@@ -668,7 +667,8 @@ class DirUtils:
                            not_exists_is_ok: bool = False,
                            dir_depth: int = -1,
                            exact_depth: bool = False,
-                           ) -> List[str]:
+                           return_dict: bool = False,
+                           ) -> Union[List[str], Dict[str, str]]:
         """
         Returns the full path objects in a directory
         :param directory:
@@ -683,6 +683,7 @@ class DirUtils:
         :param dir_depth: How depth the code should search, default is -1 which means deactivated.
         Only works when only_directories is set to True.
         :param exact_depth: If set True, the exact depth should be matched and smaller ones are not accepted!
+        :param return_dict: If return_dict is set to True, the output will be a dict like the following: {filename: filepath}
         :return:
         """
         interest_extensions = interest_extensions or []
@@ -721,7 +722,26 @@ class DirUtils:
                         continue
 
                 output.append(file_path if get_full_path else filename)
+            if return_dict:
+                if interest_extensions:
+                    output = {DirUtils.remove_extension_with_replace(split(filepath)[-1], interest_extensions): filepath
+                              for filepath in output}
+                else:
+                    output = {DirUtils.split_extension(split(filepath)[-1])[0]: filepath for filepath in output}
         return output
+
+    @staticmethod
+    def remove_extension_with_replace(filename: str, extensions: list[str]) -> str:
+        """
+        Removes extensions from the input filename
+        :param filename:
+        :param extensions:
+        :return:
+        """
+        for extension in extensions:
+            rev_ext = extension[::-1]
+            filename = filename[::-1].replace(rev_ext, "", 1)[::-1]
+        return filename
 
     @staticmethod
     def remove_create(dir_: str, remove=True, logger=None, verbose=0) -> str:
