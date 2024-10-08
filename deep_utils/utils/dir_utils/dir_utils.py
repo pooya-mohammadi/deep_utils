@@ -709,6 +709,7 @@ class DirUtils:
                     else:
                         if current_depth <= dir_depth:
                             output.append(current_dir_path)
+            output = sorted(output) if sort else output
         else:
             for filename in sorted(os.listdir(directory)) if sort else os.listdir(directory):
                 file_path = join(directory, filename)
@@ -722,6 +723,7 @@ class DirUtils:
                         continue
 
                 output.append(file_path if get_full_path else filename)
+            output = sorted(output) if sort else output
             if return_dict:
                 if interest_extensions:
                     output = {DirUtils.remove_extension_with_replace(split(filepath)[-1], interest_extensions): filepath
