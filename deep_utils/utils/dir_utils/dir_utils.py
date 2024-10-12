@@ -883,3 +883,19 @@ class DirUtils:
             skip_transfer=skip_transfer,
             remove_in_dir=remove_in_dir,
         )
+
+    @staticmethod
+    def endswith(filepath: str, ext: list[str] | str):
+        """
+        Checks whether a file ends with a list of strings!
+        :param filepath:
+        :param ext:
+        :return:
+        """
+        if isinstance(ext, list):
+            for ext_ in ext:
+                if filepath.endswith(ext_):
+                    return True
+            return False
+        else:
+            return filepath.endswith(ext)
