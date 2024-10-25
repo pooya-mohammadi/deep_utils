@@ -6,8 +6,8 @@ import minio
 
 class MinIOUtils:
     @staticmethod
-    def get_client(endpoint, access_key, secret_key):
-        client = minio.Minio(endpoint, access_key, secret_key)
+    def get_client(endpoint, access_key, secret_key, secure: bool = True):
+        client = minio.Minio(endpoint, access_key, secret_key, secure=secure)
         return client
 
     @staticmethod
