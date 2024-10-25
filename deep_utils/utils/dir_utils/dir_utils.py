@@ -545,6 +545,12 @@ class DirUtils:
             shutil.rmtree(in_dir)
 
     @staticmethod
+    def write_txt(path: str | Path, list_content: list, mode="w"):
+        with open(path, mode=mode) as f:
+            for item in list_content:
+                f.write(f"{item}\n")
+
+    @staticmethod
     def dir_train_test_split(
             in_dir,
             train_dir="./train",
