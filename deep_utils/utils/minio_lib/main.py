@@ -7,20 +7,20 @@ import minio
 class MinIOUtils:
     @staticmethod
     def get_client(endpoint, access_key, secret_key):
-        minio_client = minio.Minio(endpoint, access_key, secret_key)
-        return minio_client
+        client = minio.Minio(endpoint, access_key, secret_key)
+        return client
 
     @staticmethod
-    def minio_get(minio_client, bucket_name, object_name, logger: Union[None, Logger]):
+    def get(client, bucket_name, object_name, logger: Union[None, Logger] = None):
         """
-        Get object from minio_client. This function is created for compatibility otherwise no extra functionality provided compared to the main module.
-        :param minio_client:
+        Get object from client. This function is created for compatibility otherwise no extra functionality provided compared to the main module.
+        :param client:
         :param bucket_name:
         :param object_name:
         :param logger:
         :return:
         """
-        obj = minio_client.get_object(bucket_name, object_name)
+        obj = client.get_object(bucket_name, object_name)
         log_print(
             logger=logger,
             message=f"Successfully got object: {object_name} from bucket: {bucket_name}",
@@ -28,19 +28,19 @@ class MinIOUtils:
         return obj
 
     @staticmethod
-    def minio_fget(
-            minio_client, bucket_name, object_name, file_path, logger: Union[None, Logger]
+    def fget(
+            client, bucket_name, object_name, file_path, logger: Union[None, Logger]
     ):
         """
-        Get file object from minio_client. This function is created for compatibility otherwise no extra functionality provided compared to the main module.
-        :param minio_client:
+        Get file object from client. This function is created for compatibility otherwise no extra functionality provided compared to the main module.
+        :param client:
         :param bucket_name:
         :param object_name:
         :param file_path: Where to save the file
         :param logger:
         :return:
         """
-        obj = minio_client.fget_object(bucket_name, object_name, file_path)
+        obj = client.fget_object(bucket_name, object_name, file_path)
         log_print(
             logger=logger,
             message=f"Successfully got object: {object_name} from bucket: {bucket_name}",
@@ -48,8 +48,8 @@ class MinIOUtils:
         return obj
 
     @staticmethod
-    def minio_put(
-            minio_client,
+    def put(
+            client,
             bucket_name,
             object_name,
             data,
@@ -58,7 +58,7 @@ class MinIOUtils:
     ):
         """
         put an object inside a bucket
-        :param minio_client:
+        :param client:
         :param bucket_name:
         :param object_name:
         :param data: data-file to be stored in
@@ -66,7 +66,7 @@ class MinIOUtils:
         :param logger: a logger instance
         :return:
         """
-        MinIOUtils.create_bucket(minio_client, bucket_name, create, logger, )
+        MinIOUtils.create_bucket(client, bucket_name, create, logger, )
         try:
             length = len(data.read())
             data.seek(0)
@@ -74,7 +74,7 @@ class MinIOUtils:
         except:
             length = -1
             part_size = data.__sizeof__()
-        result = minio_client.put_object(
+        result = client.put_object(
             bucket_name,
             object_name,
             data,
@@ -88,8 +88,8 @@ class MinIOUtils:
         return result
 
     @staticmethod
-    def minio_fput(
-            minio_client,
+    def fput(
+            client,
             bucket_name,
             object_name,
             file_path,
@@ -98,7 +98,7 @@ class MinIOUtils:
     ):
         """
         put a file inside a bucket
-        :param minio_client:
+        :param client:
         :param bucket_name:
         :param object_name:
         :param file_path: file to be stored in the given bucket
@@ -106,9 +106,9 @@ class MinIOUtils:
         :param logger: a logger instance
         :return:
         """
-        MinIOUtils.create_bucket(minio_client, bucket_name, create, logger)
+        MinIOUtils.create_bucket(client, bucket_name, create, logger)
 
-        result = minio_client.fput_object(
+        result = client.fput_object(
             bucket_name,
             object_name,
             file_path,
@@ -120,21 +120,21 @@ class MinIOUtils:
         return result
 
     @staticmethod
-    def create_bucket(minio_client, bucket_name, create=True, logger=None) -> bool:
+    def create_bucket(client, bucket_name, create=True, logger=None) -> bool:
         """
         This method is used to find the requested bucket and create it in case the user desires it.
         :param bucket_name:
         :param create:
         :param logger:
-        :param minio_client:
+        :param client:
         :return:
         """
-        found = minio_client.bucket_exists(bucket_name)
+        found = client.bucket_exists(bucket_name)
         if found:
             log_print(logger=logger,
                       message=f"Bucket {bucket_name} already exists")
         elif not found and create:
-            minio_client.make_bucket(bucket_name)
+            client.make_bucket(bucket_name)
             log_print(logger=logger,
                       message=f"Successfully Created bucket: {bucket_name}")
         else:
@@ -143,19 +143,19 @@ class MinIOUtils:
         return found
 
     @staticmethod
-    def check_minio_connection(minio_host, status_key="MINIO_STATUS") -> Dict[str, str]:
+    def check_connection(host, status_key="MINIO_STATUS") -> Dict[str, str]:
         import requests
         # check minio
         status = dict()
         try:
-            minio_status = requests.get(f"http://{minio_host}/minio/health/live").ok
-            status[status_key] = "Alive" if minio_status else "Down"
+            status = requests.get(f"http://{host}/minio/health/live").ok
+            status[status_key] = "Alive" if status else "Down"
         except:
             status[status_key] = "Down"
         return status
 
     @staticmethod
-    def _get_minio_policy(bucket_name):
+    def _get_policy(bucket_name):
         policy = {"Statement": [{"Action": ["s3:GetBucketLocation"],
                                  "Effect": "Allow", "Principal": {"AWS": ["*"]},
                                  "Resource": [f"arn:aws:s3:::{bucket_name}"]},
@@ -165,9 +165,9 @@ class MinIOUtils:
         return policy
 
     @staticmethod
-    def make_bucket_public(minio_client, bucket_name, logger=None, verbose=1):
+    def make_bucket_public(client, bucket_name, logger=None, verbose=1):
         import json
-        found = MinIOUtils.create_bucket(minio_client, bucket_name)
+        found = MinIOUtils.create_bucket(client, bucket_name)
         if not found:
-            minio_client.set_bucket_policy(bucket_name, json.dumps(MinIOUtils._get_minio_policy(bucket_name)))
+            client.set_bucket_policy(bucket_name, json.dumps(MinIOUtils._get_policy(bucket_name)))
             log_print(logger=logger, message=f"Successfully Made bucket: {bucket_name} public", verbose=verbose)
