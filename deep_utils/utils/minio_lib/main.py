@@ -29,7 +29,7 @@ class MinIOUtils:
 
     @staticmethod
     def fget(
-            client, bucket_name, object_name, file_path, logger: Union[None, Logger]
+            client, bucket_name, object_name, file_path, logger: Union[None, Logger] = None
     ):
         """
         Get file object from client. This function is created for compatibility otherwise no extra functionality provided compared to the main module.
