@@ -161,5 +161,11 @@ class TikTokenUtils(metaclass=DummyObject):
 
 class MemoryUtilsTorch(metaclass=DummyObject):
     _backend = [Backends.TORCH]
+
+
 class MinIOUtils(metaclass=DummyObject):
     _backend = [Backends.MINIO]
+
+
+class AsyncDownloadUtils(metaclass=DummyObject):
+    _backend = [Backends.AIOHTTP]
