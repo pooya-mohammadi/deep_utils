@@ -171,3 +171,18 @@ class MinIOUtils:
         if not found:
             client.set_bucket_policy(bucket_name, json.dumps(MinIOUtils._get_policy(bucket_name)))
             log_print(logger=logger, message=f"Successfully Made bucket: {bucket_name} public", verbose=verbose)
+
+    @staticmethod
+    def exists(client: minio.Minio, bucket_name: str, object_name: str):
+        from os.path import split
+        prefix, name = split(object_name)
+        if prefix:
+            prefix = prefix + "/"
+            list_of_objects = [item._object_name.replace(prefix, "") for item in
+                               client.list_objects(bucket_name, prefix=prefix, recursive=True)]
+        else:
+            list_of_objects = [item._object_name for item in client.list_objects(bucket_name, recursive=True)]
+        if name in list_of_objects:
+            return True
+        else:
+            return False
