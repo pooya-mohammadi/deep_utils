@@ -77,6 +77,29 @@ async def post_form_upload(input_url, data_key: str, upload_file):
 class AIOHttpRequests:
 
     @staticmethod
+    async def put_request(url, data=None, json=None):
+        async with aiohttp.ClientSession() as session:
+            if data is not None:
+                async with session.put(url, data=data) as response:
+                    # Check if the request was successful
+                    if response.status == 200:
+                        result = await response.json()
+                        return result
+                    else:
+                        print("Failed to update data:", response.status)
+                        print("Response text:", await response.text())
+            elif json is not None:
+                async with session.put(url, json=data) as response:
+                    # Check if the request was successful
+                    if response.status == 200:
+                        result = await response.json()
+                        return result
+                    else:
+                        print("Failed to update data:", response.status)
+                        print("Response text:", await response.text())
+
+
+    @staticmethod
     async def _encoding(response, encoding: str | None):
         if encoding == "content":
             return await response.content.read()
