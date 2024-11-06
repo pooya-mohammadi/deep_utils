@@ -551,6 +551,11 @@ class DirUtils:
                 f.write(f"{item}\n")
 
     @staticmethod
+    def read_txt(path: str | Path, mode="r"):
+        list_content = [item.strip() for item in open(path, mode=mode).readlines()]
+        return list_content
+
+    @staticmethod
     def dir_train_test_split(
             in_dir,
             train_dir="./train",
