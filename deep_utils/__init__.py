@@ -83,6 +83,8 @@ import_lazy_module("TikTokenUtils", "utils.tiktoken_utils.tiktoken_utils")
 import_lazy_module("MemoryUtilsTorch", "utils.memory_utils.torch_memory_utils")
 import_lazy_module("MinIOUtils", "utils.minio_lib.main")
 import_lazy_module("AsyncDownloadUtils", "utils.download_utils.async_download_utils")
+import_lazy_module("DecordUtils", "utils.decord_utils.decord_utils")
+
 
 if TYPE_CHECKING:
     from utils.numpy_utils.numpy_utils import NumpyUtils
@@ -143,6 +145,7 @@ if TYPE_CHECKING:
     from .utils.memory_utils.torch_memory_utils import MemoryUtilsTorch
     from .utils.minio_lib.main import MinIOUtils
     from .utils.download_utils.async_download_utils import AsyncDownloadUtils
+    from .utils.decord_utils.decord_utils import DecordUtils
 else:
     import sys
 

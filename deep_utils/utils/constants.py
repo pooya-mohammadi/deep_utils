@@ -42,6 +42,7 @@ class Backends(str, Enum):
     NIBABEL = "nibabel"
     TORCHAUDIO = "torchaudio"
     TikToken = "tiktoken"
+    DECORD = "decord"
 
     def __str__(self):
         return str(self.value)
