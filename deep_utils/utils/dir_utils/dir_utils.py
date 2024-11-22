@@ -782,7 +782,7 @@ class DirUtils:
     @staticmethod
     def crawl_directory_dataset(
             dir_: str,
-            ext_filter: list = None,
+            ext_filter: list | str= None,
             map_labels=False,
             label_map_dict: dict = None,
             logger=None,
@@ -802,6 +802,7 @@ class DirUtils:
         print(f"[INFO] beginning to crawl {dir_}")
         x, y = [], []
         label_map = dict()
+        ext_filter = [ext_filter] if isinstance(ext_filter, str) else ext_filter
         for cls_name in os.listdir(dir_):
             cls_path = join(dir_, cls_name)
             if not os.path.isdir(cls_path):
