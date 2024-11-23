@@ -258,7 +258,7 @@ def remove_create(dir_: str, remove=True, logger=None, verbose=1):
     raise ValueError("dir_ should be provided!")
 
 
-def mkdir_incremental(dir_path: str, base_name="exp", fix_name=None, overwrite=False) -> Path:
+def mkdir_incremental(dir_path: str | list[str], base_name="exp", fix_name=None, overwrite=False) -> Path:
     """
     makes new directories, if it exists increment it and makes another one. Good for hyperparameter tuning!
     Args:
@@ -279,7 +279,7 @@ def mkdir_incremental(dir_path: str, base_name="exp", fix_name=None, overwrite=F
         os.makedirs(final_path, exist_ok=True)
     else:
         folders = []
-        for dir_ in os.listdir(dir_path):
+        for dir_ in (os.listdir(dir_path) if isinstance(dir_path, str) else dir_path):
             if base_name in dir_:
                 counter = dir_.split(base_name + "_")[-1]
                 if counter.isdigit():
@@ -295,7 +295,7 @@ def mkdir_incremental(dir_path: str, base_name="exp", fix_name=None, overwrite=F
     return Path(final_path)
 
 
-def file_incremental(file_path, artifact_type="prefix", artifact_value=0, extra_punctuation="_",
+def file_incremental(file_path: str, artifact_type="prefix", artifact_value=0, extra_punctuation="_",
                      add_artifact_value=False):
     """
     This function is used to increment a file's address with prefix or suffix values until it becomes unique
@@ -306,18 +306,22 @@ def file_incremental(file_path, artifact_type="prefix", artifact_value=0, extra_
     :param add_artifact_value: If set to True, adds the artifact_value then checks its existence.
     :return:
     """
-    dir_, n = os.path.split(file_path)
+    dir_, filename = os.path.split(file_path)
     artifact_value = int(artifact_value)
     while True:
         if add_artifact_value:
             # Maybe someone requires their file to have the first artifact
-            file_path = join(dir_, split_extension(n, artifact_type=artifact_type, artifact_value=artifact_value,
+            file_path = join(dir_, split_extension(filename,
+                                                   artifact_type=artifact_type,
+                                                   artifact_value=artifact_value,
                                                    extra_punctuation=extra_punctuation))
         if not os.path.exists(file_path):
             break
 
         if not add_artifact_value:
-            file_path = join(dir_, split_extension(n, artifact_type=artifact_type, artifact_value=artifact_value,
+            file_path = join(dir_, split_extension(filename,
+                                                   artifact_type=artifact_type,
+                                                   artifact_value=artifact_value,
                                                    extra_punctuation=extra_punctuation))
         artifact_value += 1
     return file_path
@@ -782,7 +786,7 @@ class DirUtils:
     @staticmethod
     def crawl_directory_dataset(
             dir_: str,
-            ext_filter: list | str= None,
+            ext_filter: list | str = None,
             map_labels=False,
             label_map_dict: dict = None,
             logger=None,
@@ -911,3 +915,41 @@ class DirUtils:
             return False
         else:
             return filepath.endswith(ext)
+
+    @staticmethod
+    def file_incremental(file_path: str | None, artifact_type="prefix", artifact_value=0, extra_punctuation="_",
+                         add_artifact_value=False, dir_items: list[str] | None = None):
+        """
+        This function is used to increment a file's address with prefix or suffix values until it becomes unique
+        :param file_path:
+        :param artifact_type:
+        :param artifact_value:
+        :param extra_punctuation:
+        :param add_artifact_value: If set to True, adds the artifact_value then checks its existence.
+        :param dir_items: list of items
+        :return:
+        """
+        dir_, filename = os.path.split(file_path)
+        artifact_value = int(artifact_value)
+        while True:
+            if add_artifact_value:
+                # Maybe someone requires their file to have the first artifact
+
+                file_path = split_extension(filename,
+                                            artifact_type=artifact_type,
+                                            artifact_value=artifact_value,
+                                            extra_punctuation=extra_punctuation)
+                if not dir_items:
+                    file_path = join(dir_, file_path)
+            if (dir_items and not (file_path in dir_items)) or (not dir_items and not os.path.exists(file_path)):
+                break
+
+            if not add_artifact_value:
+                file_path = split_extension(filename,
+                                            artifact_type=artifact_type,
+                                            artifact_value=artifact_value,
+                                            extra_punctuation=extra_punctuation)
+                if not dir_items:
+                    file_path = join(dir_, file_path)
+            artifact_value += 1
+        return file_path

@@ -2,6 +2,7 @@ from logging import Logger
 from typing import Union, Dict
 from deep_utils.utils.logging_utils.logging_utils import log_print, value_error_log
 import minio
+from os.path import split
 
 
 class MinIOUtils:
@@ -174,7 +175,7 @@ class MinIOUtils:
 
     @staticmethod
     def exists(client: minio.Minio, bucket_name: str, object_name: str):
-        from os.path import split
+
         prefix, name = split(object_name)
         if prefix:
             prefix = prefix + "/"
@@ -186,3 +187,20 @@ class MinIOUtils:
             return True
         else:
             return False
+
+    @staticmethod
+    def list(client: minio.Minio, bucket_name: str, object_name: str = "", directory: str = "") -> list[str]:
+        if directory:
+            prefix = directory
+        elif object_name:
+            prefix, name = split(object_name)
+        else:
+            raise ValueError("object_name or directory should be provided!")
+
+        if prefix:
+            prefix = (prefix + "/") if not prefix.endswith("/") else prefix
+            list_of_objects = [item._object_name.replace(prefix, "") for item in
+                               client.list_objects(bucket_name, prefix=prefix, recursive=True)]
+        else:
+            list_of_objects = [item._object_name for item in client.list_objects(bucket_name, recursive=True)]
+        return list_of_objects
