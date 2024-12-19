@@ -258,42 +258,6 @@ def remove_create(dir_: str, remove=True, logger=None, verbose=1):
     raise ValueError("dir_ should be provided!")
 
 
-def mkdir_incremental(dir_path: str | list[str], base_name="exp", fix_name=None, overwrite=False) -> Path:
-    """
-    makes new directories, if it exists increment it and makes another one. Good for hyperparameter tuning!
-    Args:
-        dir_path:
-        base_name:
-        fix_name: If provided this will be created!
-        overwrite: If True, it will overwrite the existing directory!
-
-    Returns:
-
-    """
-    os.makedirs(dir_path, exist_ok=True)
-    if overwrite:
-        return Path(dir_path)
-
-    if fix_name is not None:
-        final_path = os.path.join(dir_path, fix_name)
-        os.makedirs(final_path, exist_ok=True)
-    else:
-        folders = []
-        for dir_ in (os.listdir(dir_path) if isinstance(dir_path, str) else dir_path):
-            if base_name in dir_:
-                counter = dir_.split(base_name + "_")[-1]
-                if counter.isdigit():
-                    folders.append(int(counter))
-        if len(folders) == 0:
-            final_path = os.path.join(dir_path, base_name + f"_1")
-        else:
-            max_counter = max(folders)
-            final_path = os.path.join(
-                dir_path, base_name + f"_{max_counter + 1}")
-        os.makedirs(final_path)
-
-    return Path(final_path)
-
 
 def file_incremental(file_path: str, artifact_type="prefix", artifact_value=0, extra_punctuation="_",
                      add_artifact_value=False):
@@ -953,3 +917,41 @@ class DirUtils:
                     file_path = join(dir_, file_path)
             artifact_value += 1
         return file_path
+    @staticmethod
+    def mkdir_incremental(dir_path: str | list[str], base_name="exp", fix_name=None, overwrite=False) -> Path:
+        """
+        makes new directories, if it exists increment it and makes another one. Good for hyperparameter tuning!
+        Args:
+            dir_path:
+            base_name:
+            fix_name: If provided this will be created!
+            overwrite: If True, it will overwrite the existing directory!
+
+        Returns:
+
+        """
+        os.makedirs(dir_path, exist_ok=True)
+        if overwrite:
+            return Path(dir_path)
+
+        if fix_name is not None:
+            final_path = os.path.join(dir_path, fix_name)
+            os.makedirs(final_path, exist_ok=True)
+        else:
+            folders = []
+            for dir_ in (os.listdir(dir_path) if isinstance(dir_path, str) else dir_path):
+                if base_name in dir_:
+                    counter = dir_.split(base_name + "_")[-1]
+                    if counter.isdigit():
+                        folders.append(int(counter))
+            if len(folders) == 0:
+                final_path = os.path.join(dir_path, base_name + f"_1")
+            else:
+                max_counter = max(folders)
+                final_path = os.path.join(
+                    dir_path, base_name + f"_{max_counter + 1}")
+            os.makedirs(final_path)
+
+        return Path(final_path)
+
+mkdir_incremental = DirUtils.mkdir_incremental
