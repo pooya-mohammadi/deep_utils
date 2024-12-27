@@ -42,3 +42,13 @@ class TorchUtils:
                 }
             )
         return model
+
+    @staticmethod
+    def one_hot_encoder(input_tensor, n_classes: int = None):
+        n_classes = n_classes or (int(input_tensor.max()) + 1)
+        tensor_list = []
+        for i in range(n_classes):
+            temp_prob = input_tensor == i  # * torch.ones_like(input_tensor)
+            tensor_list.append(temp_prob.unsqueeze(1))
+        output_tensor = torch.cat(tensor_list, dim=1)
+        return output_tensor.float()
