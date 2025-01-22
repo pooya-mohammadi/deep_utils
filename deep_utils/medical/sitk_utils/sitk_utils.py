@@ -174,9 +174,9 @@ class SITKUtils:
                 sample_sitk.SetSpacing(spacing)
             else:
                 spacing = list(org_sitk_img.GetSpacing())
-                if remove_index and len(spacing) > 3:
+                if remove_index is not None and len(spacing) > 3:
                     del spacing[remove_index]
-                if slice_index and len(spacing) > 3:
+                if slice_index is not None and len(spacing) > 3:
                     del spacing[slice_index]
                 sample_sitk.SetSpacing(spacing)
 
@@ -187,10 +187,10 @@ class SITKUtils:
                 org_flat_direction = np.array(org_sitk_img.GetDirection())
                 direction_size = int(math.sqrt(len(org_flat_direction)))
                 original_direction = org_flat_direction.reshape(direction_size, direction_size)
-                if remove_index and direction_size > 3:
+                if remove_index is not None and direction_size > 3:
                     original_direction = np.delete(original_direction, remove_index, 0)
                     original_direction = np.delete(original_direction, remove_index, 1)
-                if slice_index and direction_size > 3:
+                if slice_index is not None  and direction_size > 3:
                     original_direction = np.delete(original_direction, slice_index, 0)
                     original_direction = np.delete(original_direction, slice_index, 1)
 
@@ -202,9 +202,9 @@ class SITKUtils:
             else:
                 original_origin = list(org_sitk_img.GetOrigin())
                 org_size = len(original_origin)
-                if remove_index and org_size > 3:
+                if remove_index is not None and org_size > 3:
                     del original_origin[remove_index]
-                if slice_index and org_size > 3:
+                if slice_index is not None and org_size > 3:
                     del original_origin[slice_index]
 
                 # submatrix_direction = original_direction[:3, :3].flatten()
