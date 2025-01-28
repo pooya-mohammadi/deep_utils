@@ -258,7 +258,6 @@ def remove_create(dir_: str, remove=True, logger=None, verbose=1):
     raise ValueError("dir_ should be provided!")
 
 
-
 def file_incremental(file_path: str, artifact_type="prefix", artifact_value=0, extra_punctuation="_",
                      add_artifact_value=False):
     """
@@ -917,6 +916,7 @@ class DirUtils:
                     file_path = join(dir_, file_path)
             artifact_value += 1
         return file_path
+
     @staticmethod
     def mkdir_incremental(dir_path: str | list[str], base_name="exp", fix_name=None, overwrite=False) -> Path:
         """
@@ -953,5 +953,13 @@ class DirUtils:
             os.makedirs(final_path)
 
         return Path(final_path)
+
+    @staticmethod
+    def execute_command(command: str):
+        from subprocess import Popen, PIPE
+        process = Popen(command, stdout=PIPE, stderr=None, shell=True)
+        output = process.communicate()[0]
+        return output.decode()
+
 
 mkdir_incremental = DirUtils.mkdir_incremental
