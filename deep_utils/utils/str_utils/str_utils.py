@@ -24,3 +24,11 @@ class StringUtils:
                 inner_list.extend([s for s in str_val.split(split_val) if not remove_empty or s])
             input_str = inner_list
         return input_str
+
+    @staticmethod
+    def right_replace(input_str: str, replace: str, replace_with: str,count:int = -1):
+        reverse_input_str = input_str[::-1]
+        reverse_replace = replace[::-1]
+        reverse_replace_with = replace_with[::-1]
+        reverse_input_str = reverse_input_str.replace(reverse_replace, reverse_replace_with, count)
+        return reverse_input_str[::-1]
