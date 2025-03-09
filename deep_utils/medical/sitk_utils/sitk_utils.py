@@ -210,7 +210,7 @@ class SITKUtils:
                 # submatrix_direction = original_direction[:3, :3].flatten()
                 sample_sitk.SetOrigin(original_origin)
         else:
-            raise ValueError()
+            raise ValueError("Len input shape should be four or three, five is not supported yet")
         sitk.WriteImage(sample_sitk, save_path)
 
     @staticmethod
