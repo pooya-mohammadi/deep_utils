@@ -169,5 +169,7 @@ class MinIOUtils(metaclass=DummyObject):
 
 class AsyncDownloadUtils(metaclass=DummyObject):
     _backend = [Backends.AIOHTTP]
+
+
 class DecordUtils(metaclass=DummyObject):
     _backend = [Backends.DECORD]

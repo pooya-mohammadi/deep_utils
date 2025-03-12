@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.4,0"
+__version__ = "1.4.1"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -36,6 +36,8 @@ _import_structure = {
     "medical.nnunet_utils.nnunet_utils": ["NNUnetUtils"],
     "utils.encodes.b64": ["BinaryUtils"],
     "nlp.utils.persian.utils": ["PersianUtils"],
+    "utils.dataclass_parser.dataclass_argparser": ["DataClassArgParser"],
+
     DUMMY_PATH: [],  # this is required for dummy check!
 }
 
@@ -84,7 +86,6 @@ import_lazy_module("MemoryUtilsTorch", "utils.memory_utils.torch_memory_utils")
 import_lazy_module("MinIOUtils", "utils.minio_lib.main")
 import_lazy_module("AsyncDownloadUtils", "utils.download_utils.async_download_utils")
 import_lazy_module("DecordUtils", "utils.decord_utils.decord_utils")
-import_lazy_module("DataClassArgParser", "utils.dataclass_parser.dataclass_argparser")
 
 
 if TYPE_CHECKING:
