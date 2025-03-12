@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.3.64"
+__version__ = "1.4,0"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -84,6 +84,7 @@ import_lazy_module("MemoryUtilsTorch", "utils.memory_utils.torch_memory_utils")
 import_lazy_module("MinIOUtils", "utils.minio_lib.main")
 import_lazy_module("AsyncDownloadUtils", "utils.download_utils.async_download_utils")
 import_lazy_module("DecordUtils", "utils.decord_utils.decord_utils")
+import_lazy_module("DataClassArgParser", "utils.dataclass_parser.dataclass_argparser")
 
 
 if TYPE_CHECKING:
@@ -146,6 +147,7 @@ if TYPE_CHECKING:
     from .utils.minio_lib.main import MinIOUtils
     from .utils.download_utils.async_download_utils import AsyncDownloadUtils
     from .utils.decord_utils.decord_utils import DecordUtils
+    from .utils.dataclass_parser.dataclass_argparser import DataClassArgParser
 else:
     import sys
 
