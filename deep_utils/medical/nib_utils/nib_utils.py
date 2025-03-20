@@ -4,9 +4,28 @@ from typing import Union, Optional, Sequence, Tuple, List
 import numpy as np
 import nibabel as nib
 from nibabel.filebasedimages import FileBasedImage
+from deep_utils.medical.main_utils import MainMedUtils
 
 
-class NIBUtils:
+class NIBUtils(MainMedUtils):
+
+    @staticmethod
+    def get_largets_box(array: np.ndarray, get_info: bool = False):
+        if get_info:
+            arr, info = MainMedUtils.get_largets_box(array, get_info)
+            info['class'] = "nib"
+            return arr, info
+        else:
+            return MainMedUtils.get_largets_box(array, get_info)
+
+    @staticmethod
+    def get_largest_box_and_crop(array: np.ndarray, expand: int = 0, get_info: bool = False):
+        if get_info:
+            arr, info = MainMedUtils.get_largest_box_and_crop(array, expand, get_info)
+            info['class'] = "nib"
+            return arr, info
+        else:
+            return MainMedUtils.get_largest_box_and_crop(array, expand, get_info)
     @staticmethod
     def get_img(filepath: str) -> FileBasedImage:
         img = nib.load(filepath)

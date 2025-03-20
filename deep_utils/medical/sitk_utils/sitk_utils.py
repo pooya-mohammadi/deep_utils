@@ -4,9 +4,28 @@ from typing import Tuple, Union, Dict, List, Optional
 import SimpleITK as sitk  # noqa
 import numpy as np
 from SimpleITK import Image
+from deep_utils.medical.main_utils import MainMedUtils
 
 
-class SITKUtils:
+class SITKUtils(MainMedUtils):
+
+    @staticmethod
+    def get_largets_box(array: np.ndarray, get_info: bool = False):
+        if get_info:
+            arr, info = MainMedUtils.get_largets_box(array, get_info)
+            info['class'] = "sitk"
+            return arr, info
+        else:
+            return MainMedUtils.get_largets_box(array, get_info)
+    @staticmethod
+    def get_largest_box_and_crop(array: np.ndarray, expand: int = 0, get_info: bool = False):
+        if get_info:
+            arr, info = MainMedUtils.get_largest_box_and_crop(array, expand, get_info)
+            info['class'] = "sitk"
+            return arr, info
+        else:
+            return MainMedUtils.get_largest_box_and_crop(array, expand, get_info)
+
     @staticmethod
     def get_array_img_properties(filepath: str):
         arr, img = SITKUtils.get_array_img(filepath)
@@ -190,7 +209,7 @@ class SITKUtils:
                 if remove_index is not None and direction_size > 3:
                     original_direction = np.delete(original_direction, remove_index, 0)
                     original_direction = np.delete(original_direction, remove_index, 1)
-                if slice_index is not None  and direction_size > 3:
+                if slice_index is not None and direction_size > 3:
                     original_direction = np.delete(original_direction, slice_index, 0)
                     original_direction = np.delete(original_direction, slice_index, 1)
 
