@@ -31,6 +31,7 @@ _import_structure = {
     "utils.py_utils.py_utils": ["PyUtils"],
     "utils.json_utils.json_utils": ["JsonUtils"],
     "utils.pickle_utils.pickle_utils": ["PickleUtils"],
+    "utils.coco_utils.main": ["COCOUtils"],
     "utils.fa_nlp_utils.fa_nlp_utils": ['FaNLPUtils'],
     "utils.str_utils.str_utils": ["StringUtils"],
     "medical.nnunet_utils.nnunet_utils": ["NNUnetUtils"],
@@ -149,6 +150,7 @@ if TYPE_CHECKING:
     from .utils.download_utils.async_download_utils import AsyncDownloadUtils
     from .utils.decord_utils.decord_utils import DecordUtils
     from .utils.dataclass_parser.dataclass_argparser import DataClassArgParser
+    from .utils.coco_utils.main import COCOUtils
 else:
     import sys
 
