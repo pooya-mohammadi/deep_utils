@@ -9,6 +9,38 @@ from deep_utils.medical.main_utils import MainMedUtils
 
 class SITKUtils(MainMedUtils):
     @staticmethod
+    def get_largest_component_per_label(input_img: Image):
+        unique_labels = sitk.GetArrayViewFromImage(input_img).astype(int)
+        unique_labels = set(unique_labels.flatten()) - {0}  # Exclude background (label 0)
+
+        output = sitk.Image(input_img.GetSize(), input_img.GetPixelIDValue())
+        output.CopyInformation(input_img)  # Keep metadata
+
+        for label in unique_labels:
+            # Extract binary mask for current label
+            binary_mask = sitk.BinaryThreshold(input_img, lowerThreshold=int(label), upperThreshold=int(label))
+
+            # Compute connected components
+            cc = sitk.ConnectedComponent(binary_mask)
+            #
+            # # Compute statistics
+            stats = sitk.LabelShapeStatisticsImageFilter()
+            stats.Execute(cc)
+
+            # Find the largest component
+            largest_label = max(stats.GetLabels(), key=lambda l: stats.GetPhysicalSize(l))
+            # print(stats.GetLabels(), largest_label)
+            # Keep only the largest component
+            largest_component = sitk.BinaryThreshold(cc, lowerThreshold=int(largest_label),
+                                                     upperThreshold=int(largest_label))
+
+            # Assign the label back to the output image
+            output = sitk.Mask(output, sitk.Not(largest_component))  # Keep previous labels
+            output += sitk.Cast(largest_component, input_img.GetPixelID()) * label  # Set the correct label
+
+        return output
+
+    @staticmethod
     def get_orientation_str(direction):
         orientation = sitk.DICOMOrientImageFilter().GetOrientationFromDirectionCosines(direction)
         return orientation
