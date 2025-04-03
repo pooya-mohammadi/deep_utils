@@ -8,7 +8,10 @@ from deep_utils.medical.main_utils import MainMedUtils
 
 
 class SITKUtils(MainMedUtils):
-
+    @staticmethod
+    def get_orientation_str(direction):
+        orientation = sitk.DICOMOrientImageFilter().GetOrientationFromDirectionCosines(direction)
+        return orientation
     @staticmethod
     def get_largets_box(array: np.ndarray, get_info: bool = False):
         if get_info:
@@ -19,9 +22,11 @@ class SITKUtils(MainMedUtils):
             return MainMedUtils.get_largets_box(array, get_info)
     @staticmethod
     def get_largest_box_and_crop(array: np.ndarray, expand: int = 0, get_info: bool = False):
+
         if get_info:
             arr, info = MainMedUtils.get_largest_box_and_crop(array, expand, get_info)
             info['class'] = "sitk"
+            info['expand'] = expand
             return arr, info
         else:
             return MainMedUtils.get_largest_box_and_crop(array, expand, get_info)
@@ -104,35 +109,38 @@ class SITKUtils(MainMedUtils):
         SITKUtils.save_sample(swaped_array, image, output_file, **kwarg)
 
     @staticmethod
-    def write(sitk_img, save_path: str):
+    def write(img, save_path: str):
         """
         write sitk image!
-        :param sitk_img:
+        :param img:
         :param save_path:
         :return:
         """
-        sitk.WriteImage(sitk_img, save_path)
+        sitk.WriteImage(img, save_path)
 
     @staticmethod
-    def save_sample_with_img(filepath: str, sample_array: np.ndarray, sitk_img: sitk.Image):
+    def save_sample_with_img(filepath: str, sample_array: np.ndarray, img: sitk.Image):
         img_ = sitk.GetImageFromArray(sample_array)
-        img_.CopyInformation(sitk_img)
-        img = sitk.Cast(img_, sitk_img.GetPixelID())
-        sitk.WriteImage(sitk_img, filepath)
+        img_.CopyInformation(img)
+        img = sitk.Cast(img_, img.GetPixelID())
+        sitk.WriteImage(img, filepath)
 
     @staticmethod
-    def save_sample(input_sample: np.ndarray, org_sitk_img: Optional[Image],
-                    save_path: str, time_array_index=-1,
+    def save_sample(filepath: str,
+                    input_array: np.ndarray,
+                    *,
+                    time_array_index=-1,
                     direction: Optional[list] = None,
                     spacing: Optional[list] = None,
                     origin: Optional[list] = None,
                     remove_index: int = None,
-                    slice_index: int = None):
+                    slice_index: int = None,
+                    img: Optional[Image]=None,
+                    ):
         """
-
-        :param input_sample:
-        :param org_sitk_img:
-        :param save_path:
+        :param input_array:
+        :param img:
+        :param filepath:
         :param time_array_index: This is for 4D data
         :param direction:
         :param spacing: if provided will be used in the save
@@ -142,21 +150,21 @@ class SITKUtils(MainMedUtils):
         :return:
         """
         slices = []
-        if len(input_sample.shape) == 4:
-            for t in range(input_sample.shape[time_array_index]):
-                sample_sitk = sitk.GetImageFromArray(input_sample[..., t] if time_array_index else input_sample[t],
+        if len(input_array.shape) == 4:
+            for t in range(input_array.shape[time_array_index]):
+                sample_sitk = sitk.GetImageFromArray(input_array[..., t] if time_array_index else input_array[t],
                                                      False)
                 slices.append(sample_sitk)
             sample_sitk = sitk.JoinSeries(slices)
-            if org_sitk_img is None:
-                org_sitk_img = sample_sitk
+            if img is None:
+                img = sample_sitk
 
             if origin is None:
-                org_origin = org_sitk_img.GetOrigin()
+                org_origin = img.GetOrigin()
                 sample_sitk.SetOrigin((*org_origin, 1.0) if len(org_origin) == 3 else org_origin)
             else:
                 sample_sitk.SetOrigin(tuple(origin))
-            org_spacing = org_sitk_img.GetSpacing()
+            org_spacing = img.GetSpacing()
             if len(org_spacing) == 5:
                 if remove_index is None:
                     raise ValueError("remove index should be provided for 5 samples")
@@ -169,7 +177,7 @@ class SITKUtils(MainMedUtils):
                 sample_sitk.SetSpacing(spacing)
             else:
                 sample_sitk.SetSpacing(org_spacing)
-            org_direction = np.array(org_sitk_img.GetDirection())
+            org_direction = np.array(img.GetDirection())
             if org_direction.size == 9:
                 org_direction = org_direction.reshape(3, 3)
                 org_direction = np.pad(org_direction, [(0, 1), (0, 1)], mode='constant', constant_values=1).flatten()
@@ -185,14 +193,14 @@ class SITKUtils(MainMedUtils):
                 sample_sitk.SetDirection(org_direction)
             except:
                 print("[WARNING] Couldn't set the direction. Skipping....")
-        elif len(input_sample.shape) == 3:
-            sample_sitk = sitk.GetImageFromArray(input_sample, False)
-            if org_sitk_img is None:
-                org_sitk_img = sample_sitk
+        elif len(input_array.shape) == 3:
+            sample_sitk = sitk.GetImageFromArray(input_array, False)
+            if img is None:
+                img = sample_sitk
             if spacing is not None:
                 sample_sitk.SetSpacing(spacing)
             else:
-                spacing = list(org_sitk_img.GetSpacing())
+                spacing = list(img.GetSpacing())
                 if remove_index is not None and len(spacing) > 3:
                     del spacing[remove_index]
                 if slice_index is not None and len(spacing) > 3:
@@ -203,7 +211,7 @@ class SITKUtils(MainMedUtils):
             if direction is not None:
                 sample_sitk.SetDirection(np.array(direction).flatten())
             else:
-                org_flat_direction = np.array(org_sitk_img.GetDirection())
+                org_flat_direction = np.array(img.GetDirection())
                 direction_size = int(math.sqrt(len(org_flat_direction)))
                 original_direction = org_flat_direction.reshape(direction_size, direction_size)
                 if remove_index is not None and direction_size > 3:
@@ -219,7 +227,7 @@ class SITKUtils(MainMedUtils):
             if origin is not None:
                 sample_sitk.SetOrigin(tuple(origin))
             else:
-                original_origin = list(org_sitk_img.GetOrigin())
+                original_origin = list(img.GetOrigin())
                 org_size = len(original_origin)
                 if remove_index is not None and org_size > 3:
                     del original_origin[remove_index]
@@ -230,7 +238,7 @@ class SITKUtils(MainMedUtils):
                 sample_sitk.SetOrigin(original_origin)
         else:
             raise ValueError("Len input shape should be four or three, five is not supported yet")
-        sitk.WriteImage(sample_sitk, save_path)
+        sitk.WriteImage(sample_sitk, filepath)
 
     @staticmethod
     def update_file(file_path: str, target_path: Optional[str] = None,
@@ -250,7 +258,7 @@ class SITKUtils(MainMedUtils):
         spacing[2] = spacing_z or spacing[2]
         if len(spacing) > 3:
             spacing[3] = spacing_t or spacing[3]
-        SITKUtils.save_sample(array, img, spacing=spacing, save_path=target_path)
+        SITKUtils.save_sample(input_array=array, img=img, spacing=spacing, filepath=target_path)
 
     @staticmethod
     def get_largest_size(*files, mood: str = "monai"):
