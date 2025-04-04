@@ -9,7 +9,11 @@ from deep_utils.medical.main_utils import MainMedUtils
 
 class SITKUtils(MainMedUtils):
     @staticmethod
-    def get_largest_component_per_label(input_img: Image):
+    def get_largest_component_per_label(input_img: Image, input_array: np.ndarray= None, get_array: bool = False) -> Image | np.ndarray:
+        if input_array is not None:
+            arr_img = sitk.GetImageFromArray(input_array)
+            arr_img.CopyInformation(input_img)
+            input_img = arr_img
         unique_labels = sitk.GetArrayViewFromImage(input_img).astype(int)
         unique_labels = set(unique_labels.flatten()) - {0}  # Exclude background (label 0)
 
@@ -37,13 +41,17 @@ class SITKUtils(MainMedUtils):
             # Assign the label back to the output image
             output = sitk.Mask(output, sitk.Not(largest_component))  # Keep previous labels
             output += sitk.Cast(largest_component, input_img.GetPixelID()) * label  # Set the correct label
-
-        return output
+        if get_array:
+            arr = sitk.GetArrayFromImage(output)
+            return arr
+        else:
+            return output
 
     @staticmethod
     def get_orientation_str(direction):
         orientation = sitk.DICOMOrientImageFilter().GetOrientationFromDirectionCosines(direction)
         return orientation
+
     @staticmethod
     def get_largets_box(array: np.ndarray, get_info: bool = False):
         if get_info:
@@ -52,6 +60,7 @@ class SITKUtils(MainMedUtils):
             return arr, info
         else:
             return MainMedUtils.get_largets_box(array, get_info)
+
     @staticmethod
     def get_largest_box_and_crop(array: np.ndarray, expand: int = 0, get_info: bool = False):
 
@@ -167,7 +176,7 @@ class SITKUtils(MainMedUtils):
                     origin: Optional[list] = None,
                     remove_index: int = None,
                     slice_index: int = None,
-                    img: Optional[Image]=None,
+                    img: Optional[Image] = None,
                     ):
         """
         :param input_array:
