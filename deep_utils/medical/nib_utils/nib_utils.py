@@ -12,9 +12,9 @@ class NIBUtils(MainMedUtils):
     @staticmethod
     def get_largets_box(array: np.ndarray, get_info: bool = False):
         if get_info:
-            arr, info = MainMedUtils.get_largets_box(array, get_info)
+            info = MainMedUtils.get_largets_box(array, get_info)
             info['class'] = "nib"
-            return arr, info
+            return info
         else:
             return MainMedUtils.get_largets_box(array, get_info)
 
