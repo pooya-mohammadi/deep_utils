@@ -678,8 +678,8 @@ class DirUtils:
             directory = "./" if directory == "." else directory
             for root, dirs, files in os.walk(directory):
                 for dir_name in dirs:
-                    current_dir_path = join(directory, root.replace(directory, ''), dir_name)
-                    relative_current_dir_path = join(root.replace(directory, ''), dir_name)
+                    current_dir_path = join(directory, root.replace(directory, '').lstrip("//"), dir_name.lstrip("//"))
+                    relative_current_dir_path = join(root.replace(directory, ''), dir_name.lstrip("//"))
                     current_depth = len(relative_current_dir_path.strip("/").split("/"))
                     if exact_depth:
                         if current_depth == dir_depth:
@@ -961,5 +961,32 @@ class DirUtils:
         output = process.communicate()[0]
         return output.decode()
 
+    def split(path: str, depth: int = 1):
+        """
+
+        :param depth:
+        :return:
+        >>> DirUtils.split("/pooya/ali/saeed/wow.txt", 3)
+        'ali'
+        >>> DirUtils.split("/pooya/ali/saeed/wow.txt", 2)
+        'saeed'
+        >>> DirUtils.split("/pooya/ali/saeed/wow.txt", 1)
+        'wow.txt'
+        """
+        if depth == 1:
+            import warnings
+            warnings.warn("Use os.path.split(path)[-1] for depth=1 :)")
+            return split(path)[-1]
+        elif depth < 1:
+            raise ValueError("depth should not be lower than 1")
+        else:
+            p = path
+            for item in range(depth - 1):
+                p = split(p)[0]
+            return split(p)[-1]
+
 
 mkdir_incremental = DirUtils.mkdir_incremental
+
+if __name__ == '__main__':
+    print() #
