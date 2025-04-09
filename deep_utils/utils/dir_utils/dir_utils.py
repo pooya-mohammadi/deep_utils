@@ -961,10 +961,19 @@ class DirUtils:
         output = process.communicate()[0]
         return output.decode()
 
-    def split(path: str, depth: int = 1):
+    @staticmethod
+    def is_windows():
+        if os.name != "posix":
+            return True
+        else:
+            return False
+
+    def split(path: str, depth: int = 1, continuous: bool = False):
         """
 
+        :param path:
         :param depth:
+        :param continuous:
         :return:
         >>> DirUtils.split("/pooya/ali/saeed/wow.txt", 3)
         'ali'
@@ -972,6 +981,10 @@ class DirUtils:
         'saeed'
         >>> DirUtils.split("/pooya/ali/saeed/wow.txt", 1)
         'wow.txt'
+        >>> DirUtils.split("/pooya/ali/saeed/wow.txt", 2, continuous=True)
+        'saeed/wow.txt'
+        >>> DirUtils.split("/pooya/ali/saeed", 2, continuous=True)
+        'ali/saeed'
         """
         if depth == 1:
             import warnings
@@ -980,10 +993,19 @@ class DirUtils:
         elif depth < 1:
             raise ValueError("depth should not be lower than 1")
         else:
-            p = path
-            for item in range(depth - 1):
-                p = split(p)[0]
-            return split(p)[-1]
+            if not continuous:
+                p = path
+                for _ in range(depth - 1):
+                    p = split(p)[0]
+
+                output = split(p)[-1]
+            else:
+                outputs = []
+                for _ in range(depth):
+                    path, p = split(path)
+                    outputs.insert(0, p)
+                output = os.path.join(*outputs)
+            return output
 
 
 mkdir_incremental = DirUtils.mkdir_incremental
