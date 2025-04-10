@@ -646,6 +646,7 @@ class DirUtils:
                            dir_depth: int = -1,
                            exact_depth: bool = False,
                            return_dict: bool = False,
+                           ends_with:Optional[Union[str, List[str]]] = None,
                            ) -> Union[List[str], Dict[str, str]]:
         """
         Returns the full path objects in a directory
@@ -662,12 +663,14 @@ class DirUtils:
         Only works when only_directories is set to True.
         :param exact_depth: If set True, the exact depth should be matched and smaller ones are not accepted!
         :param return_dict: If return_dict is set to True, the output will be a dict like the following: {filename: filepath}
+        :param ends_with: If ends with these items they will be accepted
         :return:
         """
         interest_extensions = interest_extensions or []
         interest_extensions = [interest_extensions] if isinstance(interest_extensions, str) else interest_extensions
         interest_extensions = [f".{ext}" if not ext.startswith(".") else ext for ext in
                                interest_extensions]
+
         output = []
         if not os.path.exists(directory):
             if not_exists_is_ok:
@@ -678,6 +681,8 @@ class DirUtils:
             directory = "./" if directory == "." else directory
             for root, dirs, files in os.walk(directory):
                 for dir_name in dirs:
+                    if not DirUtils.endswith(dir_name, ends_with):
+                        continue
                     current_dir_path = join(directory, root.replace(directory, '').lstrip("//"), dir_name.lstrip("//"))
                     relative_current_dir_path = join(root.replace(directory, ''), dir_name.lstrip("//"))
                     current_depth = len(relative_current_dir_path.strip("/").split("/"))
@@ -690,6 +695,8 @@ class DirUtils:
             output = sorted(output) if sort else output
         else:
             for filename in sorted(os.listdir(directory)) if sort else os.listdir(directory):
+                if not DirUtils.endswith(filename, ends_with):
+                    continue
                 file_path = join(directory, filename)
                 if not only_directories:
                     if filter_directories and os.path.isdir(file_path):
@@ -866,7 +873,7 @@ class DirUtils:
     @staticmethod
     def endswith(filepath: str, ext: list[str] | str):
         """
-        Checks whether a file ends with a list of strings!
+        Checks whether a file ends with a list of strings! If ext is None it will return True!
         :param filepath:
         :param ext:
         :return:
@@ -876,9 +883,12 @@ class DirUtils:
                 if filepath.endswith(ext_):
                     return True
             return False
-        else:
+        elif isinstance(ext, str):
             return filepath.endswith(ext)
-
+        elif ext is None:
+            return True
+        else:
+            raise ValueError(f"ext: {ext} is not supported!")
     @staticmethod
     def file_incremental(file_path: str | None, artifact_type="prefix", artifact_value=0, extra_punctuation="_",
                          add_artifact_value=False, dir_items: list[str] | None = None):
@@ -985,8 +995,18 @@ class DirUtils:
         'saeed/wow.txt'
         >>> DirUtils.split("/pooya/ali/saeed", 2, continuous=True)
         'ali/saeed'
+        >>> DirUtils.split("/pooya/ali/saeed", 0)
+        ['pooya', 'ali', 'saeed']
         """
-        if depth == 1:
+        if depth == 0:
+            outputs = []
+            while path:
+                path, p = split(path)
+                if not p:
+                    break
+                outputs.insert(0, p)
+            return outputs
+        elif depth == 1:
             import warnings
             warnings.warn("Use os.path.split(path)[-1] for depth=1 :)")
             return split(path)[-1]
