@@ -978,7 +978,7 @@ class DirUtils:
         else:
             return False
 
-    def split(path: str, depth: int = 1, continuous: bool = False):
+    def split(path: str, depth: int = 1, continuous: bool = False, list_it: bool = False):
         """
 
         :param path:
@@ -995,6 +995,8 @@ class DirUtils:
         'saeed/wow.txt'
         >>> DirUtils.split("/pooya/ali/saeed", 2, continuous=True)
         'ali/saeed'
+        >>> DirUtils.split("/pooya/ali/saeed", 2, continuous=True, list_it=True)
+        ['ali', 'saeed']
         >>> DirUtils.split("/pooya/ali/saeed", 0)
         ['pooya', 'ali', 'saeed']
         """
@@ -1024,7 +1026,10 @@ class DirUtils:
                 for _ in range(depth):
                     path, p = split(path)
                     outputs.insert(0, p)
-                output = os.path.join(*outputs)
+                if list_it:
+                    output = outputs
+                else:
+                    output = os.path.join(*outputs)
             return output
 
 
