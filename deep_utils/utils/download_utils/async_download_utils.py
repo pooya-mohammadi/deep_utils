@@ -40,9 +40,9 @@ class AsyncDownloadUtils:
             filename = url.replace(remove_to_get_local_file_path, "").strip("/")
             local_filepath = os.path.join(local_dir, filename)
             os.makedirs(os.path.dirname(local_filepath), exist_ok=True)
-            task = await asyncio.create_task(AsyncDownloadUtils.download(url, local_filepath))
+            task = asyncio.create_task(AsyncDownloadUtils.download(url, local_filepath))
             tasks.append(task)
-        local_files = asyncio.gather(*tasks)
+        local_files = await asyncio.gather(*tasks)
         return local_files
 
 
