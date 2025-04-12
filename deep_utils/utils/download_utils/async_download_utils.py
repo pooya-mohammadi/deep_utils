@@ -1,7 +1,6 @@
-import os.path
-
+import os
 import aiohttp
-
+import asyncio
 
 class AsyncDownloadUtils:
 
@@ -20,6 +19,8 @@ class AsyncDownloadUtils:
             return url
         if os.path.exists(local_filepath) and exists_ok:
             return local_filepath
+        elif os.path.exists(local_filepath) and not exists_ok:
+            raise ValueError("file exists!")
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 response.raise_for_status()
@@ -30,6 +31,19 @@ class AsyncDownloadUtils:
                             break
                         file.write(chunk)
         return local_filepath
+
+    @staticmethod
+    async def download_urls(urls: list[str], local_dir: str, remove_to_get_local_file_path: str = None):
+        os.makedirs(local_dir, exist_ok=True)
+        tasks = []
+        for url in urls:
+            filename = url.replace(remove_to_get_local_file_path, "").strip("/")
+            local_filepath = os.path.join(local_dir, filename)
+            os.makedirs(os.path.dirname(local_filepath), exist_ok=True)
+            task = await asyncio.create_task(AsyncDownloadUtils.download(url, local_filepath))
+            tasks.append(task)
+        local_files = asyncio.gather(*tasks)
+        return local_files
 
 
 if __name__ == '__main__':
