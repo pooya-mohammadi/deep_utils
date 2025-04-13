@@ -12,7 +12,10 @@ from deep_utils.vision.color_recognition.cnn_color.torch.color_cnn_torch import 
 class ColorRecognitionCNNTorchPrediction:
     def __init__(self, model_path, device='cpu'):
         self.device = device
-        state_dict = torch.load(model_path, map_location=self.device)
+        if torch.__version__ >= "2.6.0":
+            state_dict = torch.load(model_path, map_location=self.device, weights_only=False)
+        else:
+            state_dict = torch.load(model_path, map_location=self.device)
         self.model = ColorRecognitionCNNTorch(n_classes=state_dict['n_classes'],
                                               in_channel=state_dict.get('in_channel', 3))
         self.model.to(self.device)
