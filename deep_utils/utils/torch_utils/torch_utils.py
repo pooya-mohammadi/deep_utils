@@ -7,8 +7,10 @@ from torch import nn
 class TorchUtils:
     @staticmethod
     def save_config_to_weight(weight_path, config, logger=None, verbose=1, **kwargs):
-
-        best_weight = torch.load(weight_path)
+        if torch.__version__ >= "2.6.0":
+            best_weight = torch.load(weight_path, weights_only=False)
+        else:
+            best_weight = torch.load(weight_path)
         for k, v in get_obj_variables(config).items():
             if k not in best_weight:
                 best_weight[k] = v
