@@ -1,6 +1,8 @@
 import os
+os.environ['CURL_CA_BUNDLE'] = ''
 import aiohttp
 import asyncio
+
 
 class AsyncDownloadUtils:
 
@@ -33,7 +35,8 @@ class AsyncDownloadUtils:
         return local_filepath
 
     @staticmethod
-    async def download_urls(urls: list[str], local_dir: str, remove_to_get_local_file_path: str = None):
+    async def download_urls(urls: list[str], local_dir: str, remove_to_get_local_file_path: str = None,
+                            async_tasks: int = None):
         os.makedirs(local_dir, exist_ok=True)
         tasks = []
         for url in urls:
@@ -42,7 +45,15 @@ class AsyncDownloadUtils:
             os.makedirs(os.path.dirname(local_filepath), exist_ok=True)
             task = asyncio.create_task(AsyncDownloadUtils.download(url, local_filepath))
             tasks.append(task)
-        local_files = await asyncio.gather(*tasks)
+        if async_tasks is not None:
+            local_files = []
+            for i in range(0, len(tasks) // async_tasks):
+                _tasks = tasks[i * async_tasks: (i + 1) * async_tasks]
+                print(f"working on {len(_tasks)}")
+                files = await asyncio.gather(*_tasks)
+                local_files.extend(files)
+        else:
+            local_files = await asyncio.gather(*tasks)
         return local_files
 
 

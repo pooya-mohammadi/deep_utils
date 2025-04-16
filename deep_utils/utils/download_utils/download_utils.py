@@ -90,7 +90,13 @@ class DownloadUtils:
                 os.remove(temp_download_des)
             raise Exception(error_msg.format(url))
         return download_des
-
+    def download_urls(dl_urls: list[str], download_path: str, remove_to_get_local_file_path: str = None):
+        for url in dl_urls:
+            if remove_to_get_local_file_path:
+                filename = url.replace(remove_to_get_local_file_path, "").strip("/")
+            local_filepath = os.path.join(download_path, filename)
+            os.makedirs(os.path.dirname(local_filepath), exist_ok=True)
+            DownloadUtils.download_file(url, os.path.dirname(local_filepath), filename=split(filename)[-1].replace('"', "").replace(";", ""), exists_skip=True)
 
 if __name__ == '__main__':
     image_download_path = "https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden.jpg"
