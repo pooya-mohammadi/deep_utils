@@ -49,7 +49,7 @@ class NIBUtils(MainMedUtils):
         if img:
             affine = img.affine
             header = img.header
-        clipped_img = nib.Nifti1Image(sitk_img, affine, header)
+        clipped_img = nib.Nifti1Image(input_array, affine, header)
         nib.save(clipped_img, filepath)
     @staticmethod
     def update_origin_of_cropped_image(origin, spacing, min_coordinates):
