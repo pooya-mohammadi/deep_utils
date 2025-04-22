@@ -2,12 +2,12 @@ import os
 os.environ['CURL_CA_BUNDLE'] = ''
 import aiohttp
 import asyncio
-
+from os.path import join, split
 
 class AsyncDownloadUtils:
 
     @staticmethod
-    async def download(url: str, local_filepath: str, chunk_size: int = 69 * 1024, exists_ok=True) -> str:
+    async def download(url: str, local_filepath: str =None, chunk_size: int = 69 * 1024, exists_ok=True, session = None, directory_path: str=None) -> str:
         """
         Download a file from a URL in an asynchronous manner into the input local filepath.
         If url is a local file, return url.
@@ -17,21 +17,34 @@ class AsyncDownloadUtils:
         :param exists_ok: if True, do not download if the file already exists.
         :return:
         """
+        async def _write(local_filepath):
+            response.raise_for_status()
+            with open(local_filepath, 'wb') as file:
+                while True:
+                    chunk = await response.content.read(chunk_size)
+                    if not chunk:
+                        break
+                    file.write(chunk)
+
         if os.path.exists(url):
             return url
-        if os.path.exists(local_filepath) and exists_ok:
+
+        if local_filepath is None and directory_path is not None:
+            os.makedirs(directory_path, exist_ok=True)
+            local_filepath = join(directory_path, split(url)[-1])
+
+        if local_filepath is not None and os.path.exists(local_filepath) and exists_ok:
             return local_filepath
-        elif os.path.exists(local_filepath) and not exists_ok:
+        elif local_filepath is not None and os.path.exists(local_filepath) and not exists_ok:
             raise ValueError("file exists!")
-        async with aiohttp.ClientSession() as session:
+
+        if session is None:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url) as response:
+                    await _write(local_filepath)
+        else:
             async with session.get(url) as response:
-                response.raise_for_status()
-                with open(local_filepath, 'wb') as file:
-                    while True:
-                        chunk = await response.content.read(chunk_size)
-                        if not chunk:
-                            break
-                        file.write(chunk)
+                await _write(local_filepath)
         return local_filepath
 
     @staticmethod

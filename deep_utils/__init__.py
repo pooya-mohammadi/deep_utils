@@ -38,6 +38,7 @@ _import_structure = {
     "utils.encodes.b64": ["BinaryUtils"],
     "nlp.utils.persian.utils": ["PersianUtils"],
     "utils.dataclass_parser.dataclass_argparser": ["DataClassArgParser"],
+    "utils.prompt_utils.prompt_utils": ["PromptUtils"],
 
     DUMMY_PATH: [],  # this is required for dummy check!
 }
@@ -151,6 +152,7 @@ if TYPE_CHECKING:
     from .utils.decord_utils.decord_utils import DecordUtils
     from .utils.dataclass_parser.dataclass_argparser import DataClassArgParser
     from .utils.coco_utils.main import COCOUtils
+    from .utils.prompt_utils.prompt_utils import PromptUtils
 else:
     import sys
 
