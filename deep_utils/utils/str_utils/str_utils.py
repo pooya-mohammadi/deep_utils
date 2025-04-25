@@ -1,4 +1,4 @@
-from typing import Union, List
+from typing import List
 
 
 class StringUtils:
@@ -26,7 +26,7 @@ class StringUtils:
         return input_str
 
     @staticmethod
-    def right_replace(input_str: str, replace: str, replace_with: str,count:int = -1):
+    def right_replace(input_str: str, replace: str, replace_with: str, count: int = 1):
         reverse_input_str = input_str[::-1]
         reverse_replace = replace[::-1]
         reverse_replace_with = replace_with[::-1]
