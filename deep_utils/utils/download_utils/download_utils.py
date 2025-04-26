@@ -22,7 +22,7 @@ class DownloadUtils:
     def download_file(
             url,
             download_dir=".",
-            file_name=None,
+            filename=None,
             remove_download=False,
             exists_skip=False,
     ):
@@ -30,7 +30,7 @@ class DownloadUtils:
         Download a file from url
         :param url:
         :param download_dir:
-        :param file_name:
+        :param filename:
         :param remove_download:
         :param exists_skip: If True, skip download if file exists
         :return:
@@ -50,16 +50,16 @@ class DownloadUtils:
                 response = requests.get(url, stream=True)
                 total = response.headers.get("content-length")
             try:
-                if file_name is None:
-                    file_name = response.headers.get("filename")
-                    if file_name is None:
-                        file_name = response.headers.get("content-disposition").split("=")[
+                if filename is None:
+                    filename = response.headers.get("filename")
+                    if filename is None:
+                        filename = response.headers.get("content-disposition").split("=")[
                             -1
                         ]
             except:
-                file_name = os.path.split(url)[-1]
+                filename = os.path.split(url)[-1]
 
-            download_des = os.path.join(download_dir, file_name)
+            download_des = os.path.join(download_dir, filename)
             temp_download_des = download_des + ".tmp"
             if exists_skip and os.path.isfile(download_des):
                 return download_des
@@ -76,7 +76,7 @@ class DownloadUtils:
                         f.write(data)
                         done = int(50 * downloaded / total)
                         sys.stdout.write("\rDownloading {}: {}% [{}{}]"
-                                         .format(file_name, round((downloaded * 100 / total), 2), "█" * done,
+                                         .format(filename, round((downloaded * 100 / total), 2), "█" * done,
                                                  "." * (50 - done)))
                         sys.stdout.flush()
             sys.stdout.write("\n")
@@ -90,6 +90,7 @@ class DownloadUtils:
                 os.remove(temp_download_des)
             raise Exception(error_msg.format(url))
         return download_des
+
     def download_urls(dl_urls: list[str], download_path: str, remove_to_get_local_file_path: str = None):
         for url in dl_urls:
             if remove_to_get_local_file_path:
