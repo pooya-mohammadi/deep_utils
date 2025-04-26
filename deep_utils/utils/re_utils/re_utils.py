@@ -131,7 +131,25 @@ class REUtils:
         return re.sub(pattern, lambda m: chars_to_map[m.group()], str(text))
 
 
+    @staticmethod
+    def find_digit_pattern(patten:str="string_{d}", string: str=""):
+        """
+
+        :param string:
+        :param patten:
+        :return:
+        >>> REUtils.find_digit_pattern("Season_\d", " 001_Emily_in_Paris _Season_4_Episode_7_Juliens_Printed_Tulle_Blazer_right.jpg")
+        'Season_4'
+        """
+
+        find = re.search(patten, string)
+        if find:
+            return find.group()
+
+
 if __name__ == "__main__":
     str_ = "s12"
     output = REUtils.split_char_number(str_)
     print(output)
+    print()
+

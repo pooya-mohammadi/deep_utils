@@ -1,3 +1,4 @@
+from typing import Union
 from typing import List
 
 
@@ -26,9 +27,13 @@ class StringUtils:
         return input_str
 
     @staticmethod
-    def right_replace(input_str: str, replace: str, replace_with: str, count: int = 1):
+    def right_replace(input_str: str, replace: Union[str, list[str]], replace_with: str, count: int = 1):
+        replace_list = [replace] if isinstance(replace, str) else replace
         reverse_input_str = input_str[::-1]
-        reverse_replace = replace[::-1]
         reverse_replace_with = replace_with[::-1]
-        reverse_input_str = reverse_input_str.replace(reverse_replace, reverse_replace_with, count)
+        for replace in replace_list:
+            reverse_replace = replace[::-1]
+            reverse_input_str = reverse_input_str.replace(reverse_replace,
+                                                          reverse_replace_with,
+                                                          count)
         return reverse_input_str[::-1]
