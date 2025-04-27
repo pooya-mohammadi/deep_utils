@@ -105,3 +105,8 @@ class DecordUtils:
             return output, vr
         del vr
         return output
+
+
+if __name__ == '__main__':
+    fps = DecordUtils.get_fps("https://filmeditor.io/thumbnails/saeed-video/InformativeShortFormAnimation_DEAR.mp4")
+    print("fps: ", fps)

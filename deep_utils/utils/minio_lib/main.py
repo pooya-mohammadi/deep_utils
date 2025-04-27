@@ -7,7 +7,7 @@ from os.path import split
 
 class MinIOUtils:
     @staticmethod
-    def get_client(endpoint, access_key, secret_key, secure: bool = True):
+    def get_client(endpoint, access_key, secret_key, secure: bool = True) -> minio.Minio:
         client = minio.Minio(endpoint, access_key, secret_key, secure=secure)
         return client
 
