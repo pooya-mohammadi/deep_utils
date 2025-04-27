@@ -1,6 +1,6 @@
 import setuptools
 
-VERSION = "1.4.7"
+VERSION = "1.4.8"
 
 long_description = open("Readme.md", mode="r", encoding="utf-8").read()
 

@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.4.7"
+__version__ = "1.4.8"
 
 from .utils.constants import DUMMY_PATH, Backends
 
@@ -39,6 +39,7 @@ _import_structure = {
     "nlp.utils.persian.utils": ["PersianUtils"],
     "utils.dataclass_parser.dataclass_argparser": ["DataClassArgParser"],
     "utils.prompt_utils.prompt_utils": ["PromptUtils"],
+    "utils.ff_utils.ffprobe_utils": ["FFProbeUtils"],
 
     DUMMY_PATH: [],  # this is required for dummy check!
 }
@@ -155,6 +156,7 @@ if TYPE_CHECKING:
     from .utils.coco_utils.main import COCOUtils
     from .utils.prompt_utils.prompt_utils import PromptUtils
     from .utils.boto3_utils.boto3_utils import Boto3Utils
+    from .utils.ff_utils.ffprobe_utils import FFProbeUtils
 else:
     import sys
 
