@@ -173,3 +173,7 @@ class AsyncDownloadUtils(metaclass=DummyObject):
 
 class DecordUtils(metaclass=DummyObject):
     _backend = [Backends.DECORD]
+
+
+class Boto3Utils(metaclass=DummyObject):
+    _backend = [Backends.BOTO3]

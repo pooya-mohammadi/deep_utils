@@ -11,6 +11,7 @@ class Backends(str, Enum):
     for importing, for example if you set PILLOW the value must be `PIL` not `pillow`, `pil`, etc.
     """
     MINIO = "minio"
+    BOTO3 = "boto3"
     NUMPY = "numpy"
     TORCH = "torch"
     TRANSFORMERS = "transformers"

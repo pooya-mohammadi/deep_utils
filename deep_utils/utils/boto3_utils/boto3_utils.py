@@ -1,19 +1,16 @@
 import logging
 import os
-import posixpath
-from os.path import exists, join, basename, dirname
-from typing import Optional, Dict, Any, Tuple
-from urllib import parse
-from urllib.parse import parse_qsl
-from urllib.parse import urlsplit
+from typing import Tuple
 
 import boto3
 
 
 class Boto3Utils:
     def __init__(self,
+
                  aws_access_key_id: str = None,
                  aws_secret_access_key: str = None,
+                 endpoint_url: str = None,
                  aws_region: str = None,
                  bucket_name: str = None,
                  credential_txt_path: str = None,
@@ -45,8 +42,8 @@ class Boto3Utils:
 
         assert aws_access_key_id, "aws_access_key_id is not provided"
         assert aws_secret_access_key, "aws_secret_access_key is not provided"
-        assert aws_region, "aws_region is not provided"
-
+        assert aws_region or endpoint_url, "aws_region or endpoint_url is not provided"
+        self.endpoint_url = endpoint_url
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
         self.region_name = aws_region
@@ -54,6 +51,37 @@ class Boto3Utils:
         self.con_s3, self.con_bucket = self.connect_s3(bucket_name)
         self.querystring_expire = querystring_expire
         self.querystring_auth = querystring_auth
+
+    def put_presigned_url(self, object_path: str, parameters=None, expire=None, bucket_name=None):
+        # Preserve the trailing slash after normalizing the path.
+        params = parameters.copy() if parameters else {}
+        if expire is None:
+            expire = 3600
+
+        params["Bucket"] = self.bucket_name if bucket_name is None else bucket_name
+        params["Key"] = object_path.lstrip("/")
+        con_bucket = self.con_bucket if self.con_bucket is not None else self._get_bucket_connection(params["Bucket"])
+
+        url = con_bucket.meta.client.generate_presigned_url(
+            "put_object", Params=params, ExpiresIn=expire
+        )
+
+        return url
+
+    def get_presigned_url(self, object_path: str, parameters=None, expire=None, bucket_name=None):
+        # Preserve the trailing slash after normalizing the path.
+        params = parameters.copy() if parameters else {}
+        if expire is None:
+            expire = 3600
+
+        params["Bucket"] = self.bucket_name if bucket_name is None else bucket_name
+        params["Key"] = object_path.lstrip("/")
+        con_bucket = self.con_bucket if self.con_bucket is not None else self._get_bucket_connection(params["Bucket"])
+
+        url = con_bucket.meta.client.generate_presigned_url(
+            "get_object", Params=params, ExpiresIn=expire
+        )
+        return url
 
     @staticmethod
     def _get_credentials_from_txt(credential_txt_path: str) -> tuple:
@@ -94,6 +122,7 @@ class Boto3Utils:
         """
         try:
             s3 = boto3.resource(
+                endpoint_url=self.endpoint_url,
                 service_name='s3',
                 region_name=self.region_name,
                 aws_access_key_id=self.aws_access_key_id,
@@ -110,6 +139,7 @@ class Boto3Utils:
 
     def get_boto_client(self):
         return boto3.client('s3',
+                            endpoint_url=self.endpoint_url,
                             region_name=self.region_name,
                             aws_access_key_id=self.aws_access_key_id,
                             aws_secret_access_key=self.aws_secret_access_key

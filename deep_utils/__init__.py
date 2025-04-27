@@ -88,6 +88,7 @@ import_lazy_module("MemoryUtilsTorch", "utils.memory_utils.torch_memory_utils")
 import_lazy_module("MinIOUtils", "utils.minio_lib.main")
 import_lazy_module("AsyncDownloadUtils", "utils.download_utils.async_download_utils")
 import_lazy_module("DecordUtils", "utils.decord_utils.decord_utils")
+import_lazy_module("Boto3Utils", "utils.boto3_utils.boto3_utils")
 
 
 if TYPE_CHECKING:
@@ -153,6 +154,7 @@ if TYPE_CHECKING:
     from .utils.dataclass_parser.dataclass_argparser import DataClassArgParser
     from .utils.coco_utils.main import COCOUtils
     from .utils.prompt_utils.prompt_utils import PromptUtils
+    from .utils.boto3_utils.boto3_utils import Boto3Utils
 else:
     import sys
 
