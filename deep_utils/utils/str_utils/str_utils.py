@@ -74,7 +74,7 @@ class StringUtils:
             colors["end"]
 
     @staticmethod
-    def print(*args, sep=' ', end='\n', file=None, color: Optional[str] = None, mode: Union[str, list] = None):
+    def print(*args, sep=' ', end='\n', file=None, color: Optional[str] = "red", mode: Union[str, list] = "bold"):
         """
         colorful print!
         :param args:
