@@ -1034,7 +1034,12 @@ class DirUtils:
 
     @staticmethod
     def get_dir_time(directory: str):
-        return {item.split(" ")[-1]: " ".join( item.split(" ")[-4: -1]) for item in DirUtils.execute_command(f"ls -l {directory}").split("\n") if item}
+        return {item.split(" ")[-1]: " ".join( item.split(" ")[-4: -1]) for item in DirUtils.execute_command(f"ls -l '{directory}'").split("\n") if item}
+
+    @staticmethod
+    def open_dir(directory: str):
+        os.system(f"nautilus '{directory}'")
+
 mkdir_incremental = DirUtils.mkdir_incremental
 
 if __name__ == '__main__':
