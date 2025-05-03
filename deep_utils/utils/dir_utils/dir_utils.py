@@ -646,7 +646,7 @@ class DirUtils:
                            dir_depth: int = -1,
                            exact_depth: bool = False,
                            return_dict: bool = False,
-                           ends_with:Optional[Union[str, List[str]]] = None,
+                           ends_with: Optional[Union[str, List[str]]] = None,
                            ) -> Union[List[str], Dict[str, str]]:
         """
         Returns the full path objects in a directory
@@ -889,6 +889,7 @@ class DirUtils:
             return True
         else:
             raise ValueError(f"ext: {ext} is not supported!")
+
     @staticmethod
     def file_incremental(file_path: str | None, artifact_type="prefix", artifact_value=0, extra_punctuation="_",
                          add_artifact_value=False, dir_items: list[str] | None = None):
@@ -1034,13 +1035,18 @@ class DirUtils:
 
     @staticmethod
     def get_dir_time(directory: str):
-        return {item.split(" ")[-1]: " ".join( item.split(" ")[-4: -1]) for item in DirUtils.execute_command(f"ls -l '{directory}'").split("\n") if item}
+        return {item.split(" ")[-1]: " ".join(item.split(" ")[-4: -1]) for item in
+                DirUtils.execute_command(f"ls -l '{directory}'").split("\n") if item}
 
     @staticmethod
     def open_dir(directory: str):
         os.system(f"nautilus '{directory}'")
 
-mkdir_incremental = DirUtils.mkdir_incremental
+    @staticmethod
+    def get_symbolink(directory: str) -> Dict[str, str]:
+        output = [item.split("->") for item in DirUtils.execute_command(f"ls -l {directory}").split("\n")[1:]]
+        output = {" ".join(item[0].strip().split(" ")[9:]).strip(): item[1].strip() for item in output if len(item) == 2}
+        return output
 
-if __name__ == '__main__':
-    print() #
+
+mkdir_incremental = DirUtils.mkdir_incremental
