@@ -126,7 +126,14 @@ class AIOHttpRequests:
         The files should have the following items:
         [{'name': variable_name, 'value': file_content, 'content_type': multipart/form-data||application/vnd.ms-excel||etc,
         }, {...}]
+        Note: make sure to do open(filepath, 'rb') instead of open(filepath) or use cv2 for images:
+        img = cv2.imread("img-path")
+        _, buffer = cv2.imencode('.jpg', img)
+        file_bytes = buffer.tobytes()
         data or files one of them should be filled!
+        Note: If you files alongside data, in your input you cannot use pydantic models since the inputs are form data and I believe pydantic checks the json data. So you should have like the following:
+        @app.post("/main")
+        def main( img_file: Annotated[bytes | None, File()] = None, message : Annotated[str, Form()] = ""):
         If you want to send a dictionary as json, set the json to True. in that case you cannot send files!
         :param url:
         :param data:
