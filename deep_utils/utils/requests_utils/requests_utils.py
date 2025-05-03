@@ -133,7 +133,7 @@ class AIOHttpRequests:
         data or files one of them should be filled!
         Note: If you files alongside data, in your input you cannot use pydantic models since the inputs are form data and I believe pydantic checks the json data. So you should have like the following:
         @app.post("/main")
-        def main( img_file: Annotated[bytes | None, File()] = None, message : Annotated[str, Form()] = ""):
+        def main( img_file: Annotated[UploadFile | None, File()] = None, message : Annotated[str, Form()] = ""):
         If you want to send a dictionary as json, set the json to True. in that case you cannot send files!
         :param url:
         :param data:
