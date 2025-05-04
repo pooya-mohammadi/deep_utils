@@ -1032,6 +1032,10 @@ class DirUtils:
                 else:
                     output = os.path.join(*outputs)
             return output
+    @staticmethod
+    def get_file_time(filepath: str):
+        item = DirUtils.execute_command(f"ls -l '{filepath}'")
+        return " ".join(item.split(" ")[-4: -1])
 
     @staticmethod
     def get_dir_time(directory: str):
