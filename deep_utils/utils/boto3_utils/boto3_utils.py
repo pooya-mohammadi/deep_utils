@@ -154,3 +154,23 @@ class Boto3Utils:
         """
         con_bucket = self._get_bucket_connection(bucket_name)
         con_bucket.upload_file(Filename=file_path, Key=file_name)
+
+
+    def download_file(self, remote_key: str, local_download_path: str, bucket_name: str = None,
+                      check_file_exists=False) -> str:
+        """
+        downloads a file from s3/minio
+        :param remote_key:
+        :param local_download_path:
+        :param check_file_exists: if True, then check if file exists in local path
+        :param bucket_name: if None, then use the default bucket.
+        :return:
+        """
+        con_bucket = self._get_bucket_connection(bucket_name)
+        if check_file_exists and os.path.exists(local_download_path):
+            return local_download_path
+        dir_name = os.path.dirname(local_download_path)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
+        con_bucket.download_file(Key=remote_key, Filename=local_download_path)
+        return local_download_path
