@@ -1053,4 +1053,15 @@ class DirUtils:
         return output
 
 
+    @staticmethod
+    def open_image(path):
+        import sys
+        import subprocess
+        imageViewerFromCommandLine = {'linux': 'xdg-open',
+                                      'win32': 'explorer',
+                                      'darwin': 'open'}[sys.platform]
+        subprocess.run([imageViewerFromCommandLine, path])
+
+
 mkdir_incremental = DirUtils.mkdir_incremental
+
