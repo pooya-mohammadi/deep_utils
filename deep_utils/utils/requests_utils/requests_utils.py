@@ -98,7 +98,6 @@ class AIOHttpRequests:
                         print("Failed to update data:", response.status)
                         print("Response text:", await response.text())
 
-
     @staticmethod
     async def _encoding(response, encoding: str | None):
         if encoding == "content":
@@ -120,7 +119,8 @@ class AIOHttpRequests:
             ssl: bool = False,
             encoding: Optional[str] = None,
             json_serialize: Callable = json.dumps,
-            json: dict = None
+            json: dict = None,
+            timeout: int = None
     ):
         """
         The files should have the following items:
@@ -157,9 +157,9 @@ class AIOHttpRequests:
                         form_data.add_field(file_obj.get("name", "file"), file_obj["value"],
                                             filename=file_obj.get("filename"),
                                             content_type=file_obj.get("content_type", 'multipart/form-data'))
-                output = await session.post(url, data=form_data, ssl=ssl)
+                output = await session.post(url, data=form_data, ssl=ssl, timeout=timeout)
             else:
-                output = await session.post(url, json=json, ssl=ssl)
+                output = await session.post(url, json=json, ssl=ssl, timeout=timeout)
             output = await AIOHttpRequests._encoding(output, encoding)
         return output
 
