@@ -979,12 +979,16 @@ class DirUtils:
         else:
             return False
 
-    def split(path: str, depth: int = 1, continuous: bool = False, list_it: bool = False):
+    def split(path: str, depth: int = 1, continuous: bool = False, list_it: bool = False,
+              join_del:str=None, return_right: bool = True):
         """
 
         :param path:
         :param depth:
         :param continuous:
+        :param list_it:
+        :param join_del:
+        :param return_right:
         :return:
         >>> DirUtils.split("/pooya/ali/saeed/wow.txt", 3)
         'ali'
@@ -998,8 +1002,12 @@ class DirUtils:
         'ali/saeed'
         >>> DirUtils.split("/pooya/ali/saeed", 2, continuous=True, list_it=True)
         ['ali', 'saeed']
+        >>> DirUtils.split("/pooya/ali/saeed", 2, continuous=True, join_del=",")
+        'ali,saeed'
         >>> DirUtils.split("/pooya/ali/saeed", 0)
         ['pooya', 'ali', 'saeed']
+        >>> DirUtils.split("/pooya/ali/saeed", depth=1, return_right=False)
+        '/pooya/ali'
         """
         if depth == 0:
             outputs = []
@@ -1010,9 +1018,15 @@ class DirUtils:
                 outputs.insert(0, p)
             return outputs
         elif depth == 1:
-            import warnings
-            warnings.warn("Use os.path.split(path)[-1] for depth=1 :)")
-            return split(path)[-1]
+            if return_right:
+                import warnings
+                warnings.warn("Use os.path.split(path)[-1] for depth=1 :)")
+
+                return split(path)[-1]
+            else:
+                import warnings
+                warnings.warn("Use os.path.split(path)[0] for depth=1 and return_right=False :)")
+                return split(path)[0]
         elif depth < 1:
             raise ValueError("depth should not be lower than 1")
         else:
@@ -1020,8 +1034,10 @@ class DirUtils:
                 p = path
                 for _ in range(depth - 1):
                     p = split(p)[0]
-
-                output = split(p)[-1]
+                if return_right:
+                    output = split(p)[-1]
+                else:
+                    output = split(p)[0]
             else:
                 outputs = []
                 for _ in range(depth):
@@ -1030,7 +1046,10 @@ class DirUtils:
                 if list_it:
                     output = outputs
                 else:
-                    output = os.path.join(*outputs)
+                    if join_del is None:
+                        output = os.path.join(*outputs)
+                    else:
+                        output = join_del.join(item for item in outputs)
             return output
     @staticmethod
     def get_file_time(filepath: str):
