@@ -137,7 +137,7 @@ class DecordUtils:
 if __name__ == '__main__':
     # fps = DecordUtils.get_fps("https://filmeditor.io/thumbnails/saeed-video/InformativeShortFormAnimation_DEAR.mp4")
     # print("fps: ", fps)
-    s_time, e_time = "00:09:20", "00:09:30"
-    DecordUtils.crop_video("/media/aicvi/11111bdb-a0c7-4342-9791-36af7eb70fc0/pooya/cloth/vivid-sister/emily/Emily_in_Paris_S04E10_1080p_WEB-DL_30nama_30NAMA.mkv",
+    s_time, e_time = "00:18:45", "00:18:55"
+    DecordUtils.crop_video("/home/aicvi/Downloads/Emily_in_Paris_S01E02_10bit_x265_1080p_WEB-DL_30nama_30NAMA.mkv",
                            s_time, e_time,
                            "demo.mp4")
