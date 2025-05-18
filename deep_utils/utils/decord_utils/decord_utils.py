@@ -1,8 +1,9 @@
+import datetime
 from typing import List, Optional, Union, Tuple
 
 import decord
 import numpy as np
-
+from deep_utils.utils.datetime_utils.datetime_utils import DateTimeUtils
 
 class DecordUtils:
 
@@ -106,7 +107,37 @@ class DecordUtils:
         del vr
         return output
 
+    @staticmethod
+    def crop_video(video_path: str, start: str, end: str, output_video_path: str):
+        """
+
+        :param video_path:
+        :param output_video_path:
+        :param start: "01:09:23"
+        :param end: "01:56:00"
+        :return:
+        """
+        from deep_utils.utils.opencv_utils.opencv_utils import VideoWriterCV
+        from deep_utils.utils.ff_utils.ffprobe_utils import FFProbeUtils
+
+        with open(video_path, mode="rb") as f:
+            vr = decord.VideoReader(f)  # noqa
+        width, height, fps = FFProbeUtils.get_width_height_fps(video_path)
+        start_frame = round(DateTimeUtils.parse_time_str(start) * fps)
+        end_frame =  round(DateTimeUtils.parse_time_str(end) * fps)
+        frames = DecordUtils.read_video_indices(list(range(start_frame, end_frame)), vr = vr)
+        vw = VideoWriterCV(output_video_path, height, width, 'mp4v', fps=fps, colorful=True)
+        for frame in frames:
+            vw.write(frame[..., ::-1])
+        vw.release()
+
+
+
 
 if __name__ == '__main__':
-    fps = DecordUtils.get_fps("https://filmeditor.io/thumbnails/saeed-video/InformativeShortFormAnimation_DEAR.mp4")
-    print("fps: ", fps)
+    # fps = DecordUtils.get_fps("https://filmeditor.io/thumbnails/saeed-video/InformativeShortFormAnimation_DEAR.mp4")
+    # print("fps: ", fps)
+    s_time, e_time = "00:09:20", "00:09:30"
+    DecordUtils.crop_video("/media/aicvi/11111bdb-a0c7-4342-9791-36af7eb70fc0/pooya/cloth/vivid-sister/emily/Emily_in_Paris_S04E10_1080p_WEB-DL_30nama_30NAMA.mkv",
+                           s_time, e_time,
+                           "demo.mp4")

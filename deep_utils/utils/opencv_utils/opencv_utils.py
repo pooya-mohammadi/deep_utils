@@ -30,6 +30,9 @@ class VideoWriterCV:
             frame = resize(frame, (self.width, self.height))
         self.vw.write(frame)
 
+    def release(self):
+        self.vw.release()
+
 
 class CVUtils:
     @staticmethod

@@ -61,7 +61,14 @@ class FFProbeUtils:
         result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if result.returncode == 0:
             footage_size = result.stdout.strip().strip(",")
-            width, height, fps = [round(float(item.strip().split("/")[0])) for item in footage_size.split(",")][:3]
+            width, height = [round(float(item)) for item in footage_size.split(",")[:2]]
+            fps_string = footage_size.split(",")[2]
+            if "/" in fps_string:
+                value, denominator = fps_string.split("/")
+                fps = float(value)/float(denominator)
+            else:
+                fps = round(fps_string)
+            fps = round(fps)
             return width, height, fps
         else:
             raise ValueError(f"dl_url: {dl_url} not working")
