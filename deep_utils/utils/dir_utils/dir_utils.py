@@ -1,6 +1,6 @@
 import os
 import shutil
-from os.path import join, split
+from os.path import join, split, exists
 from pathlib import Path
 from typing import Dict, List, Tuple, Union, Optional
 
@@ -980,7 +980,7 @@ class DirUtils:
             return False
 
     def split(path: str, depth: int = 1, continuous: bool = False, list_it: bool = False,
-              join_del:str=None, return_right: bool = True):
+              join_del: str = None, return_right: bool = True):
         """
 
         :param path:
@@ -1051,6 +1051,7 @@ class DirUtils:
                     else:
                         output = join_del.join(item for item in outputs)
             return output
+
     @staticmethod
     def get_file_time(filepath: str):
         item = DirUtils.execute_command(f"ls -l '{filepath}'")
@@ -1068,9 +1069,9 @@ class DirUtils:
     @staticmethod
     def get_symbolink(directory: str) -> Dict[str, str]:
         output = [item.split("->") for item in DirUtils.execute_command(f"ls -l {directory}").split("\n")[1:]]
-        output = {" ".join(item[0].strip().split(" ")[9:]).strip(): item[1].strip() for item in output if len(item) == 2}
+        output = {" ".join(item[0].strip().split(" ")[9:]).strip(): item[1].strip() for item in output if
+                  len(item) == 2}
         return output
-
 
     @staticmethod
     def open_image(path):
@@ -1081,6 +1082,131 @@ class DirUtils:
                                       'darwin': 'open'}[sys.platform]
         subprocess.run([imageViewerFromCommandLine, path])
 
+    @staticmethod
+    def remove_empty_dirs(directory: str, verbose: bool = True):
+        from tqdm import tqdm
+        if os.path.exists(directory):
+            all_dirs = os.walk(directory)
+            pbar = tqdm(all_dirs, total=len(all_dirs))
+            for root, dirs, filenames in pbar:
+                for dir_ in dirs:
+                    try:
+                        os.remove(dir_)
+                    except:
+                        if verbose:
+                            print(f"[Warning] {dir_} is not empty")
+                pbar.update()
 
+    @staticmethod
+    def is_empty(directory: str):
+        if exists(directory):
+            for root, dirs, filenames in os.walk(directory):
+                for _ in dirs:
+                    return False
+                for _ in filenames:
+                    return False
+        return True
+
+    @staticmethod
+    def safe_item_move(base_directory: str, target_directory: str, remove_if_sizes_are_the_same: bool = True, keep_the_largest_if_sizes_are_not_the_same: bool = True, remove_base_empty_dir: bool = True, verbose: bool = True):
+        """
+        This only works for items not directories
+        :param base_directory:
+        :param target_directory:
+        :param remove_base_empty_dir:
+        :param verbose:
+        :param remove_if_sizes_are_the_same:
+        :return:
+        """
+        from tqdm import tqdm
+        all_items = list(os.listdir(base_directory))
+        for base_item_name in tqdm(all_items, total=len(all_items), desc=f"Items: {base_directory} --> {target_directory}"):
+            target_item_path = join(target_directory, base_item_name)
+            base_item_path = join(base_directory, base_item_name)
+            if not exists(target_item_path):
+                shutil.move(base_item_path, target_item_path)
+            else:
+                # check the sizes
+                base_size = os.path.getsize(base_item_path)
+                target_size = os.path.getsize(target_item_path)
+                if target_size == base_size and remove_if_sizes_are_the_same:
+                    os.remove(base_item_path)
+                elif target_size >= base_size and keep_the_largest_if_sizes_are_not_the_same:
+                    os.remove(base_item_path)
+                elif target_size < base_size and keep_the_largest_if_sizes_are_not_the_same:
+                    shutil.move(base_item_path, target_item_path)
+                else:
+                    if verbose:
+                        print(f"[WARNING] {base_item_path} with size: {base_size} is different from {target_item_path} with size: {target_size}")
+        if DirUtils.is_empty(base_directory) and remove_base_empty_dir:
+            os.rmdir(base_directory)
+        else:
+            if verbose:
+                print(f"There are some items/directories left in {base_directory}")
+            return False
+        return True
+
+    @staticmethod
+    def move_dir_of_dirs(base_dir: str, target_dir: str, remove_empty_base_dirs:bool=True, verbose: bool = True, endswith: str | tuple[str] = None, move_n_samples: int = None, n_jobs: int = 1):
+        """
+
+        :param base_dir:
+        :param target_dir:
+        :param remove_empty_base_dirs:
+        :param verbose:
+        :param endswith:
+        :param move_n_samples: This is only applied to the main directory not the inner ones.
+        :return:
+        """
+        from tqdm import tqdm
+
+        def shutil_move(base_directory_, target_directory_, endswith_):
+            if endswith_:
+                if base_directory_.endswith(endswith_):
+                    shutil.move(base_directory_, target_directory_)
+            else:
+                shutil.move(base_directory_, target_directory_)
+
+        def _move(base_directory_, target_dir_, endswith_):
+            if not DirUtils.is_empty(base_directory_):
+                target_directory_ = join(target_dir_, split(base_directory_)[-1])
+                if exists(target_directory_):
+                    if DirUtils.is_empty(target_directory_):
+                        os.rmdir(target_directory_)
+                        shutil_move(base_directory_, target_directory_, endswith_)
+                    else:
+                        DirUtils.move_dir_of_dirs(base_directory_,
+                                                  target_directory_,
+                                                  remove_empty_base_dirs=remove_empty_base_dirs,
+                                                  endswith=endswith,
+                                                  verbose=verbose)
+                else:
+                    shutil_move(base_directory_, target_directory_, endswith_)
+            else:
+                if remove_empty_base_dirs:
+                    os.rmdir(base_directory_)
+
+        all_base_dirs = DirUtils.list_dir_full_path(base_dir, only_directories=True)[:move_n_samples]
+        if len(all_base_dirs):
+            if n_jobs > 1:
+                from joblib import Parallel, delayed
+                list(tqdm(Parallel(return_as="generator", n_jobs=n_jobs)(delayed(_move)(base_directory, target_dir, endswith) for base_directory in all_base_dirs), total=len(all_base_dirs), desc=f"Dirs: {base_dir} --> {target_dir}"))
+            else:
+                for base_directory in tqdm(all_base_dirs, total=len(all_base_dirs), desc=f"Dirs: {base_dir} --> {target_dir}"):
+                    _move(base_directory, target_dir, endswith)
+
+            if DirUtils.is_empty(base_dir)and remove_empty_base_dirs:
+                os.rmdir(base_dir)
+            else:
+                if verbose:
+                    print(f"[INFO] There are some files(not directories) in {base_dir} preventing it from being removed!")
+        else:
+            if endswith and not base_dir.endswith(endswith):
+                return
+            fixed = DirUtils.safe_item_move(base_dir, target_dir, remove_base_empty_dir=remove_empty_base_dirs, verbose=verbose)
+            if verbose and not fixed:
+                print(f"Directory: {base_dir} and {target_dir} contain same data")
 mkdir_incremental = DirUtils.mkdir_incremental
 
+if __name__ == '__main__':
+    DirUtils.move_dir_of_dirs("/media/aicvi/Med-FM/CT/chest_12t/manifest-NLST_allCT/NLST", "/media/aicvi/Elements/chest_12t/manifest-NLST_allCT/NLST", n_jobs=10)
