@@ -1108,7 +1108,12 @@ class DirUtils:
         return True
 
     @staticmethod
-    def safe_item_move(base_directory: str, target_directory: str, remove_if_sizes_are_the_same: bool = True, keep_the_largest_if_sizes_are_not_the_same: bool = True, remove_base_empty_dir: bool = True, verbose: bool = True):
+    def safe_item_move(base_directory: str, target_directory: str, remove_if_sizes_are_the_same: bool = True,
+                       keep_the_largest_if_sizes_are_not_the_same: bool = True,
+                       remove_base_empty_dir: bool = True, verbose: bool = True,
+                       copy: bool = False, endswith: str | tuple[str] = None,
+                       not_endswith: str | tuple[str] = None,
+                       min_size: int = None):
         """
         This only works for items not directories
         :param base_directory:
@@ -1116,15 +1121,30 @@ class DirUtils:
         :param remove_base_empty_dir:
         :param verbose:
         :param remove_if_sizes_are_the_same:
+        :param min_size: this is based on megabyte
         :return:
         """
         from tqdm import tqdm
+        target_directory_created = False
+        if not exists(target_directory):
+            os.makedirs(target_directory, exist_ok=True)
+            target_directory_created = True
         all_items = list(os.listdir(base_directory))
-        for base_item_name in tqdm(all_items, total=len(all_items), desc=f"Items: {base_directory} --> {target_directory}"):
+        for base_item_name in tqdm(all_items, total=len(all_items), desc=f"Items: {base_directory} --> {target_directory}", disable=not verbose):
+            if endswith and not base_item_name.endswith(endswith):
+                continue
+            if not_endswith and base_item_name.endswith(not_endswith):
+                continue
             target_item_path = join(target_directory, base_item_name)
             base_item_path = join(base_directory, base_item_name)
+
+            if min_size: # skip if size is less than specified!
+                base_size = os.path.getsize(base_item_path) / 1024 / 1024 # MB
+                if base_size < min_size:
+                    continue
+
             if not exists(target_item_path):
-                shutil.move(base_item_path, target_item_path)
+                mv_or_copy(base_item_path, target_item_path, mode="cp" if copy else "mv")
             else:
                 # check the sizes
                 base_size = os.path.getsize(base_item_path)
@@ -1134,17 +1154,22 @@ class DirUtils:
                 elif target_size >= base_size and keep_the_largest_if_sizes_are_not_the_same:
                     os.remove(base_item_path)
                 elif target_size < base_size and keep_the_largest_if_sizes_are_not_the_same:
-                    shutil.move(base_item_path, target_item_path)
+                    mv_or_copy(base_item_path, target_item_path, mode="cp" if copy else "mv")
                 else:
                     if verbose:
                         print(f"[WARNING] {base_item_path} with size: {base_size} is different from {target_item_path} with size: {target_size}")
+        output = True
         if DirUtils.is_empty(base_directory) and remove_base_empty_dir:
             os.rmdir(base_directory)
+        elif not remove_base_empty_dir:
+            pass
         else:
             if verbose:
-                print(f"There are some items/directories left in {base_directory}")
-            return False
-        return True
+                print(f"There are some items/directories left in {base_directory}, preventing the base removal")
+            output = False
+        if target_directory_created and len(os.listdir(target_directory)) == 0:
+            os.rmdir(target_directory)
+        return output
 
     @staticmethod
     def move_dir_of_dirs(base_dir: str, target_dir: str, remove_empty_base_dirs:bool=True, verbose: bool = True, endswith: str | tuple[str] = None, move_n_samples: int = None, n_jobs: int = 1):
@@ -1181,6 +1206,7 @@ class DirUtils:
                                                   endswith=endswith,
                                                   verbose=verbose)
                 else:
+                    os.makedirs(split(target_directory_)[0], exist_ok=True)
                     shutil_move(base_directory_, target_directory_, endswith_)
             else:
                 if remove_empty_base_dirs:
@@ -1209,4 +1235,4 @@ class DirUtils:
 mkdir_incremental = DirUtils.mkdir_incremental
 
 if __name__ == '__main__':
-    DirUtils.move_dir_of_dirs("/media/aicvi/Med-FM/CT/chest_12t/manifest-NLST_allCT/NLST", "/media/aicvi/Elements/chest_12t/manifest-NLST_allCT/NLST", n_jobs=10)
+    DirUtils.move_dir_of_dirs("/media/aicvi/Med-FM/CT/chest_12t/manifest-NLST_allCT/NLST", "/media/aicvi/Elements/chest_12t/manifest-NLST_allCT/NLST", n_jobs=30)
