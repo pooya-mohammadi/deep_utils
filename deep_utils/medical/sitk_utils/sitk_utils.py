@@ -1,7 +1,7 @@
 import math
 from typing import Tuple, Union, Dict, List, Optional
 
-import SimpleITK as sitk  # noqa
+import SimpleITK as sitk  # noqa1537
 import numpy as np
 from SimpleITK import Image
 from deep_utils.medical.main_utils import MainMedUtils
@@ -9,16 +9,51 @@ from deep_utils.medical.main_utils import MainMedUtils
 
 class SITKUtils(MainMedUtils):
     @staticmethod
-    def get_largest_component_per_label(input_img: Image, input_array: np.ndarray= None, get_array: bool = False) -> Image | np.ndarray:
+    def get_components(input_img: Image, input_array: np.ndarray = None, get_array: bool = False,
+                       labels: int | tuple[int] = None) -> Image | np.ndarray:
         if input_array is not None:
             arr_img = sitk.GetImageFromArray(input_array)
             arr_img.CopyInformation(input_img)
             input_img = arr_img
-        unique_labels = sitk.GetArrayViewFromImage(input_img).astype(int)
-        unique_labels = set(unique_labels.flatten()) - {0}  # Exclude background (label 0)
+        if labels is not None:
+            labels = (labels,) if isinstance(labels, int) else labels
+            unique_labels = set(labels) - {0}
+        else:
+            unique_labels = sitk.GetArrayViewFromImage(input_img).astype(int)
+            unique_labels = set(unique_labels.flatten()) - {0}  # Exclude background (label 0)
+
+        components = []
+        for label in unique_labels:
+            # Extract binary mask for current label
+            binary_mask = sitk.BinaryThreshold(input_img, lowerThreshold=int(label), upperThreshold=int(label))
+
+            # Compute connected components
+            cc = sitk.ConnectedComponent(binary_mask)
+            components.append(cc)
+
+        if get_array:
+            arr = [sitk.GetArrayFromImage(output) for output in components]
+            return arr
+        else:
+            return components
+
+    @staticmethod
+    def get_largest_component_per_label(input_img: Image, input_array: np.ndarray = None, get_array: bool = False,
+                                        labels: int | tuple[int] = None) -> Image | np.ndarray:
+        if input_array is not None:
+            arr_img = sitk.GetImageFromArray(input_array)
+            arr_img.CopyInformation(input_img)
+            input_img = arr_img
+        if labels is not None:
+            labels = (labels,) if isinstance(labels, int) else labels
+            unique_labels = set(labels) - {0}
+        else:
+            unique_labels = sitk.GetArrayViewFromImage(input_img).astype(int)
+            unique_labels = set(unique_labels.flatten()) - {0}  # Exclude background (label 0)
 
         output = sitk.Image(input_img.GetSize(), input_img.GetPixelIDValue())
-        output.CopyInformation(input_img)  # Keep metadata
+        output.CopyInformation(input_img)
+        # Keep metadata
 
         for label in unique_labels:
             # Extract binary mask for current label
