@@ -20,3 +20,29 @@ class DateTimeUtils:
         if output == "seconds":
             x = datetime.timedelta(hours=x.hour, minutes=x.minute, seconds=x.second, microseconds=x.microsecond).total_seconds()
         return x
+
+    @staticmethod
+    def parse_str_time(time_input, input: Literal['seconds'] = "seconds"):
+        """
+        :param time_input: 10
+        :param input:
+        :return:
+        >>> DateTimeUtils.parse_str_time(12.5, input="seconds")
+        '00:00:12.500'
+        >>> DateTimeUtils.parse_str_time(12., input="seconds")
+        '00:00:12.000'
+        """
+
+
+        if input == "seconds":
+            milliseconds = int((time_input * 1e+3) % 1e+3)
+            x = str(datetime.timedelta(hours=0, minutes=0, seconds=int(time_input),
+                                   milliseconds=milliseconds))
+            if x.startswith("0:"):
+                x = "00:" + x[2:]
+            if x.endswith("000"):
+                x = x[:-3]
+            if "." not in x:
+                x = x + ".000"
+
+            return str(x)
