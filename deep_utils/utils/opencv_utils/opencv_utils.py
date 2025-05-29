@@ -85,5 +85,17 @@ class CVUtils:
                 cv2.destroyWindow(win_name)
                 raise e
 
+    @staticmethod
+    def write_video(video_path: str, frames: np.ndarray, fps:int|float, input_format: str = "rgb",
+                    output_colorful:bool=True):
+        if input_format == 'rgb':
+             height, width = frames[0].shape
+        else:
+            width, height = frames[0].shape
+
+        vw = VideoWriterCV(video_path, height, width, 'mp4v', fps=fps, colorful=output_colorful)
+        for frame in frames:
+            vw.write(frame[..., ::-1] if input_format == 'rgb' else frame)
+        vw.release()
 
 show_destroy_cv2 = CVUtils.show_destroy_cv2
