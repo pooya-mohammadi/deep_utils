@@ -1,14 +1,16 @@
-import datetime
 from typing import List, Optional, Union, Tuple
 
 import decord
 import numpy as np
+
 from deep_utils.utils.datetime_utils.datetime_utils import DateTimeUtils
+
 
 class DecordUtils:
 
     @staticmethod
-    def get_fps(video_path: Optional[str] = None, vr: Optional[decord.VideoReader] = None, round_output:bool=True) -> int | float:
+    def get_fps(video_path: Optional[str] = None, vr: Optional[decord.VideoReader] = None,
+                round_output: bool = True) -> int | float:
         """
         Get video fps using decord
         :param video_path: path to video file
@@ -91,7 +93,7 @@ class DecordUtils:
         return indices
 
     @staticmethod
-    def count_video_frames(video_path: str=None, vr=None, return_vr: bool = False) -> Union[
+    def count_video_frames(video_path: str = None, vr=None, return_vr: bool = False) -> Union[
         int, Tuple[int, decord.VideoReader]]:
         """
         Count video frames using decord
@@ -128,20 +130,25 @@ class DecordUtils:
 
         width, height, fps = FFProbeUtils.get_width_height_fps(video_path)
         start_frame = round(DateTimeUtils.parse_time_str(start) * fps)
-        end_frame =  round(DateTimeUtils.parse_time_str(end) * fps)
+        end_frame = round(DateTimeUtils.parse_time_str(end) * fps)
         frame_indices = []
         for item in list(range(start_frame, end_frame)):
             if item >= num_frames:
-                print(f"[WARNING] timing is not correct. Requesting for frame: {item} while available frames are {num_frames}")
+                print(
+                    f"[WARNING] timing is not correct. Requesting for frame: {item} while available frames are {num_frames}")
                 continue
             frame_indices.append(item)
-        frames = DecordUtils.read_video_indices(frame_indices, vr = vr)
+        frames = DecordUtils.read_video_indices(frame_indices, vr=vr)
         vw = VideoWriterCV(output_video_path, height, width, 'mp4v', fps=fps, colorful=True)
         for frame in frames:
             vw.write(frame[..., ::-1])
         vw.release()
 
-
+    @staticmethod
+    def get_all_frames(video_path: str) -> np.ndarray:
+        n_frames, vr = DecordUtils.count_video_frames(video_path, return_vr=True)
+        frames = DecordUtils.read_video_indices(list(range(n_frames)), vr=vr)
+        return frames
 
 
 if __name__ == '__main__':
@@ -151,5 +158,7 @@ if __name__ == '__main__':
     # DecordUtils.crop_video("/home/aicvi/Downloads/Emily_in_Paris_S01E02_10bit_x265_1080p_WEB-DL_30nama_30NAMA.mkv",
     #                        s_time, e_time,
     #                        "demo.mp4")
-    output = DecordUtils.get_fps("/media/aicvi/11111bdb-a0c7-4342-9791-36af7eb70fc0/pooya/cloth/vivid-sister/emily/Emily_in_Paris_S01E10_10bit_x265_1080p_WEB-DL_30nama_30NAMA.mkv", round_output=False)
+    output = DecordUtils.get_fps(
+        "/media/aicvi/11111bdb-a0c7-4342-9791-36af7eb70fc0/pooya/cloth/vivid-sister/emily/Emily_in_Paris_S01E10_10bit_x265_1080p_WEB-DL_30nama_30NAMA.mkv",
+        round_output=False)
     print(output)
