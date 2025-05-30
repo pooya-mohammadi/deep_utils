@@ -86,12 +86,12 @@ class CVUtils:
                 raise e
 
     @staticmethod
-    def write_video(video_path: str, frames: np.ndarray, fps:int|float, input_format: str = "rgb",
+    def write_video(video_path: str, frames: np.ndarray | list[str], fps:int|float, input_format: str = "rgb",
                     output_colorful:bool=True):
         if input_format == 'rgb':
-             height, width = frames[0].shape
+             height, width = frames[0].shape[:2]
         else:
-            width, height = frames[0].shape
+            width, height = frames[0].shape[:2]
 
         vw = VideoWriterCV(video_path, height, width, 'mp4v', fps=fps, colorful=output_colorful)
         for frame in frames:
