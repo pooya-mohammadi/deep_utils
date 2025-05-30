@@ -79,12 +79,20 @@ class DecordUtils:
         if width is not None and height is not None:
             with open(video_path, mode="rb") as f:
                 vr = decord.VideoReader(f, width=width, height=height)  # noqa
-                indices = vr.get_batch(indices).asnumpy()
+                indices = vr.get_batch(indices)
+                if isinstance(indices, decord.ndarray.NDArray):
+                    indices = indices.asnumpy()
+                else:
+                    indices = indices.numpy()
         else:
             if not vr:
                 with open(video_path, mode="rb") as f:
                     vr = decord.VideoReader(f)  # noqa
-            indices = vr.get_batch(indices).asnumpy()
+            indices = vr.get_batch(indices)
+            if isinstance(indices, decord.ndarray.NDArray):
+                indices = indices.asnumpy()
+            else:
+                indices = indices.numpy()
         if rgb:
             indices = indices[..., :3]  # only the first 3 channels
         if return_vr:
