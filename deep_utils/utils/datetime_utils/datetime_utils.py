@@ -31,6 +31,8 @@ class DateTimeUtils:
         '00:00:12.500'
         >>> DateTimeUtils.parse_str_time(12., input="seconds")
         '00:00:12.000'
+        >>> DateTimeUtils.parse_str_time(67., input="seconds")
+        '00:01:07.000'
         """
 
 
