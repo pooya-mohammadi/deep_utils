@@ -23,6 +23,16 @@ class StringUtils:
                 inner_list.extend([s for s in str_val.split(split_val) if not remove_empty or s])
             input_str = inner_list
         return input_str
+    @staticmethod
+    def replace(input_str: str, replace: str | tuple[str, ...], replace_with: str | tuple[str] = None) -> str:
+
+        replaces = (replace, ) if isinstance(replace, str) else replace
+        replace_withs = [""] * len(replace) if replace_with is None else replace_with
+
+        for replace, replace_with in zip(replaces, replace_withs):
+            input_str = input_str.replace(replace, replace_with)
+        return input_str
+
 
     @staticmethod
     def right_replace(input_str: str, replace: Union[str, list[str]], replace_with: str, count: int = 1):
