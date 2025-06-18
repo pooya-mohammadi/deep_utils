@@ -25,6 +25,7 @@ class DownloadUtils:
             filename=None,
             remove_download=False,
             exists_skip=False,
+            cookies=None
     ):
         """
         Download a file from url
@@ -33,6 +34,7 @@ class DownloadUtils:
         :param filename:
         :param remove_download:
         :param exists_skip: If True, skip download if file exists
+        :param cookies:
         :return:
         """
         if url is None:
@@ -44,7 +46,7 @@ class DownloadUtils:
         temp_download_des = download_des = None
 
         try:
-            response = requests.get(url, stream=True)
+            response = requests.get(url, stream=True, cookies=cookies)
             total = response.headers.get("content-length")
             while not total:
                 response = requests.get(url, stream=True)
@@ -91,13 +93,16 @@ class DownloadUtils:
             raise Exception(error_msg.format(url))
         return download_des
 
-    def download_urls(dl_urls: list[str], download_path: str, remove_to_get_local_file_path: str = None):
+    def download_urls(dl_urls: list[str], download_path: str, remove_to_get_local_file_path: str = None, cookies=None):
         for url in dl_urls:
             if remove_to_get_local_file_path:
                 filename = url.replace(remove_to_get_local_file_path, "").strip("/")
             local_filepath = os.path.join(download_path, filename)
             os.makedirs(os.path.dirname(local_filepath), exist_ok=True)
-            DownloadUtils.download_file(url, os.path.dirname(local_filepath), filename=split(filename)[-1].replace('"', "").replace(";", ""), exists_skip=True)
+            DownloadUtils.download_file(url, os.path.dirname(local_filepath),
+                                        filename=split(filename)[-1].replace('"', "").replace(";", ""),
+                                        exists_skip=True, cookies=cookies)
+
 
 if __name__ == '__main__':
     image_download_path = "https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden.jpg"
