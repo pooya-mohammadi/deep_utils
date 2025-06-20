@@ -1232,7 +1232,35 @@ class DirUtils:
             fixed = DirUtils.safe_item_move(base_dir, target_dir, remove_base_empty_dir=remove_empty_base_dirs, verbose=verbose)
             if verbose and not fixed:
                 print(f"Directory: {base_dir} and {target_dir} contain same data")
-mkdir_incremental = DirUtils.mkdir_incremental
+    @staticmethod
+    def list_items_walk(directory_path: str, endswith: Union[str, tuple[str, ...]]=None):
+        output = []
+        for root, _, filenames in os.walk(directory_path):
+            for filename in filenames:
+                if filename.endswith(endswith):
+                    output.append(join(root, filename))
 
-if __name__ == '__main__':
-    DirUtils.move_dir_of_dirs("/media/aicvi/Med-FM/CT/chest_12t/manifest-NLST_allCT/NLST", "/media/aicvi/Elements/chest_12t/manifest-NLST_allCT/NLST", n_jobs=30)
+
+
+    @staticmethod
+    def list_items_scandir(directory_path: str, endswith: Union[str, tuple[str, ...]] = None,
+                           not_endswith: Union[str, tuple[str, ...]] = None):
+        if endswith is not None and not_endswith is None:
+            for entry in os.scandir(directory_path):
+                if not entry.name.startswith('.'):
+                    if entry.is_file():
+                        if entry.name.endswith(endswith):
+                            yield entry.path
+                    else:
+                        yield from DirUtils.list_items_scandir(entry.path, endswith=endswith)
+
+        elif endswith is not None and not_endswith is not None:
+            for entry in os.scandir(directory_path):
+                if not entry.name.startswith('.'):
+                    if entry.is_file():
+                        if entry.name.endswith(endswith) and not entry.name.endswith(not_endswith):
+                            yield entry.path
+                    else:
+                        yield from DirUtils.list_items_scandir(entry.path, endswith=endswith, not_endswith=not_endswith)
+
+mkdir_incremental = DirUtils.mkdir_incremental
