@@ -2,6 +2,8 @@ import json
 from typing import Union
 from pathlib import Path
 
+import numpy as np
+
 from deep_utils.utils.decorators.main import method_deprecated
 
 
@@ -41,6 +43,40 @@ class JsonUtils:
 
         """
 
+        with open(json_path, mode="w", encoding=encoding) as f:
+            json.dump(json_object, f, ensure_ascii=ensure_ascii)
+
+    @staticmethod
+    def safe_numpy_json(json_object):
+        if isinstance(json_object, list):
+            json_object = [JsonUtils.safe_numpy_json(item) for item in json_object]
+        elif isinstance(json_object, dict):
+            json_object = {k: JsonUtils.safe_numpy_json(v) for k, v in json_object.items()}
+        elif isinstance(json_object, np.ndarray):
+            return json_object.tolist()
+        elif isinstance(json_object, np.floating):
+            return float(json_object)
+        elif isinstance(json_object, np.integer):
+            return int(json_object)
+        else:
+            pass
+        return json_object
+    @staticmethod
+    def dump_safe_numpy(
+            json_path: Union[str, Path], json_object: Union[list, dict], encoding="utf-8", ensure_ascii=True
+    ) -> None:
+        """
+        dumps a json file
+        Args:
+            json_object:
+            json_path: path to json file
+            encoding: encoding format
+            ensure_ascii: set to False for persian characters
+
+        Returns:
+
+        """
+        json_object = JsonUtils.safe_numpy_json(json_object)
         with open(json_path, mode="w", encoding=encoding) as f:
             json.dump(json_object, f, ensure_ascii=ensure_ascii)
 
