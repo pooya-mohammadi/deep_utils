@@ -461,6 +461,54 @@ def combine_directory_of_directories(dataset_dir, result_dir, remove_result_dir=
 
 class DirUtils:
     @staticmethod
+    def ln_s_move(org_data_list, des, remove: bool = False, add_suffix: bool = None,
+                  replace: str | tuple[str, ...] = None, replace_with: str | tuple[str, ...] = None):
+        if isinstance(des, str) and add_suffix is None:
+            raise ValueError("add_suffix cannot be None")
+        if isinstance(des, str) and add_suffix:
+            os.makedirs(des, exist_ok=True)
+            des = [join(des, DirUtils.split_extension(split(item)[-1], suffix="_0000", current_extension=".nii.gz")) for
+                   item in org_data_list]
+        if replace is not None:
+            des = [StringUtils.replace(item, replace, replace_with) for item in des]
+        if isinstance(des, str):
+            os.makedirs(des, exist_ok=True)
+            for img in org_data_list:
+                target_path = join(des, split(img)[-1])
+                if exists(target_path) and not remove:
+                    raise ValueError(f"target exists: {target_path} for input {img}")
+                elif exists(target_path) and remove:
+                    print(f"Removed target: {target_path}")
+                    os.remove(target_path)
+
+                out = os.system(f"ln -s '{img}' '{target_path}'")
+                if out != 0:
+                    out = os.system(f'ln -s "{img}" "{target_path}"')
+                    if out != 0:
+                        raise ValueError(
+                            f"You messed up bro :) o: {img} and t: {target_path}, check the outputs in the console as well")
+                # if out != 0:
+                #     raise ValueError(f"You messed up bro :) o: {img} and t: {target_path}")
+
+        elif isinstance(des, list) and len(des) == len(org_data_list):
+            for t, o in zip(des, org_data_list):
+                if exists(t) and not remove:
+                    raise ValueError(f"target exists: {t} for input {o}")
+                elif exists(t) and remove:
+                    print(f"Removed target: {t}")
+                    os.remove(t)
+                out = os.system(f"ln -s '{o}' '{t}'")
+                if out != 0:
+                    out = os.system(f'ln -s "{o}" "{t}"')
+                    if out != 0:
+                        raise ValueError(
+                            f"You messed up bro :) o: {o} and t: {t}, check the outputs in the console as well")
+        else:
+            raise "Dude what have you done:)"
+
+
+
+    @staticmethod
     def split_dir_of_dir(
             in_dir,
             train_dir="./train",
