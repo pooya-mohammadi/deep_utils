@@ -28,7 +28,7 @@ class StringUtils:
 
         replaces = (replace, ) if isinstance(replace, str) else replace
         replace_withs = [""] * len(replace) if replace_with is None else replace_with
-
+        replace_withs = [replace_with] if isinstance(replace_with, str) else replace_with
         for replace, replace_with in zip(replaces, replace_withs):
             input_str = input_str.replace(replace, replace_with)
         return input_str
