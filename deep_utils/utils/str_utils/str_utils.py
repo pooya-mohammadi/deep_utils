@@ -28,7 +28,7 @@ class StringUtils:
 
         replaces = (replace, ) if isinstance(replace, str) else replace
         replace_withs = [""] * len(replace) if replace_with is None else replace_with
-        replace_withs = [replace_with] if isinstance(replace_with, str) else replace_with
+        replace_withs = [replace_withs] * len(replaces) if isinstance(replace_withs, str) else replace_withs
         for replace, replace_with in zip(replaces, replace_withs):
             input_str = input_str.replace(replace, replace_with)
         return input_str
@@ -97,3 +97,9 @@ class StringUtils:
         """
         args = [StringUtils.color_str(str(arg), color=color, mode=mode) for arg in args]
         print(*args, sep=sep, end=end, file=file)
+
+
+if __name__ == '__main__':
+    import string
+    print(StringUtils.replace("7/Don'tLabel!People_Nouma nAliKhan_0.mp4",
+                        tuple(string.punctuation + " "), ""))
