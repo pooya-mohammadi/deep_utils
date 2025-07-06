@@ -92,11 +92,19 @@ class FFProbeUtils:
         result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         if result.returncode == 0:
             footage_size = result.stdout.strip().strip(",")
-            width, height, fps, duration = [round(float(item.strip().split("/")[0])) if index < 3 else float(item.strip().split("/")[0]) for index, item in enumerate(footage_size.split(",")) ][:4]
+            width, height, fps, duration = footage_size.split(",")
+            duration = round(float(duration.strip()))
+            width = round(float(width.strip()))
+            height = round(float(height.strip()))
+            if "/" in fps:
+                left, right = fps.strip().split("/")
+                fps = float(left)/float(right)
+            fps  = round(fps)
+             # = [round(float(item.strip().split("/")[0])) if index < 3 else float(item.strip().split("/")[0]) for index, item in enumerate(footage_size.split(",")) ][:4]
             return width, height, fps, duration, round(duration * fps)
         else:
             raise ValueError(f"dl_url: {dl_url} not working")
 
 if __name__ == '__main__':
-    info = FFProbeUtils.get_width_height_fps_duration_frame_count("/home/aicvi/projects/ShifterRemotion/public/sample.mp4")
+    info = FFProbeUtils.get_width_height_fps_duration_frame_count("/home/ai/Downloads/Don'tLabel!People_Nouma nAliKhan.mp4")
     print("info: ", info)
