@@ -106,5 +106,5 @@ class FFProbeUtils:
             raise ValueError(f"dl_url: {dl_url} not working")
 
 if __name__ == '__main__':
-    info = FFProbeUtils.get_width_height_fps_duration_frame_count("/home/ai/Downloads/Don'tLabel!People_Nouma nAliKhan.mp4")
+    info = FFProbeUtils.get_width_height_fps_duration_frame_count("")
     print("info: ", info)

@@ -461,6 +461,13 @@ def combine_directory_of_directories(dataset_dir, result_dir, remove_result_dir=
 
 class DirUtils:
     @staticmethod
+    def sanitize_filename(filename: str) -> str:
+        """Remove special characters from filename."""
+        import re
+        return re.sub(r'[\\/*?:"<>|]', "", filename).replace(' ', '_')
+
+
+    @staticmethod
     def symbolic_link_move(org_data_list:list[str], des: Union[str, list[str]], remove: bool = False, suffix: str = None,
                   replace: str | tuple[str, ...] = None, replace_with: str | tuple[str, ...] = None,
                   current_extension=".nii.gz"):
