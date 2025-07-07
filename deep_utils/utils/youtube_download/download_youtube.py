@@ -1,8 +1,7 @@
-from typing import Dict, Any
 import os
-from deep_utils.utils.dir_utils.dir_utils import DirUtils
-from deep_utils.utils.json_utils.json_utils import JsonUtils
 import subprocess
+
+from deep_utils.utils.dir_utils.dir_utils import DirUtils
 
 
 class DownloadYoutube:
@@ -14,6 +13,7 @@ class DownloadYoutube:
     tqdm>=4.64.1
     yt-dlp>=2023.3.4
     """
+
     @staticmethod
     def get_format_string(file_format="mp4", resolution="best") -> str:
         """
@@ -74,7 +74,6 @@ class DownloadYoutube:
                 stderr=subprocess.PIPE,
                 universal_newlines=True
             )
-
 
             # output = os.system(f"yt-dlp -f {format_string} -o {output_path} --no-warnings --progress {video_url}")
             stdout, stderr = process.communicate()
@@ -174,7 +173,7 @@ class DownloadYoutube:
 
 if __name__ == '__main__':
     DownloadYoutube.download_video(video_id="jEH1eokufjU&list=PLYZxc42QNctWxkUZ7WSsUYC7yo8D85igl",
-                                   output_dir="/home/ai/Downloads",
+                                   output_dir="/home/aicvi/Downloads",
                                    channel_name="yasir_qadhi",
                                    video_title="Akhlagh_01",
                                    resolution="worst")
