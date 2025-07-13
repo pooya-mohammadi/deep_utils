@@ -41,7 +41,7 @@ _import_structure = {
     "utils.prompt_utils.prompt_utils": ["PromptUtils"],
     "utils.ff_utils.ffprobe_utils": ["FFProbeUtils"],
     "utils.datetime_utils.datetime_utils": ["DateTimeUtils"],
-
+    "utils.youtube_download.download_youtube": ["DownloadYoutube"],
     DUMMY_PATH: [],  # this is required for dummy check!
 }
 
@@ -159,6 +159,7 @@ if TYPE_CHECKING:
     from .utils.boto3_utils.boto3_utils import Boto3Utils
     from .utils.ff_utils.ffprobe_utils import FFProbeUtils
     from .utils.datetime_utils.datetime_utils import DateTimeUtils
+    from .utils.youtube_download.download_youtube import DownloadYoutube
 else:
     import sys
 
