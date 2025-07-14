@@ -62,6 +62,7 @@ class DownloadYoutube:
             '-o', output_path,
             '--no-warnings',
             '--progress',
+            "--merge-output-format", file_format,
             video_url
         ]
 
@@ -173,7 +174,7 @@ class DownloadYoutube:
 
 if __name__ == '__main__':
     DownloadYoutube.download_video(video_id="jEH1eokufjU&list=PLYZxc42QNctWxkUZ7WSsUYC7yo8D85igl",
-                                   output_dir="/home/ai/Downloads",
+                                   output_dir="/home/aicvi/Downloads",
                                    channel_name="yasir_qadhi",
                                    video_title="Akhlagh_01_best",
                                    resolution="best")
