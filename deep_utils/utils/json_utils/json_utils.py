@@ -48,7 +48,7 @@ class JsonUtils:
 
     @staticmethod
     def safe_numpy_json(json_object):
-        if isinstance(json_object, list):
+        if isinstance(json_object, (list, tuple, set)):
             json_object = [JsonUtils.safe_numpy_json(item) for item in json_object]
         elif isinstance(json_object, dict):
             json_object = {k: JsonUtils.safe_numpy_json(v) for k, v in json_object.items()}
