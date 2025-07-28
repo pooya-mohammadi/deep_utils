@@ -1320,4 +1320,17 @@ class DirUtils:
                     else:
                         yield from DirUtils.list_items_scandir(entry.path, endswith=endswith, not_endswith=not_endswith)
 
+
+    @staticmethod
+    def get_nvidia_users(password: str):
+        command = f"echo {password}  | sudo -S fuser -v /dev/nvidia*"
+        output = DirUtils.execute_command(command)
+        print(output)
+        for line in output.split("\n"):
+            print(line)
+
 mkdir_incremental = DirUtils.mkdir_incremental
+
+
+if __name__ == '__main__':
+    DirUtils.get_nvidia_users("cviai")
