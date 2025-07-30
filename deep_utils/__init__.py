@@ -42,6 +42,7 @@ _import_structure = {
     "utils.ff_utils.ffprobe_utils": ["FFProbeUtils"],
     "utils.datetime_utils.datetime_utils": ["DateTimeUtils"],
     "utils.youtube_download.download_youtube": ["DownloadYoutube"],
+    "medical.dicom2nifti_utils.dicom2nifti_utils":["Dicom2Nifti"],
     DUMMY_PATH: [],  # this is required for dummy check!
 }
 
@@ -160,6 +161,7 @@ if TYPE_CHECKING:
     from .utils.ff_utils.ffprobe_utils import FFProbeUtils
     from .utils.datetime_utils.datetime_utils import DateTimeUtils
     from .utils.youtube_download.download_youtube import DownloadYoutube
+    from .medical.dicom2nifti_utils.dicom2nifti_utils import Dicom2Nifti
 else:
     import sys
 
