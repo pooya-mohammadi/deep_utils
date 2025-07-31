@@ -9,6 +9,7 @@ from deep_utils.utils.os_utils.os_path import split_extension
 from deep_utils.utils.shutil_utils.shutil_utils import mv_or_copy
 from deep_utils.utils.str_utils.str_utils import StringUtils
 
+
 def transfer_directory_items(
         in_dir,
         out_dir,
@@ -466,11 +467,11 @@ class DirUtils:
         import re
         return re.sub(r'[\\/*?:"<>|]', "", filename).replace(' ', '_')
 
-
     @staticmethod
-    def symbolic_link_move(org_data_list:list[str], des: Union[str, list[str]], remove: bool = False, suffix: str = None,
-                  replace: str | tuple[str, ...] = None, replace_with: str | tuple[str, ...] = None,
-                  current_extension=".nii.gz"):
+    def symbolic_link_move(org_data_list: list[str], des: Union[str, list[str]], remove: bool = False,
+                           suffix: str = None,
+                           replace: str | tuple[str, ...] = None, replace_with: str | tuple[str, ...] = None,
+                           current_extension=".nii.gz"):
 
         if isinstance(des, str) and suffix:
             os.makedirs(des, exist_ok=True)
@@ -514,8 +515,6 @@ class DirUtils:
                             f"You messed up bro :) o: {o} and t: {t}, check the outputs in the console as well")
         else:
             raise "Dude what have you done:)"
-
-
 
     @staticmethod
     def split_dir_of_dir(
@@ -1187,7 +1186,8 @@ class DirUtils:
             os.makedirs(target_directory, exist_ok=True)
             target_directory_created = True
         all_items = list(os.listdir(base_directory))
-        for base_item_name in tqdm(all_items, total=len(all_items), desc=f"Items: {base_directory} --> {target_directory}", disable=not verbose):
+        for base_item_name in tqdm(all_items, total=len(all_items),
+                                   desc=f"Items: {base_directory} --> {target_directory}", disable=not verbose):
             if endswith and not base_item_name.endswith(endswith):
                 continue
             if not_endswith and base_item_name.endswith(not_endswith):
@@ -1195,8 +1195,8 @@ class DirUtils:
             target_item_path = join(target_directory, base_item_name)
             base_item_path = join(base_directory, base_item_name)
 
-            if min_size: # skip if size is less than specified!
-                base_size = os.path.getsize(base_item_path) / 1024 / 1024 # MB
+            if min_size:  # skip if size is less than specified!
+                base_size = os.path.getsize(base_item_path) / 1024 / 1024  # MB
                 if base_size < min_size:
                     continue
 
@@ -1214,7 +1214,8 @@ class DirUtils:
                     mv_or_copy(base_item_path, target_item_path, mode="cp" if copy else "mv")
                 else:
                     if verbose:
-                        print(f"[WARNING] {base_item_path} with size: {base_size} is different from {target_item_path} with size: {target_size}")
+                        print(
+                            f"[WARNING] {base_item_path} with size: {base_size} is different from {target_item_path} with size: {target_size}")
         output = True
         if DirUtils.is_empty(base_directory) and remove_base_empty_dir:
             os.rmdir(base_directory)
@@ -1229,7 +1230,8 @@ class DirUtils:
         return output
 
     @staticmethod
-    def move_dir_of_dirs(base_dir: str, target_dir: str, remove_empty_base_dirs:bool=True, verbose: bool = True, endswith: str | tuple[str] = None, move_n_samples: int = None, n_jobs: int = 1):
+    def move_dir_of_dirs(base_dir: str, target_dir: str, remove_empty_base_dirs: bool = True, verbose: bool = True,
+                         endswith: str | tuple[str] = None, move_n_samples: int = None, n_jobs: int = 1):
         """
 
         :param base_dir:
@@ -1273,53 +1275,65 @@ class DirUtils:
         if len(all_base_dirs):
             if n_jobs > 1:
                 from joblib import Parallel, delayed
-                list(tqdm(Parallel(return_as="generator", n_jobs=n_jobs)(delayed(_move)(base_directory, target_dir, endswith) for base_directory in all_base_dirs), total=len(all_base_dirs), desc=f"Dirs: {base_dir} --> {target_dir}"))
+                list(tqdm(Parallel(return_as="generator", n_jobs=n_jobs)(
+                    delayed(_move)(base_directory, target_dir, endswith) for base_directory in all_base_dirs),
+                          total=len(all_base_dirs), desc=f"Dirs: {base_dir} --> {target_dir}"))
             else:
-                for base_directory in tqdm(all_base_dirs, total=len(all_base_dirs), desc=f"Dirs: {base_dir} --> {target_dir}"):
+                for base_directory in tqdm(all_base_dirs, total=len(all_base_dirs),
+                                           desc=f"Dirs: {base_dir} --> {target_dir}"):
                     _move(base_directory, target_dir, endswith)
 
-            if DirUtils.is_empty(base_dir)and remove_empty_base_dirs:
+            if DirUtils.is_empty(base_dir) and remove_empty_base_dirs:
                 os.rmdir(base_dir)
             else:
                 if verbose:
-                    print(f"[INFO] There are some files(not directories) in {base_dir} preventing it from being removed!")
+                    print(
+                        f"[INFO] There are some files(not directories) in {base_dir} preventing it from being removed!")
         else:
             if endswith and not base_dir.endswith(endswith):
                 return
-            fixed = DirUtils.safe_item_move(base_dir, target_dir, remove_base_empty_dir=remove_empty_base_dirs, verbose=verbose)
+            fixed = DirUtils.safe_item_move(base_dir, target_dir, remove_base_empty_dir=remove_empty_base_dirs,
+                                            verbose=verbose)
             if verbose and not fixed:
                 print(f"Directory: {base_dir} and {target_dir} contain same data")
+
     @staticmethod
-    def list_items_walk(directory_path: str, endswith: Union[str, tuple[str, ...]]=None):
+    def list_items_walk(directory_path: str, endswith: Union[str, tuple[str, ...]] = None):
         output = []
         for root, _, filenames in os.walk(directory_path):
             for filename in filenames:
                 if filename.endswith(endswith):
                     output.append(join(root, filename))
 
-
-
     @staticmethod
     def list_items_scandir(directory_path: str, endswith: Union[str, tuple[str, ...]] = None,
-                           not_endswith: Union[str, tuple[str, ...]] = None):
-        if endswith is not None and not_endswith is None:
+                           not_endswith: Union[str, tuple[str, ...]] = None, only_directory: bool = False):
+
+        if only_directory:
             for entry in os.scandir(directory_path):
                 if not entry.name.startswith('.'):
-                    if entry.is_file():
-                        if entry.name.endswith(endswith):
-                            yield entry.path
-                    else:
-                        yield from DirUtils.list_items_scandir(entry.path, endswith=endswith)
+                    if entry.is_dir():
+                        yield entry.path
+                        yield from DirUtils.list_items_scandir(entry.path, only_directory=True)
+        else:
+            if endswith is not None and not_endswith is None:
+                for entry in os.scandir(directory_path):
+                    if not entry.name.startswith('.'):
+                        if entry.is_file():
+                            if entry.name.endswith(endswith):
+                                yield entry.path
+                        else:
+                            yield from DirUtils.list_items_scandir(entry.path, endswith=endswith)
 
-        elif endswith is not None and not_endswith is not None:
-            for entry in os.scandir(directory_path):
-                if not entry.name.startswith('.'):
-                    if entry.is_file():
-                        if entry.name.endswith(endswith) and not entry.name.endswith(not_endswith):
-                            yield entry.path
-                    else:
-                        yield from DirUtils.list_items_scandir(entry.path, endswith=endswith, not_endswith=not_endswith)
-
+            elif endswith is not None and not_endswith is not None:
+                for entry in os.scandir(directory_path):
+                    if not entry.name.startswith('.'):
+                        if entry.is_file():
+                            if entry.name.endswith(endswith) and not entry.name.endswith(not_endswith):
+                                yield entry.path
+                        else:
+                            yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
+                                                                   not_endswith=not_endswith)
 
     @staticmethod
     def get_nvidia_users(password: str):
@@ -1329,8 +1343,7 @@ class DirUtils:
         for line in output.split("\n"):
             print(line)
 
+
 mkdir_incremental = DirUtils.mkdir_incremental
 
 
-if __name__ == '__main__':
-    DirUtils.get_nvidia_users("cviai")
