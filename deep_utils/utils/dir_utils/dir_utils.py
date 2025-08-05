@@ -1277,7 +1277,7 @@ class DirUtils:
                 from joblib import Parallel, delayed
                 list(tqdm(Parallel(return_as="generator", n_jobs=n_jobs)(
                     delayed(_move)(base_directory, target_dir, endswith) for base_directory in all_base_dirs),
-                          total=len(all_base_dirs), desc=f"Dirs: {base_dir} --> {target_dir}"))
+                    total=len(all_base_dirs), desc=f"Dirs: {base_dir} --> {target_dir}"))
             else:
                 for base_directory in tqdm(all_base_dirs, total=len(all_base_dirs),
                                            desc=f"Dirs: {base_dir} --> {target_dir}"):
@@ -1307,14 +1307,42 @@ class DirUtils:
 
     @staticmethod
     def list_items_scandir(directory_path: str, endswith: Union[str, tuple[str, ...]] = None,
-                           not_endswith: Union[str, tuple[str, ...]] = None, only_directory: bool = False):
+                           not_endswith: Union[str, tuple[str, ...]] = None, only_directories: bool = False,
+                           dir_start_depth: int = 0, dir_end_depth: int = -1, current_dir_path: int = 0):
+        """
 
-        if only_directory:
+        :param directory_path:
+        :param endswith:
+        :param not_endswith:
+        :param only_directories:
+        :param current_dir_path:
+        :param dir_start_depth:
+        :param dir_end_depth:
+        :return:
+        """
+
+        if only_directories:
             for entry in os.scandir(directory_path):
                 if not entry.name.startswith('.'):
                     if entry.is_dir():
-                        yield entry.path
-                        yield from DirUtils.list_items_scandir(entry.path, only_directory=True)
+                        if dir_end_depth <= 0:
+                            if dir_start_depth <= current_dir_path:
+                                yield entry.path
+                            yield from DirUtils.list_items_scandir(entry.path, only_directories=True,
+                                                                   current_dir_path=current_dir_path + 1,
+                                                                   dir_end_depth=dir_end_depth,
+                                                                   dir_start_depth=dir_start_depth
+                                                                   )
+                        else:
+                            if dir_start_depth <= current_dir_path < dir_end_depth:
+                                yield entry.path
+                            if current_dir_path + 1 < dir_end_depth:
+                                yield from DirUtils.list_items_scandir(entry.path, only_directories=True,
+                                                                   current_dir_path=current_dir_path + 1,
+                                                                       dir_end_depth=dir_end_depth,
+                                                                       dir_start_depth=dir_start_depth
+                                                                   )
+
         else:
             if endswith is not None and not_endswith is None:
                 for entry in os.scandir(directory_path):
@@ -1345,5 +1373,3 @@ class DirUtils:
 
 
 mkdir_incremental = DirUtils.mkdir_incremental
-
-
