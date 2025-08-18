@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 
 class MainMedUtils:
@@ -19,6 +19,19 @@ class MainMedUtils:
             info = {i: (mi, ma) for i, (mi, ma) in enumerate(zip(mins, maxs))}
             return info
         return mins, maxs
+
+    @staticmethod
+    def compute_new_shape(old_shape: Union[Tuple[int, ...], List[int], np.ndarray],
+                          old_spacing: Union[Tuple[float, ...], List[float], np.ndarray],
+                          new_spacing: Union[Tuple[float, ...], List[float], np.ndarray]) -> np.ndarray:
+        assert len(old_spacing) == len(old_shape), "Shapes are not equal"
+        assert len(old_shape) == len(new_spacing), "Shapes are not equal"
+
+        new_shape = np.array(
+            [int(round(old_spacing_ / new_spacing_ * old_shape_)) for old_spacing_, new_spacing_, old_shape_ in
+             zip(old_spacing, new_spacing, old_shape)])
+
+        return new_shape
 
     @staticmethod
     def get_largest_box_and_crop(array: np.ndarray, expand: int = 0, get_info: bool = False):
