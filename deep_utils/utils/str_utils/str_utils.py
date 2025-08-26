@@ -1,4 +1,4 @@
-from typing import Union, List, Optional
+from typing import Union, List, Optional, Tuple
 
 class StringUtils:
     @staticmethod
@@ -24,7 +24,7 @@ class StringUtils:
             input_str = inner_list
         return input_str
     @staticmethod
-    def replace(input_str: str, replace: str | tuple[str, ...], replace_with: str | tuple[str] = None) -> str:
+    def replace(input_str: str, replace: Union[str, Tuple[str, ...]], replace_with: Union[str , Tuple[str]] = None) -> str:
 
         replaces = (replace, ) if isinstance(replace, str) else replace
         replace_withs = [""] * len(replace) if replace_with is None else replace_with
@@ -35,7 +35,7 @@ class StringUtils:
 
 
     @staticmethod
-    def right_replace(input_str: str, replace: Union[str, list[str]], replace_with: str, count: int = 1):
+    def right_replace(input_str: str, replace: Union[str, List[str]], replace_with: str, count: int = 1):
         replace_list = [replace] if isinstance(replace, str) else replace
         reverse_input_str = input_str[::-1]
         reverse_replace_with = replace_with[::-1]

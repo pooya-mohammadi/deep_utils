@@ -468,9 +468,10 @@ class DirUtils:
         return re.sub(r'[\\/*?:"<>|]', "", filename).replace(' ', '_')
 
     @staticmethod
-    def symbolic_link_move(org_data_list: list[str], des: Union[str, list[str]], remove: bool = False,
+    def symbolic_link_move(org_data_list: List[str], des: Union[str, List[str]], remove: bool = False,
                            suffix: str = None,
-                           replace: str | tuple[str, ...] = None, replace_with: str | tuple[str, ...] = None,
+                           replace: Union[str, Tuple[str, ...]] = None,
+                           replace_with: Union[str, Tuple[str, ...]] = None,
                            current_extension=".nii.gz"):
 
         if isinstance(des, str) and suffix:
@@ -568,13 +569,13 @@ class DirUtils:
             shutil.rmtree(in_dir)
 
     @staticmethod
-    def write_txt(path: str | Path, list_content: list, mode="w"):
+    def write_txt(path: Union[str, Path], list_content: list, mode="w"):
         with open(path, mode=mode) as f:
             for item in list_content:
                 f.write(f"{item}\n")
 
     @staticmethod
-    def read_txt(path: str | Path, mode="r"):
+    def read_txt(path: Union[str, Path], mode="r"):
         list_content = [item.strip() for item in open(path, mode=mode).readlines()]
         return list_content
 
@@ -646,12 +647,12 @@ class DirUtils:
 
     @staticmethod
     def split_extension(path,
-                        extension: Union[str, None] = None,
-                        suffix: Union[str, None] = None,
-                        prefix: Union[str, None] = None,
+                        extension: Optional[str] = None,
+                        suffix: Optional[str] = None,
+                        prefix: Optional[str] = None,
                         artifact_type: Union[str, None] = None,
                         artifact_value: Union[str, int, None] = None,
-                        extra_punctuation: Union[str, None] = None,
+                        extra_punctuation: Optional[str] = None,
                         current_extension: Optional[str] = None
                         ):
         """
@@ -694,7 +695,7 @@ class DirUtils:
     @staticmethod
     def list_dir_full_path(directory: str,
                            filter_directories: bool = True,
-                           interest_extensions: Optional[Union[str, List[str]]] = None,
+                           interest_extensions: Union[Union[str, List[str]]] = None,
                            only_directories: bool = False,
                            get_full_path: bool = True,
                            sort: bool = True,
@@ -702,7 +703,7 @@ class DirUtils:
                            dir_depth: int = -1,
                            exact_depth: bool = False,
                            return_dict: bool = False,
-                           ends_with: Optional[Union[str, List[str]]] = None,
+                           ends_with: Union[Union[str, List[str]]] = None,
                            ) -> Union[List[str], Dict[str, str]]:
         """
         Returns the full path objects in a directory
@@ -774,7 +775,7 @@ class DirUtils:
         return output
 
     @staticmethod
-    def remove_extension_with_replace(filename: str, extensions: list[str]) -> str:
+    def remove_extension_with_replace(filename: str, extensions: List[str]) -> str:
         """
         Removes extensions from the input filename
         :param filename:
@@ -812,7 +813,7 @@ class DirUtils:
     @staticmethod
     def crawl_directory_dataset(
             dir_: str,
-            ext_filter: list | str = None,
+            ext_filter: Union[list, str] = None,
             map_labels=False,
             label_map_dict: dict = None,
             logger=None,
@@ -927,7 +928,7 @@ class DirUtils:
         )
 
     @staticmethod
-    def endswith(filepath: str, ext: list[str] | str):
+    def endswith(filepath: str, ext: Union[List[str], str]):
         """
         Checks whether a file ends with a list of strings! If ext is None it will return True!
         :param filepath:
@@ -947,8 +948,8 @@ class DirUtils:
             raise ValueError(f"ext: {ext} is not supported!")
 
     @staticmethod
-    def file_incremental(file_path: str | None, artifact_type="prefix", artifact_value=0, extra_punctuation="_",
-                         add_artifact_value=False, dir_items: list[str] | None = None):
+    def file_incremental(file_path: Optional[str], artifact_type="prefix", artifact_value=0, extra_punctuation="_",
+                         add_artifact_value=False, dir_items: Optional[List[str]] = None):
         """
         This function is used to increment a file's address with prefix or suffix values until it becomes unique
         :param file_path:
@@ -985,7 +986,7 @@ class DirUtils:
         return file_path
 
     @staticmethod
-    def mkdir_incremental(dir_path: str | list[str], base_name="exp", fix_name=None, overwrite=False) -> Path:
+    def mkdir_incremental(dir_path: Union[str, List[str]], base_name="exp", fix_name=None, overwrite=False) -> Path:
         """
         makes new directories, if it exists increment it and makes another one. Good for hyperparameter tuning!
         Args:
@@ -1166,9 +1167,11 @@ class DirUtils:
     @staticmethod
     def safe_item_move(base_directory: str, target_directory: str, remove_if_sizes_are_the_same: bool = True,
                        keep_the_largest_if_sizes_are_not_the_same: bool = True,
-                       remove_base_empty_dir: bool = True, verbose: bool = True,
-                       copy: bool = False, endswith: str | tuple[str] = None,
-                       not_endswith: str | tuple[str] = None,
+                       remove_base_empty_dir: bool = True,
+                       verbose: bool = True,
+                       copy: bool = False,
+                       endswith: Union[str, Tuple[str]] = None,
+                       not_endswith: Union[str, Tuple[str]] = None,
                        min_size: int = None):
         """
         This only works for items not directories
@@ -1231,7 +1234,7 @@ class DirUtils:
 
     @staticmethod
     def move_dir_of_dirs(base_dir: str, target_dir: str, remove_empty_base_dirs: bool = True, verbose: bool = True,
-                         endswith: str | tuple[str] = None, move_n_samples: int = None, n_jobs: int = 1):
+                         endswith: Union[str, Tuple[str]] = None, move_n_samples: int = None, n_jobs: int = 1):
         """
 
         :param base_dir:
@@ -1298,7 +1301,7 @@ class DirUtils:
                 print(f"Directory: {base_dir} and {target_dir} contain same data")
 
     @staticmethod
-    def list_items_walk(directory_path: str, endswith: Union[str, tuple[str, ...]] = None):
+    def list_items_walk(directory_path: str, endswith: Union[str, Tuple[str, ...]] = None):
         output = []
         for root, _, filenames in os.walk(directory_path):
             for filename in filenames:
@@ -1306,8 +1309,8 @@ class DirUtils:
                     output.append(join(root, filename))
 
     @staticmethod
-    def list_items_scandir(directory_path: str, endswith: Union[str, tuple[str, ...]] = None,
-                           not_endswith: Union[str, tuple[str, ...]] = None, only_directories: bool = False,
+    def list_items_scandir(directory_path: str, endswith: Union[str, Tuple[str, ...]] = None,
+                           not_endswith: Union[str, Tuple[str, ...]] = None, only_directories: bool = False,
                            dir_start_depth: int = 0, dir_end_depth: int = -1, current_dir_path: int = 0):
         """
 
@@ -1339,10 +1342,10 @@ class DirUtils:
                                     yield entry.path
                                 if current_dir_path + 1 < dir_end_depth:
                                     yield from DirUtils.list_items_scandir(entry.path, only_directories=True,
-                                                                       current_dir_path=current_dir_path + 1,
+                                                                           current_dir_path=current_dir_path + 1,
                                                                            dir_end_depth=dir_end_depth,
                                                                            dir_start_depth=dir_start_depth
-                                                                       )
+                                                                           )
             except PermissionError:
                 print(f"Warning: Permission Error in: {directory_path}")
 

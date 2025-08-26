@@ -1,8 +1,31 @@
+import random
 import numpy as np
 from typing import List, Tuple, Union
 
 
 class MainMedUtils:
+    @staticmethod
+    def crop_pad(crop, image, seg=None):
+        if seg is not None:
+            assert seg.shape == image.shape
+
+        if len(image.shape) == 3:
+            i_z, i_y, i_x = image.shape
+            c_z, c_y, c_x = crop
+            start_crop_z = random.randint(0, i_z - c_z)
+            start_crop_y = random.randint(0, i_y - c_y)
+            start_crop_x = random.randint(0, i_x - c_x)
+
+            end_crop_z = start_crop_z + c_z
+            end_crop_y = start_crop_y + c_y
+            end_crop_x = start_crop_x + c_x
+
+            image = image[start_crop_z: end_crop_z, start_crop_y: end_crop_y, start_crop_x: end_crop_x]
+            if seg is not None:
+                seg = seg[start_crop_z: end_crop_z, start_crop_y: end_crop_y, start_crop_x: end_crop_x]
+                return image, seg
+            return image
+
     @staticmethod
     def get_largets_box(array: np.ndarray, get_info: bool = False):
         dimensions = np.where(array)
@@ -42,23 +65,23 @@ class MainMedUtils:
         maxs = np.minimum(np.array(maxs) + expands, shape)
         if len(mins) == 3:
             cropped_array = array[
-                            mins[0]: maxs[0],
-                            mins[1]: maxs[1],
-                            mins[2]: maxs[2]
-                            ]
+                mins[0]: maxs[0],
+                mins[1]: maxs[1],
+                mins[2]: maxs[2]
+            ]
 
         elif len(mins) == 2:
             cropped_array = array[
-                            mins[0]: maxs[0],
-                            mins[1]: maxs[1]
-                            ]
+                mins[0]: maxs[0],
+                mins[1]: maxs[1]
+            ]
         elif len(mins) == 4:
             cropped_array = array[
-                            mins[0]: maxs[0],
-                            mins[1]: maxs[1],
-                            mins[2]: maxs[2],
-                            mins[3]: maxs[3],
-                            ]
+                mins[0]: maxs[0],
+                mins[1]: maxs[1],
+                mins[2]: maxs[2],
+                mins[3]: maxs[3],
+            ]
         else:
             raise ValueError(f"Something wrong with mins: {mins} and maxs: {maxs}")
 
@@ -78,23 +101,23 @@ class MainMedUtils:
 
         if len(mins) == 3:
             cropped_array = array[
-                            mins[0]: maxs[0],
-                            mins[1]: maxs[1],
-                            mins[2]: maxs[2]
-                            ]
+                mins[0]: maxs[0],
+                mins[1]: maxs[1],
+                mins[2]: maxs[2]
+            ]
 
         elif len(mins) == 2:
             cropped_array = array[
-                            mins[0]: maxs[0],
-                            mins[1]: maxs[1]
-                            ]
+                mins[0]: maxs[0],
+                mins[1]: maxs[1]
+            ]
         elif len(mins) == 4:
             cropped_array = array[
-                            mins[0]: maxs[0],
-                            mins[1]: maxs[1],
-                            mins[2]: maxs[2],
-                            mins[3]: maxs[3],
-                            ]
+                mins[0]: maxs[0],
+                mins[1]: maxs[1],
+                mins[2]: maxs[2],
+                mins[3]: maxs[3],
+            ]
         else:
             raise ValueError(f"Something wrong with mins: {mins} and maxs: {maxs}")
         return cropped_array

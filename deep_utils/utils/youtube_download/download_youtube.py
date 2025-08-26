@@ -173,8 +173,8 @@ class DownloadYoutube:
 
 
 if __name__ == '__main__':
-    DownloadYoutube.download_video(video_id="jEH1eokufjU&list=PLYZxc42QNctWxkUZ7WSsUYC7yo8D85igl",
+    DownloadYoutube.download_video(video_id="https://youtu.be/KqoYWTHY_js?si=0gXHu-TTWIqgl70H",
                                    output_dir="/home/aicvi/Downloads",
                                    channel_name="yasir_qadhi",
-                                   video_title="Akhlagh_01_best",
-                                   resolution="best")
+                                   video_title="Akhlagh_04",
+                                   resolution="worst")

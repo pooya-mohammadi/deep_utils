@@ -34,3 +34,17 @@ class NumpyUtils:
             raise ValueError(f"merge_type: {merge_type} is not supported!")
 
         return output_array
+    @staticmethod
+    def one_hot(array, ncols: int = None):
+
+        def all_idx(idx, axis):
+            grid = np.ogrid[tuple(map(slice, idx.shape))]
+            grid.insert(axis, idx)
+            return tuple(grid)
+
+        ncols = ncols or array.max() + 1
+
+        label = np.zeros((ncols,) + array.shape , dtype=int)
+        label[all_idx(array, axis=0)] = 1
+
+        return label
