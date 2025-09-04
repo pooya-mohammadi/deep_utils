@@ -1368,6 +1368,14 @@ class DirUtils:
                         else:
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
                                                                    not_endswith=not_endswith)
+            else:
+                for entry in os.scandir(directory_path):
+                    if not entry.name.startswith('.'):
+                        if entry.is_file():
+                            yield entry.path
+                        else:
+                            yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
+                                                                   not_endswith=not_endswith)
 
     @staticmethod
     def get_nvidia_users(password: str):
