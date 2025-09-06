@@ -1036,6 +1036,7 @@ class DirUtils:
         else:
             return False
 
+    @staticmethod
     def split(path: str, depth: int = 1, continuous: bool = False, list_it: bool = False,
               join_del: str = None, return_right: bool = True):
         """
@@ -1141,18 +1142,29 @@ class DirUtils:
 
     @staticmethod
     def remove_empty_dirs(directory: str, verbose: bool = True):
-        from tqdm import tqdm
+        def remove_(inner_dir):
+            dir_items = DirUtils.list_dir_full_path(inner_dir, only_directories=True)
+            dir_files = DirUtils.list_dir_full_path(inner_dir)
+            if len(dir_files) == 0 and len(dir_items) == 0:
+                os.rmdir(inner_dir)
+                if verbose:
+                    print(f"Removed {inner_dir}")
+                return True
+            elif len(dir_files) == 0 and len(dir_items) != 0:
+                remove_it = True
+                for inner_dir_item in dir_items:
+                    what_to_do = remove_(inner_dir_item)
+                    if remove_it and not what_to_do:
+                        remove_it = False
+                return remove_it
+            elif len(dir_files) != 0:
+                return False
+            else:
+                raise ValueError()
+
         if os.path.exists(directory):
-            all_dirs = os.walk(directory)
-            pbar = tqdm(all_dirs, total=len(all_dirs))
-            for root, dirs, filenames in pbar:
-                for dir_ in dirs:
-                    try:
-                        os.remove(dir_)
-                    except:
-                        if verbose:
-                            print(f"[Warning] {dir_} is not empty")
-                pbar.update()
+            for dir_ in DirUtils.list_items_scandir(directory, only_directories=True):
+                remove_(dir_)
 
     @staticmethod
     def is_empty(directory: str):
