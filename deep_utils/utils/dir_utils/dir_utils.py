@@ -1,6 +1,6 @@
 import os
 import shutil
-from os.path import join, split, exists
+from os.path import join, split, exists, isdir
 from pathlib import Path
 from typing import Dict, List, Tuple, Union, Optional
 
@@ -1335,7 +1335,8 @@ class DirUtils:
         :param dir_end_depth:
         :return:
         """
-
+        if not exists(directory_path) or not isdir(directory_path):
+            return
         if only_directories:
             try:
                 for entry in os.scandir(directory_path):
