@@ -690,7 +690,7 @@ class DirUtils:
                                artifact_type=artifact_type,
                                artifact_value=artifact_value,
                                extra_punctuation=extra_punctuation,
-                               current_extension=current_extension, )
+                               current_extension=current_extension)
 
     @staticmethod
     def list_dir_full_path(directory: str,
