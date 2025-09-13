@@ -26,6 +26,7 @@ class PersianUtils:
             "۸": "8",
             "۹": "9",
             "۰": "0",
+            # TODO: Add arabic items too
         }
         if reverse:
             NUM_MAP = {v: k for k, v in NUM_MAP.items()}
