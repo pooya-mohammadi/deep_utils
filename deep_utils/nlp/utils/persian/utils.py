@@ -30,6 +30,21 @@ class PersianUtils:
         }
         if reverse:
             NUM_MAP = {v: k for k, v in NUM_MAP.items()}
+        else:
+            NUM_MAP.update(
+                {
+                    "١": "1",
+                    "٢": "2",
+                    "٣": "3",
+                    "٤": "4",
+                    "٥": "5",
+                    "٦": "6",
+                    "٧": "7",
+                    "٨": "8",
+                    "٩": "9",
+                    "٠": "0"
+                }
+            )
         output_string = "".join([NUM_MAP.get(c, c) for c in input_string])
         return output_string
 
