@@ -1324,7 +1324,7 @@ class DirUtils:
     def list_items_scandir(directory_path: str, endswith: Union[str, Tuple[str, ...]] = None,
                            not_endswith: Union[str, Tuple[str, ...]] = None, only_directories: bool = False,
                            dir_start_depth: int = 0, dir_end_depth: int = -1, current_dir_path: int = 0,
-                           only_files:bool=False):
+                           only_files: bool = False):
         """
 
         :param directory_path:
@@ -1387,7 +1387,7 @@ class DirUtils:
                         else:
 
                             if not only_files:
-                                yield entry.path # return the directories as well
+                                yield entry.path  # return the directories as well
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
                                                                    not_endswith=not_endswith)
             else:
@@ -1408,6 +1408,13 @@ class DirUtils:
         print(output)
         for line in output.split("\n"):
             print(line)
+
+    @staticmethod
+    def get_relative_path(org_path, org_dir, target_dir, get_dir: bool = False):
+        if get_dir and not isdir(org_path):
+            org_path = split(org_path)[0]
+        relative_path = org_path.replace(org_dir, "").strip("/")
+        return join(target_dir, relative_path)
 
 
 mkdir_incremental = DirUtils.mkdir_incremental
