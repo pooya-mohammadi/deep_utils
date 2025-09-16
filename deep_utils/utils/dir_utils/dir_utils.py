@@ -1376,7 +1376,7 @@ class DirUtils:
                         else:
                             if not only_files:
                                 yield entry.path  # return the directories as well
-                            yield from DirUtils.list_items_scandir(entry.path, endswith=endswith)
+                            yield from DirUtils.list_items_scandir(entry.path, endswith=endswith, only_files=only_files)
 
             elif endswith is not None and not_endswith is not None:
                 for entry in os.scandir(directory_path):
@@ -1389,7 +1389,7 @@ class DirUtils:
                             if not only_files:
                                 yield entry.path  # return the directories as well
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
-                                                                   not_endswith=not_endswith)
+                                                                   not_endswith=not_endswith, only_files=only_files)
             else:
                 for entry in os.scandir(directory_path):
                     if not entry.name.startswith('.'):
@@ -1399,7 +1399,7 @@ class DirUtils:
                             if not only_files:
                                 yield entry.path  # return the directories as well
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
-                                                                   not_endswith=not_endswith)
+                                                                   not_endswith=not_endswith, only_files=only_files)
 
     @staticmethod
     def get_nvidia_users(password: str):
