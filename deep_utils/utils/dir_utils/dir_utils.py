@@ -1323,7 +1323,8 @@ class DirUtils:
     @staticmethod
     def list_items_scandir(directory_path: str, endswith: Union[str, Tuple[str, ...]] = None,
                            not_endswith: Union[str, Tuple[str, ...]] = None, only_directories: bool = False,
-                           dir_start_depth: int = 0, dir_end_depth: int = -1, current_dir_path: int = 0):
+                           dir_start_depth: int = 0, dir_end_depth: int = -1, current_dir_path: int = 0,
+                           only_files:bool=False):
         """
 
         :param directory_path:
@@ -1333,8 +1334,11 @@ class DirUtils:
         :param current_dir_path:
         :param dir_start_depth:
         :param dir_end_depth:
+        :param only_files:
         :return:
         """
+        if only_files and only_directories:
+            raise ValueError("only_files and only_directories cannot be True at the same time!!!")
         if not exists(directory_path) or not isdir(directory_path):
             return
         if only_directories:
@@ -1370,6 +1374,8 @@ class DirUtils:
                             if entry.name.endswith(endswith):
                                 yield entry.path
                         else:
+                            if not only_files:
+                                yield entry.path  # return the directories as well
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith)
 
             elif endswith is not None and not_endswith is not None:
@@ -1379,6 +1385,9 @@ class DirUtils:
                             if entry.name.endswith(endswith) and not entry.name.endswith(not_endswith):
                                 yield entry.path
                         else:
+
+                            if not only_files:
+                                yield entry.path # return the directories as well
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
                                                                    not_endswith=not_endswith)
             else:
@@ -1387,6 +1396,8 @@ class DirUtils:
                         if entry.is_file():
                             yield entry.path
                         else:
+                            if not only_files:
+                                yield entry.path  # return the directories as well
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
                                                                    not_endswith=not_endswith)
 
