@@ -49,12 +49,16 @@ class PersianUtils:
         return output_string
 
     @staticmethod
-    def arabic_char2fa_char(input_string: str):
+    def arabic_char2fa_char(input_string: str, reverse: bool = False):
         arabic2persian = {
             "ك": "ک",
             "ي": "ی",
         }
-        out_string = "".join(arabic2persian.get(s, s) for s in input_string)
+        if reverse:
+            arabic2persian = {j: k for k,j in arabic2persian.items()}
+            out_string = "".join(arabic2persian.get(s, s) for s in input_string)
+        else:
+            out_string = "".join(arabic2persian.get(s, s) for s in input_string)
         return out_string
 
     @staticmethod

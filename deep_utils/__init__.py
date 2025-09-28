@@ -162,6 +162,7 @@ if TYPE_CHECKING:
     from .utils.datetime_utils.datetime_utils import DateTimeUtils
     from .utils.youtube_download.download_youtube import DownloadYoutube
     from .medical.dicom2nifti_utils.dicom2nifti_utils import Dicom2Nifti
+    from .nlp.utils.persian.utils import PersianUtils
 else:
     import sys
 
