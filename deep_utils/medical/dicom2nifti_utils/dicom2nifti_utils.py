@@ -20,3 +20,4 @@ class Dicom2Nifti:
             if verbose:
                 StringUtils.print(f"[INFO] Successfully generated nifti {nifti_path} from dicom {dicom_path}", color="green")
 
+        return output
