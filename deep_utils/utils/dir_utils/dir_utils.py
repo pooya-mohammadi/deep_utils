@@ -1148,7 +1148,7 @@ class DirUtils:
             if len(dir_files) == 0 and len(dir_items) == 0:
                 os.rmdir(inner_dir)
                 if verbose:
-                    print(f"Removed {inner_dir}")
+                    print(f"Removed Empty dir: {inner_dir}")
                 return True
             elif len(dir_files) == 0 and len(dir_items) != 0:
                 remove_it = True
