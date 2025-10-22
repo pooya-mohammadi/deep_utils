@@ -1416,5 +1416,11 @@ class DirUtils:
         relative_path = org_path.replace(org_dir, "").strip("/")
         return join(target_dir, relative_path)
 
+    @staticmethod
+    def move_to_top(dir_path: str, file_extension: str = ""):
+        for item in DirUtils.list_items_scandir(dir_path, endswith=file_extension, only_files=True):
+            if split(item)[0] != dir_path:
+                shutil.move(item, dir_path)
+
 
 mkdir_incremental = DirUtils.mkdir_incremental
