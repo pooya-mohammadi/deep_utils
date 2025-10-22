@@ -1422,6 +1422,10 @@ class DirUtils:
     def move_to_top(dir_path:str, file_extension: str= ""):
         for item in DirUtils.list_items_scandir(dir_path, endswith=file_extension, only_files=True):
             if split(item)[0] != dir_path:
+                target_path = join(dir_path, split(item)[-1])
+                if exists(target_path):
+                    StringUtils.print(f"{item=} exists in {target_path=}")
+                    continue
                 shutil.move(item, dir_path)
 
 mkdir_incremental = DirUtils.mkdir_incremental
