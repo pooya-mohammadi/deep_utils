@@ -1153,9 +1153,11 @@ class DirUtils:
             elif len(dir_files) == 0 and len(dir_items) != 0:
                 remove_it = True
                 for inner_dir_item in dir_items:
-                    what_to_do = remove_(inner_dir_item)
-                    if remove_it and not what_to_do:
+                    you_should_remove_it = remove_(inner_dir_item)
+                    if remove_it and not you_should_remove_it:
                         remove_it = False
+                if remove_it:
+                    os.rmdir(inner_dir)
                 return remove_it
             elif len(dir_files) != 0:
                 return False
@@ -1417,10 +1419,14 @@ class DirUtils:
         return join(target_dir, relative_path)
 
     @staticmethod
-    def move_to_top(dir_path: str, file_extension: str = ""):
+    def move_to_top(dir_path:str, file_extension: str= ""):
         for item in DirUtils.list_items_scandir(dir_path, endswith=file_extension, only_files=True):
             if split(item)[0] != dir_path:
                 shutil.move(item, dir_path)
 
-
 mkdir_incremental = DirUtils.mkdir_incremental
+if __name__ == '__main__':
+    # for item in DirUtils.list_dir_full_path("/home/aicvi/projects/nnUZoo-Base/outputs/oct-22-50cases",
+    #                                         only_directories=True):
+    #     DirUtils.move_to_top(item, )
+    DirUtils.remove_empty_dirs("/home/aicvi/projects/nnUZoo-Base/outputs/oct-22-50cases")
