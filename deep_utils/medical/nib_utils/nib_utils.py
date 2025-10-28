@@ -10,13 +10,13 @@ from deep_utils.medical.main_utils import MainMedUtils
 class NIBUtils(MainMedUtils):
 
     @staticmethod
-    def get_largets_box(array: np.ndarray, get_info: bool = False):
+    def get_largest_box(array: np.ndarray, get_info: bool = False):
         if get_info:
-            info = MainMedUtils.get_largets_box(array, get_info)
+            info = MainMedUtils.get_largest_box(array, get_info)
             info['class'] = "nib"
             return info
         else:
-            return MainMedUtils.get_largets_box(array, get_info)
+            return MainMedUtils.get_largest_box(array, get_info)
 
     @staticmethod
     def get_largest_box_and_crop(array: np.ndarray, expand: int = 0, get_info: bool = False):

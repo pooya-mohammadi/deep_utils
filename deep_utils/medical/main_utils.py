@@ -27,7 +27,7 @@ class MainMedUtils:
             return image
 
     @staticmethod
-    def get_largets_box(array: np.ndarray, get_info: bool = False):
+    def get_largest_box(array: np.ndarray, get_info: bool = False):
         dimensions = np.where(array)
         mins = []
         maxs = []
@@ -58,7 +58,7 @@ class MainMedUtils:
 
     @staticmethod
     def get_largest_box_and_crop(array: np.ndarray, expand: int = 0, get_info: bool = False):
-        mins, maxs = MainMedUtils.get_largets_box(array)
+        mins, maxs = MainMedUtils.get_largest_box(array)
         shape = array.shape
         expands = np.array([int(d * expand / 100) if expand else 0 for d in shape])
         mins = np.maximum(np.array(mins) - expands, 0)
