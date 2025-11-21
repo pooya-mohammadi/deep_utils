@@ -1324,7 +1324,9 @@ class DirUtils:
 
     @staticmethod
     def list_items_scandir(directory_path: str, endswith: Union[str, Tuple[str, ...]] = None,
-                           not_endswith: Union[str, Tuple[str, ...]] = None, only_directories: bool = False,
+                           not_endswith: Union[str, Tuple[str, ...]] = None,
+                           startswith: Union[str, Tuple[str, ...]] = None,
+                           only_directories: bool = False,
                            dir_start_depth: int = 0, dir_end_depth: int = -1, current_dir_path: int = 0,
                            only_files: bool = False):
         """
@@ -1332,6 +1334,7 @@ class DirUtils:
         :param directory_path:
         :param endswith:
         :param not_endswith:
+        :param startswith:
         :param only_directories:
         :param current_dir_path:
         :param dir_start_depth:
@@ -1373,8 +1376,13 @@ class DirUtils:
                 for entry in os.scandir(directory_path):
                     if not entry.name.startswith('.'):
                         if entry.is_file():
-                            if entry.name.endswith(endswith):
-                                yield entry.path
+                            entry_name = entry.name
+                            if entry_name.endswith(endswith):
+                                if startswith is not None:
+                                    if entry_name.startswith(startswith):
+                                        yield entry.path
+                                else:
+                                    yield entry.path
                         else:
                             if not only_files:
                                 yield entry.path  # return the directories as well
@@ -1384,8 +1392,13 @@ class DirUtils:
                 for entry in os.scandir(directory_path):
                     if not entry.name.startswith('.'):
                         if entry.is_file():
-                            if entry.name.endswith(endswith) and not entry.name.endswith(not_endswith):
-                                yield entry.path
+                            entry_name = entry.name
+                            if entry_name.endswith(endswith) and not entry_name.endswith(not_endswith):
+                                if startswith is not None:
+                                    if entry_name.startswith(startswith):
+                                        yield entry.path
+                                else:
+                                    yield entry.path
                         else:
 
                             if not only_files:
@@ -1396,7 +1409,12 @@ class DirUtils:
                 for entry in os.scandir(directory_path):
                     if not entry.name.startswith('.'):
                         if entry.is_file():
-                            yield entry.path
+                            entry_name = entry.name
+                            if startswith is not None:
+                                if entry_name.startswith(startswith):
+                                    yield entry.path
+                            else:
+                                yield entry.path
                         else:
                             if not only_files:
                                 yield entry.path  # return the directories as well
@@ -1419,7 +1437,7 @@ class DirUtils:
         return join(target_dir, relative_path)
 
     @staticmethod
-    def move_to_top(dir_path:str, file_extension: str= ""):
+    def move_to_top(dir_path: str, file_extension: str = ""):
         for item in DirUtils.list_items_scandir(dir_path, endswith=file_extension, only_files=True):
             if split(item)[0] != dir_path:
                 target_path = join(dir_path, split(item)[-1])
@@ -1427,6 +1445,7 @@ class DirUtils:
                     StringUtils.print(f"{item=} exists in {target_path=}")
                     continue
                 shutil.move(item, dir_path)
+
 
 mkdir_incremental = DirUtils.mkdir_incremental
 if __name__ == '__main__':
