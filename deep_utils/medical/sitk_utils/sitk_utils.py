@@ -39,9 +39,11 @@ class SITKUtils(MainMedUtils):
             return components
 
     @staticmethod
-    def get_largest_component_per_label(input_img: Image, input_array: np.ndarray = None, get_array: bool = False,
+    def get_largest_component_per_label(input_img: Image,
+                                        input_array: np.ndarray = None,
+                                        get_array: bool = False,
                                         labels: int | tuple[int] = None) -> Image | np.ndarray:
-        if input_array is not None:
+        if input_array is not None and input_img is None:
             arr_img = sitk.GetImageFromArray(input_array)
             arr_img.CopyInformation(input_img)
             input_img = arr_img
