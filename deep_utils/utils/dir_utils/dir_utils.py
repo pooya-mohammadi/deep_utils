@@ -1446,10 +1446,30 @@ class DirUtils:
                     continue
                 shutil.move(item, dir_path)
 
+    @staticmethod
+    def move_items_from_one_dir_to_another_keeping_tree_structure(base_dir: str, target_dir: str,
+                                                                  endswith: Union[str, Tuple[str, ...]],
+                                                                  move: bool = True,
+                                                                  only_files: bool = True,
+                                                                  verbose: bool = False):
+        os.makedirs(target_dir, exist_ok=True)
+        for item in DirUtils.list_items_scandir(base_dir, endswith=endswith, only_files=only_files):
+            target_path = DirUtils.get_relative_path(item, base_dir, target_dir)
+            if isdir(target_path):
+                if move:
+                    shutil.move(item, split(target_path)[0])
+                else:
+                    shutil.copy(item, split(target_path)[0])
+            else:
+                target_base_dir = split(target_path)[0]
+                os.makedirs(target_base_dir, exist_ok=True)
+                if move:
+                    shutil.move(item, target_base_dir)
+                else:
+                    shutil.copy(item, target_base_dir)
+            if verbose:
+                StringUtils.print(f"Moved/Copied {item=} to {target_path=}", color='green')
+
 
 mkdir_incremental = DirUtils.mkdir_incremental
-if __name__ == '__main__':
-    # for item in DirUtils.list_dir_full_path("/home/aicvi/projects/nnUZoo-Base/outputs/oct-22-50cases",
-    #                                         only_directories=True):
-    #     DirUtils.move_to_top(item, )
-    DirUtils.remove_empty_dirs("/home/aicvi/projects/nnUZoo-Base/outputs/oct-22-50cases")
+
