@@ -1353,20 +1353,48 @@ class DirUtils:
                         if entry.is_dir():
                             if dir_end_depth <= 0:
                                 if dir_start_depth <= current_dir_path:
-                                    yield entry.path
+                                    if endswith:
+                                        if entry.path.endswith(endswith):
+                                            if not_endswith:
+                                                if not entry.path.endswith(not_endswith):
+                                                    yield entry.path
+                                            else:
+                                                yield entry.path
+                                    else:
+                                        if not_endswith:
+                                            if not entry.path.endswith(not_endswith):
+                                                yield entry.path
+                                        else:
+                                            yield entry.path
                                 yield from DirUtils.list_items_scandir(entry.path, only_directories=True,
                                                                        current_dir_path=current_dir_path + 1,
                                                                        dir_end_depth=dir_end_depth,
-                                                                       dir_start_depth=dir_start_depth
+                                                                       dir_start_depth=dir_start_depth,
+                                                                       endswith=endswith,
+                                                                       not_endswith=not_endswith,
                                                                        )
                             else:
                                 if dir_start_depth <= current_dir_path < dir_end_depth:
-                                    yield entry.path
+                                    if endswith:
+                                        if entry.path.endswith(endswith):
+                                            if not_endswith:
+                                                if not entry.path.endswith(not_endswith):
+                                                    yield entry.path
+                                            else:
+                                                yield entry.path
+                                    else:
+                                        if not_endswith:
+                                            if not entry.path.endswith(not_endswith):
+                                                yield entry.path
+                                        else:
+                                            yield entry.path
                                 if current_dir_path + 1 < dir_end_depth:
                                     yield from DirUtils.list_items_scandir(entry.path, only_directories=True,
                                                                            current_dir_path=current_dir_path + 1,
                                                                            dir_end_depth=dir_end_depth,
-                                                                           dir_start_depth=dir_start_depth
+                                                                           dir_start_depth=dir_start_depth,
+                                                                           endswith=endswith,
+                                                                           not_endswith=not_endswith,
                                                                            )
             except PermissionError:
                 print(f"Warning: Permission Error in: {directory_path}")
