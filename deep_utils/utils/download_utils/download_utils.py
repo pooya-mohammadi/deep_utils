@@ -105,7 +105,6 @@ class DownloadUtils:
                                         filename=split(filename)[-1].replace('"', "").replace(";", ""),
                                         exists_skip=not overwrite, cookies=cookies)
 
-a
 
 if __name__ == '__main__':
     image_download_path = "https://github.com/pooya-mohammadi/deep_utils/releases/download/1.0.2/golsa_in_garden.jpg"
