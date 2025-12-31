@@ -3,6 +3,7 @@ import shutil
 import sys
 from os.path import join, split
 import requests
+from deep_utils.utils.str_utils.str_utils import StringUtils
 
 
 class DownloadUtils:
@@ -25,7 +26,8 @@ class DownloadUtils:
             filename=None,
             remove_download=False,
             exists_skip=False,
-            cookies=None
+            cookies=None,
+            max_try: int = 5
     ):
         """
         Download a file from url
@@ -48,9 +50,13 @@ class DownloadUtils:
         try:
             response = requests.get(url, stream=True, cookies=cookies)
             total = response.headers.get("content-length")
-            while not total:
-                response = requests.get(url, stream=True)
+            for _ in range(max_try):
+                response = requests.get(url, stream=True, cookies=cookies)
                 total = response.headers.get("content-length")
+                if total is None:
+                    break
+            else:
+                StringUtils.print(f"Could not get content-length for {url} using requests.get(url, stream=True, cookies=cookies)")
             try:
                 if filename is None:
                     filename = response.headers.get("filename")
@@ -93,7 +99,7 @@ class DownloadUtils:
             raise Exception(error_msg.format(url))
         return download_des
 
-    def download_urls(dl_urls: list[str], download_path: str, remove_to_get_local_file_path: str = None, cookies=None, overwrite: bool = False):
+    def download_urls(dl_urls: list[str], download_path: str, remove_to_get_local_file_path: str = None, cookies=None, overwrite: bool = False, verbose: bool= False):
         for url in dl_urls:
             if remove_to_get_local_file_path:
                 filename = url.replace(remove_to_get_local_file_path, "").strip("/")
@@ -101,6 +107,8 @@ class DownloadUtils:
             if not overwrite and os.path.exists(local_filepath):
                 continue
             os.makedirs(os.path.dirname(local_filepath), exist_ok=True)
+            if verbose:
+                StringUtils.print(f"Downloading {url} to {local_filepath}", color="yellow")
             DownloadUtils.download_file(url, os.path.dirname(local_filepath),
                                         filename=split(filename)[-1].replace('"', "").replace(";", ""),
                                         exists_skip=not overwrite, cookies=cookies)
