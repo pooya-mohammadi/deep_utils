@@ -704,6 +704,7 @@ class DirUtils:
                            exact_depth: bool = False,
                            return_dict: bool = False,
                            ends_with: Union[Union[str, List[str]]] = None,
+                           endswith: Union[Union[str, List[str]]] = None,
                            ) -> Union[List[str], Dict[str, str]]:
         """
         Returns the full path objects in a directory
@@ -721,8 +722,10 @@ class DirUtils:
         :param exact_depth: If set True, the exact depth should be matched and smaller ones are not accepted!
         :param return_dict: If return_dict is set to True, the output will be a dict like the following: {filename: filepath}
         :param ends_with: If ends with these items they will be accepted
+        :param endswith: If ends with these items they will be accepted
         :return:
         """
+        ends_with = ends_with or endswith
         interest_extensions = interest_extensions or []
         interest_extensions = [interest_extensions] if isinstance(interest_extensions, str) else interest_extensions
         interest_extensions = [f".{ext}" if not ext.startswith(".") else ext for ext in

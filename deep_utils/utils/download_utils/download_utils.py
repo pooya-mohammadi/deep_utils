@@ -105,6 +105,8 @@ class DownloadUtils:
                 filename = url.replace(remove_to_get_local_file_path, "").strip("/")
             local_filepath = os.path.join(download_path, filename)
             if not overwrite and os.path.exists(local_filepath):
+                if verbose:
+                    StringUtils.print(f"Skipping {url} since it exists in {local_filepath}", color="yellow")
                 continue
             os.makedirs(os.path.dirname(local_filepath), exist_ok=True)
             if verbose:
