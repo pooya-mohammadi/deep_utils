@@ -1360,15 +1360,31 @@ class DirUtils:
                                         if entry.path.endswith(endswith):
                                             if not_endswith:
                                                 if not entry.path.endswith(not_endswith):
-                                                    yield entry.path
+                                                    if startswith is not None:
+                                                        if entry.path.startswith(startswith):
+                                                            yield entry.path
+                                                    else:
+                                                        yield entry.path
                                             else:
-                                                yield entry.path
+                                                if startswith is not None:
+                                                    if entry.path.startswith(startswith):
+                                                        yield entry.path
+                                                else:
+                                                    yield entry.path
                                     else:
                                         if not_endswith:
                                             if not entry.path.endswith(not_endswith):
-                                                yield entry.path
+                                                if startswith is not None:
+                                                    if entry.path.startswith(startswith):
+                                                        yield entry.path
+                                                else:
+                                                    yield entry.path
                                         else:
-                                            yield entry.path
+                                            if startswith is not None:
+                                                if entry.path.startswith(startswith):
+                                                    yield entry.path
+                                            else:
+                                                yield entry.path
                                 yield from DirUtils.list_items_scandir(entry.path, only_directories=True,
                                                                        current_dir_path=current_dir_path + 1,
                                                                        dir_end_depth=dir_end_depth,
@@ -1382,15 +1398,31 @@ class DirUtils:
                                         if entry.path.endswith(endswith):
                                             if not_endswith:
                                                 if not entry.path.endswith(not_endswith):
-                                                    yield entry.path
+                                                    if startswith is not None:
+                                                        if entry.path.startswith(startswith):
+                                                            yield entry.path
+                                                    else:
+                                                        yield entry.path
                                             else:
-                                                yield entry.path
+                                                if startswith is not None:
+                                                    if entry.path.startswith(startswith):
+                                                        yield entry.path
+                                                else:
+                                                    yield entry.path
                                     else:
                                         if not_endswith:
                                             if not entry.path.endswith(not_endswith):
-                                                yield entry.path
+                                                if startswith is not None:
+                                                    if entry.path.startswith(startswith):
+                                                        yield entry.path
+                                                else:
+                                                    yield entry.path
                                         else:
-                                            yield entry.path
+                                            if startswith is not None:
+                                                if entry.path.startswith(startswith):
+                                                    yield entry.path
+                                            else:
+                                                yield entry.path
                                 if current_dir_path + 1 < dir_end_depth:
                                     yield from DirUtils.list_items_scandir(entry.path, only_directories=True,
                                                                            current_dir_path=current_dir_path + 1,
