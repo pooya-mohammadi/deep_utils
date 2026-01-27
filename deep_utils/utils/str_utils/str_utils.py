@@ -96,8 +96,8 @@ class StringUtils:
         :param verbose:
         :return:
         """
-        args = [StringUtils.color_str(str(arg), color=color, mode=mode) for arg in args]
         if verbose:
+            args = [StringUtils.color_str(str(arg), color=color, mode=mode) for arg in args]
             print(*args, sep=sep, end=end, file=file)
 
 
