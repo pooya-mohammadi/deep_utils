@@ -84,7 +84,7 @@ class StringUtils:
             colors["end"]
 
     @staticmethod
-    def print(*args, sep=' ', end='\n', file=None, color: Optional[str] = "red", mode: Union[str, list] = "bold"):
+    def print(*args, sep=' ', end='\n', file=None, color: Optional[str] = "red", mode: Union[str, list] = "bold", verbose: bool = True):
         """
         colorful print!
         :param args:
@@ -93,10 +93,12 @@ class StringUtils:
         :param file:
         :param color:
         :param mode: text mode: available modes: bold, underline
+        :param verbose:
         :return:
         """
         args = [StringUtils.color_str(str(arg), color=color, mode=mode) for arg in args]
-        print(*args, sep=sep, end=end, file=file)
+        if verbose:
+            print(*args, sep=sep, end=end, file=file)
 
 
 if __name__ == '__main__':
