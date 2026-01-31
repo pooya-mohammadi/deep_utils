@@ -1170,7 +1170,7 @@ class DirUtils:
         if os.path.exists(directory):
             for dir_ in DirUtils.list_items_scandir(directory, only_directories=True):
                 remove_(dir_)
-
+            remove_(directory)
     @staticmethod
     def is_empty(directory: str):
         if exists(directory):
