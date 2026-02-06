@@ -42,6 +42,7 @@ _import_structure = {
     "utils.ff_utils.ffprobe_utils": ["FFProbeUtils"],
     "utils.datetime_utils.datetime_utils": ["DateTimeUtils"],
     "utils.youtube_download.download_youtube": ["DownloadYoutube"],
+    "utils.gpu_utils.gpu_utils": ["GPUUtils"],
     "medical.dicom2nifti_utils.dicom2nifti_utils":["Dicom2Nifti"],
     DUMMY_PATH: [],  # this is required for dummy check!
 }
