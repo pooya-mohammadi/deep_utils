@@ -4,7 +4,7 @@ from deep_utils.dummy_objects.dummy_framework import LazyModule
 from .utils.lib_utils.integeration_utils import import_lazy_module
 
 # Deep Utils version number
-__version__ = "1.5.16"
+__version__ = "1.5.17"
 
 from .utils.constants import DUMMY_PATH, Backends
 
