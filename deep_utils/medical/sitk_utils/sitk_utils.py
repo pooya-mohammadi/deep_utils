@@ -1,17 +1,18 @@
 import math
-from collections import defaultdict
 from typing import Tuple, Union, Dict, List, Optional
 
 import SimpleITK as sitk  # noqa1537
 import numpy as np
 from SimpleITK import Image
+
 from deep_utils.medical.main_utils import MainMedUtils
 
 
 class SITKUtils(MainMedUtils):
     @staticmethod
     def get_components(input_img: Image, input_array: np.ndarray = None, get_array: bool = False,
-                       labels: int | tuple[int] = None) -> Dict[int, Image] | Dict[int, np.ndarray]:
+                       labels: int | tuple[int] = None, disconnect_components: bool = False,
+                       remove_labels: Tuple[int, ...] = (0,)) -> Dict[int, Image] | Dict[int, np.ndarray]:
         if input_array is not None:
             arr_img = sitk.GetImageFromArray(input_array)
             arr_img.CopyInformation(input_img)
@@ -21,7 +22,7 @@ class SITKUtils(MainMedUtils):
             unique_labels = set(labels) - {0}
         else:
             unique_labels = sitk.GetArrayViewFromImage(input_img).astype(int)
-            unique_labels = set(unique_labels.flatten()) - {0}  # Exclude background (label 0)
+            unique_labels = set(unique_labels.flatten()) - set(remove_labels)
 
         components = dict()
         for label in unique_labels:
@@ -30,10 +31,23 @@ class SITKUtils(MainMedUtils):
 
             # Compute connected components
             cc = sitk.ConnectedComponent(binary_mask)
-            components[int(label)] = cc
+            if disconnect_components:
+                stats = sitk.LabelShapeStatisticsImageFilter()
+                stats.Execute(cc)
+
+                component_labels = stats.GetLabels()
+                components[int(label)] = [
+                    sitk.ConnectedComponent(sitk.BinaryThreshold(cc, lowerThreshold=int(component_label),
+                                                                 upperThreshold=int(component_label))) for
+                    component_label in component_labels]
+            else:
+                components[int(label)] = cc
 
         if get_array:
-            arr = {l: sitk.GetArrayFromImage(output) for l, output in components.items()}
+            if not disconnect_components:
+                arr = {l: sitk.GetArrayFromImage(output) for l, output in components.items()}
+            else:
+                arr = {l: [sitk.GetArrayFromImage(out) for out in output] for l, output in components.items()}
             return arr
         else:
             return components
@@ -358,9 +372,3 @@ class SITKUtils(MainMedUtils):
         else:
             raise ValueError(f"input mood: {mood} is not supported!")
         return largest_size
-
-
-if __name__ == '__main__':
-    array = np.array([[1, 3, 1, 2, 1], [1, 3, 2, 2, 1]])
-    output = SITKUtils.swap_seg_value(array, swap_seg={1: 3, 3: 1})
-    print(output)
