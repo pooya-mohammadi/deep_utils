@@ -1,6 +1,7 @@
 import random
 import numpy as np
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Literal, Any, Dict
+from deep_utils.utils.json_utils.json_utils import JsonUtils
 
 
 class MainMedUtils:
@@ -57,24 +58,52 @@ class MainMedUtils:
         return new_shape
 
     @staticmethod
-    def get_largest_box_and_crop(array: np.ndarray, expand: int = 0, get_info: bool = False):
-        mins, maxs = MainMedUtils.get_largest_box(array)
+    def get_largest_box_and_crop(array: np.ndarray, *for_crop_arrays, expands: Union[int, Tuple[int, ...]] = 0,
+                                 get_info: bool = False,
+                                 expand_type: Literal["percentage", "mil", "voxels"] = "percentage",
+                                 spacing: Tuple[int, ...] = None, lib_type: Literal['nib', 'sitk'] = "sitk"):
+
         shape = array.shape
-        expands = np.array([int(d * expand / 100) if expand else 0 for d in shape])
+
+        mins, maxs = MainMedUtils.get_largest_box(array)
+        if expands:
+            if expand_type == "mil":
+                if isinstance(expands, int):
+                    expands = [expands] * len(shape)
+                if not spacing:
+                    raise ValueError("Spacing should be provided for expand_type == mil")
+                expands = (np.array(expands) / np.array(spacing)).astype(np.int16)
+            elif expand_type == "voxels":
+                if isinstance(expands, int):
+                    expands = [expands] * len(shape)
+            elif expand_type == "percentage":
+                if isinstance(expands, int):
+                    expands = np.array([int(d * expands / 100) for d in shape])
+                else:
+                    expands = np.array([int(d * expands / 100) for d in shape])
+        else:
+            expands = [0] * len(shape)
+
         mins = np.maximum(np.array(mins) - expands, 0)
         maxs = np.minimum(np.array(maxs) + expands, shape)
+
         if len(mins) == 3:
             cropped_array = array[
                 mins[0]: maxs[0],
                 mins[1]: maxs[1],
                 mins[2]: maxs[2]
             ]
+            for_cropped_arrays = [crop_arr[mins[0]: maxs[0],
+            mins[1]: maxs[1],
+            mins[2]: maxs[2]] for crop_arr in for_crop_arrays]
 
         elif len(mins) == 2:
             cropped_array = array[
                 mins[0]: maxs[0],
                 mins[1]: maxs[1]
             ]
+            for_cropped_arrays = [crop_arr[mins[0]: maxs[0],
+            mins[1]: maxs[1]] for crop_arr in for_crop_arrays]
         elif len(mins) == 4:
             cropped_array = array[
                 mins[0]: maxs[0],
@@ -82,14 +111,31 @@ class MainMedUtils:
                 mins[2]: maxs[2],
                 mins[3]: maxs[3],
             ]
+            for_cropped_arrays = [
+                crop_arr[mins[0]: maxs[0],
+                mins[1]: maxs[1],
+                mins[2]: maxs[2],
+                mins[3]: maxs[3]] for crop_arr in for_crop_arrays]
         else:
             raise ValueError(f"Something wrong with mins: {mins} and maxs: {maxs}")
 
+        output: list[Any] = [cropped_array]
+
+        if for_cropped_arrays:
+            output.append(for_cropped_arrays)
+
         if get_info:
-            info = {i: (int(mi), int(ma)) for i, (mi, ma) in enumerate(zip(mins, maxs))}
-            return cropped_array, info
-        else:
-            return cropped_array
+            info: Dict[Union[str, int], Any] = {i: (int(mi), int(ma)) for i, (mi, ma) in enumerate(zip(mins, maxs))}
+
+            info['expands'] = expands
+            info['class'] = lib_type
+
+            if isinstance(get_info, str):
+                JsonUtils.dump(get_info, info)
+
+            output.append(info)
+
+        return tuple(output)
 
     @staticmethod
     def crop_with_info(array: np.ndarray, info: dict):

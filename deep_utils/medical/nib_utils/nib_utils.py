@@ -1,10 +1,12 @@
 import math
-from typing import Union, Optional, Sequence, Tuple, List
+from typing import Union, Optional, Tuple, List, Literal
 
-import numpy as np
 import nibabel as nib
+import numpy as np
 from nibabel.filebasedimages import FileBasedImage
+
 from deep_utils.medical.main_utils import MainMedUtils
+
 
 
 class NIBUtils(MainMedUtils):
@@ -19,14 +21,35 @@ class NIBUtils(MainMedUtils):
             return MainMedUtils.get_largest_box(array, get_info)
 
     @staticmethod
-    def get_largest_box_and_crop(array: np.ndarray, expand: int = 0, get_info: bool = False):
+    def get_largest_box_and_crop(array: np.ndarray, *for_crop_arrays, expands: Union[int, Tuple[int, ...]] = 0,
+                                 get_info: bool = False,
+                                 expand_type: Literal["percentage", "mil", "voxels"] = "percentage",
+                                 spacing: Tuple[int, ...] = None):
+        return MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays, expands=expands,
+                                                     get_info=get_info, expand_type=expand_type, spacing=spacing,
+                                                     lib_type="nib")
         if get_info:
-            arr, info = MainMedUtils.get_largest_box_and_crop(array, expand, get_info)
+            if for_crop_arrays:
+                arr, for_crop_arrays, info = MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays,
+                                                                                   expands=expands, get_info=get_info,
+                                                                                   expand_type=expand_type,
+                                                                                   spacing=spacing)
+            else:
+                arr, info = MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays,
+                                                                  expands=expands, get_info=get_info,
+                                                                  expand_type=expand_type, spacing=spacing)
             info['class'] = "nib"
-            info['expand'] = expand
-            return arr, info
+            if isinstance(get_info, str):
+                JsonUtils.dump(get_info, info)
+
+            if for_crop_arrays:
+                return arr, for_crop_arrays, info
+            else:
+                return arr, info
         else:
-            return MainMedUtils.get_largest_box_and_crop(array, expand, get_info)
+            return MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays, expands=expands,
+                                                         get_info=get_info, expand_type=expand_type, spacing=spacing)
+
     @staticmethod
     def get_img(filepath: str) -> FileBasedImage:
         img = nib.load(filepath)
@@ -51,11 +74,11 @@ class NIBUtils(MainMedUtils):
             header = img.header
         clipped_img = nib.Nifti1Image(input_array, affine, header)
         nib.save(clipped_img, filepath)
+
     @staticmethod
     def update_origin_of_cropped_image(origin, spacing, min_coordinates):
         z, x, y = min_coordinates
         min_coordinates = [x, y, z]
-
 
     @staticmethod
     def save(img, filepath: str):
