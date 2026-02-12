@@ -66,6 +66,9 @@ class MainMedUtils:
         shape = array.shape
 
         mins, maxs = MainMedUtils.get_largest_box(array)
+        if np.any([m is None for m in mins]) or np.any([m is None for m in maxs]):
+            raise ValueError(f"input array is problematic, uniques: {np.unique(array)}")
+
         if expands:
             if expand_type == "mil":
                 if isinstance(expands, int):
@@ -131,7 +134,7 @@ class MainMedUtils:
             info['class'] = lib_type
 
             if isinstance(get_info, str):
-                JsonUtils.dump(get_info, info)
+                JsonUtils.dump_safe_numpy(get_info, info)
 
             output.append(info)
 

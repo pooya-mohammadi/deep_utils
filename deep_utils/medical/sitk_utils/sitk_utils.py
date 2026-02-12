@@ -116,31 +116,12 @@ class SITKUtils(MainMedUtils):
 
     @staticmethod
     def get_largest_box_and_crop(array: np.ndarray, *for_crop_arrays, expands: Union[int, Tuple[int, ...]] = 0,
-                                 get_info: bool = False, expand_type: Literal["percentage", "mil", "voxels"] = "percentage",
+                                 get_info: bool = False,
+                                 expand_type: Literal["percentage", "mil", "voxels"] = "percentage",
                                  spacing: Tuple[int, ...] = None):
         return MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays, expands=expands,
-                                                         get_info=get_info, expand_type=expand_type, spacing=spacing,
+                                                     get_info=get_info, expand_type=expand_type, spacing=spacing,
                                                      lib_type="sitk")
-        if get_info:
-            if for_crop_arrays:
-                arr, for_crop_arrays, info = MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays,
-                                                                                   expands=expands, get_info=get_info,
-                                                                                   expand_type=expand_type, spacing=spacing)
-            else:
-                arr, info = MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays,
-                                                                  expands=expands, get_info=get_info,
-                                                                  expand_type=expand_type, spacing=spacing)
-            info['class'] = "sitk"
-            if isinstance(get_info, str):
-                JsonUtils.dump(get_info, info)
-
-            if for_crop_arrays:
-                return arr, for_crop_arrays, info
-            else:
-                return arr, info
-        else:
-            return MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays, expands=expands,
-                                                         get_info=get_info, expand_type=expand_type, spacing=spacing)
 
     @staticmethod
     def get_array_img_properties(filepath: str):

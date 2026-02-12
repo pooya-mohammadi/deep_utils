@@ -8,7 +8,6 @@ from nibabel.filebasedimages import FileBasedImage
 from deep_utils.medical.main_utils import MainMedUtils
 
 
-
 class NIBUtils(MainMedUtils):
 
     @staticmethod
@@ -28,27 +27,6 @@ class NIBUtils(MainMedUtils):
         return MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays, expands=expands,
                                                      get_info=get_info, expand_type=expand_type, spacing=spacing,
                                                      lib_type="nib")
-        if get_info:
-            if for_crop_arrays:
-                arr, for_crop_arrays, info = MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays,
-                                                                                   expands=expands, get_info=get_info,
-                                                                                   expand_type=expand_type,
-                                                                                   spacing=spacing)
-            else:
-                arr, info = MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays,
-                                                                  expands=expands, get_info=get_info,
-                                                                  expand_type=expand_type, spacing=spacing)
-            info['class'] = "nib"
-            if isinstance(get_info, str):
-                JsonUtils.dump(get_info, info)
-
-            if for_crop_arrays:
-                return arr, for_crop_arrays, info
-            else:
-                return arr, info
-        else:
-            return MainMedUtils.get_largest_box_and_crop(array, *for_crop_arrays, expands=expands,
-                                                         get_info=get_info, expand_type=expand_type, spacing=spacing)
 
     @staticmethod
     def get_img(filepath: str) -> FileBasedImage:
