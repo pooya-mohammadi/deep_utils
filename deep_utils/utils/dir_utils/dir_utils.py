@@ -1144,7 +1144,7 @@ class DirUtils:
         subprocess.run([imageViewerFromCommandLine, path])
 
     @staticmethod
-    def remove_empty_dirs(directory: str, verbose: bool = True):
+    def remove_empty_dirs(directory: str, verbose: bool = True, skip_errors: bool = False):
         def remove_(inner_dir):
             dir_items = DirUtils.list_dir_full_path(inner_dir, only_directories=True)
             dir_files = DirUtils.list_dir_full_path(inner_dir)
@@ -1169,7 +1169,14 @@ class DirUtils:
 
         if os.path.exists(directory):
             for dir_ in DirUtils.list_items_scandir(directory, only_directories=True):
-                remove_(dir_)
+                try:
+                    remove_(dir_)
+                except Exception as e:
+                    if skip_errors:
+                        if verbose:
+                            StringUtils.print(f"Error skipped: {e}")
+                    else:
+                        raise e
             remove_(directory)
     @staticmethod
     def is_empty(directory: str):
