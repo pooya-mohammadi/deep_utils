@@ -1069,6 +1069,10 @@ class DirUtils:
         ['pooya', 'ali', 'saeed']
         >>> DirUtils.split("/pooya/ali/saeed", depth=1, return_right=False)
         '/pooya/ali'
+        >>> DirUtils.split("/home/ai/pooya/noway/to/gl", 2, continuous=True, return_right=False)
+        '/home/ai/pooya/noway'
+        >>> DirUtils.split("/home/ai/pooya/noway/to/gl", 2, continuous=True, return_right=False, list_it=True)
+        ['home', 'ai', 'pooya', 'noway']
         """
         if depth == 0:
             outputs = []
@@ -1101,10 +1105,22 @@ class DirUtils:
                     output = split(p)[0]
             else:
                 outputs = []
-                for _ in range(depth):
+                if return_right:
+                    for _ in range(depth):
+                        path, p = split(path)
+                        outputs.insert(0, p)
+                else:
+                    for _ in range(depth):
+                        path = split(path)[0]
                     path, p = split(path)
-                    outputs.insert(0, p)
+                    while p:
+                        outputs.insert(0, p)   
+                        if path == "/":
+                            outputs.insert(0, path)   
+                        path, p = split(path)
                 if list_it:
+                    if outputs[0] == "/":
+                        outputs.pop(0)
                     output = outputs
                 else:
                     if join_del is None:
@@ -1543,3 +1559,5 @@ class DirUtils:
 
 mkdir_incremental = DirUtils.mkdir_incremental
 
+if __name__ == "__main__":
+    print(DirUtils.split("/home/ai/pooya/noway/to/gl", 2, continuous=True, return_right=False, list_it=True)    )
