@@ -1384,13 +1384,13 @@ class DirUtils:
                                             if not_endswith:
                                                 if not entry.path.endswith(not_endswith):
                                                     if startswith is not None:
-                                                        if entry.path.startswith(startswith):
+                                                        if split(entry.path)[-1].startswith(startswith):
                                                             yield entry.path
                                                     else:
                                                         yield entry.path
                                             else:
                                                 if startswith is not None:
-                                                    if entry.path.startswith(startswith):
+                                                    if split(entry.path)[-1].startswith(startswith):
                                                         yield entry.path
                                                 else:
                                                     yield entry.path
@@ -1398,13 +1398,13 @@ class DirUtils:
                                         if not_endswith:
                                             if not entry.path.endswith(not_endswith):
                                                 if startswith is not None:
-                                                    if entry.path.startswith(startswith):
+                                                    if split(entry.path)[-1].startswith(startswith):
                                                         yield entry.path
                                                 else:
                                                     yield entry.path
                                         else:
                                             if startswith is not None:
-                                                if entry.path.startswith(startswith):
+                                                if split(entry.path)[-1].startswith(startswith):
                                                     yield entry.path
                                             else:
                                                 yield entry.path
@@ -1422,13 +1422,13 @@ class DirUtils:
                                             if not_endswith:
                                                 if not entry.path.endswith(not_endswith):
                                                     if startswith is not None:
-                                                        if entry.path.startswith(startswith):
+                                                        if split(entry.path)[-1].startswith(startswith):
                                                             yield entry.path
                                                     else:
                                                         yield entry.path
                                             else:
                                                 if startswith is not None:
-                                                    if entry.path.startswith(startswith):
+                                                    if split(entry.path)[-1].startswith(startswith):
                                                         yield entry.path
                                                 else:
                                                     yield entry.path
@@ -1436,13 +1436,13 @@ class DirUtils:
                                         if not_endswith:
                                             if not entry.path.endswith(not_endswith):
                                                 if startswith is not None:
-                                                    if entry.path.startswith(startswith):
+                                                    if split(entry.path)[-1].startswith(startswith):
                                                         yield entry.path
                                                 else:
                                                     yield entry.path
                                         else:
                                             if startswith is not None:
-                                                if entry.path.startswith(startswith):
+                                                if split(entry.path)[-1].startswith(startswith):
                                                     yield entry.path
                                             else:
                                                 yield entry.path
@@ -1465,14 +1465,14 @@ class DirUtils:
                             entry_name = entry.name
                             if entry_name.endswith(endswith):
                                 if startswith is not None:
-                                    if entry_name.startswith(startswith):
+                                    if split(entry.path)[-1].startswith(startswith):
                                         yield entry.path
                                 else:
                                     yield entry.path
                         else:
                             if not only_files:
                                 yield entry.path  # return the directories as well
-                            yield from DirUtils.list_items_scandir(entry.path, endswith=endswith, only_files=only_files)
+                            yield from DirUtils.list_items_scandir(entry.path, endswith=endswith, only_files=only_files, startswith=startswith)
 
             elif endswith is not None and not_endswith is not None:
                 for entry in os.scandir(directory_path):
@@ -1481,7 +1481,7 @@ class DirUtils:
                             entry_name = entry.name
                             if entry_name.endswith(endswith) and not entry_name.endswith(not_endswith):
                                 if startswith is not None:
-                                    if entry_name.startswith(startswith):
+                                    if split(entry.path)[-1].startswith(startswith):
                                         yield entry.path
                                 else:
                                     yield entry.path
@@ -1490,14 +1490,14 @@ class DirUtils:
                             if not only_files:
                                 yield entry.path  # return the directories as well
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
-                                                                   not_endswith=not_endswith, only_files=only_files)
+                                                                   not_endswith=not_endswith, only_files=only_files, startswith=startswith)
             else:
                 for entry in os.scandir(directory_path):
                     if not entry.name.startswith('.'):
                         if entry.is_file():
                             entry_name = entry.name
                             if startswith is not None:
-                                if entry_name.startswith(startswith):
+                                if split(entry.path)[-1].startswith(startswith):
                                     yield entry.path
                             else:
                                 yield entry.path
@@ -1505,7 +1505,7 @@ class DirUtils:
                             if not only_files:
                                 yield entry.path  # return the directories as well
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
-                                                                   not_endswith=not_endswith, only_files=only_files)
+                                                                   not_endswith=not_endswith, only_files=only_files, startswith=startswith)
 
     @staticmethod
     def get_nvidia_users(password: str):
