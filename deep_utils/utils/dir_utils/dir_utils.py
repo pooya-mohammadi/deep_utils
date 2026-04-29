@@ -1165,9 +1165,10 @@ class DirUtils:
             dir_items = DirUtils.list_dir_full_path(inner_dir, only_directories=True)
             dir_files = DirUtils.list_dir_full_path(inner_dir)
             if len(dir_files) == 0 and len(dir_items) == 0:
-                os.rmdir(inner_dir)
-                if verbose:
-                    print(f"Removed Empty dir: {inner_dir}")
+                if inner_dir != ".":
+                    os.rmdir(inner_dir)
+                    if verbose:
+                        print(f"Removed Empty dir: {inner_dir}")
                 return True
             elif len(dir_files) == 0 and len(dir_items) != 0:
                 remove_it = True
@@ -1176,7 +1177,8 @@ class DirUtils:
                     if remove_it and not you_should_remove_it:
                         remove_it = False
                 if remove_it:
-                    os.rmdir(inner_dir)
+                    if inner_dir != ".":
+                        os.rmdir(inner_dir)
                 return remove_it
             elif len(dir_files) != 0:
                 return False
@@ -1557,9 +1559,17 @@ class DirUtils:
                     shutil.copy(item, target_base_dir)
             if verbose:
                 StringUtils.print(f"Moved/Copied {item=} to {target_path=}", color='green')
+    
+    def remove_empty_files(path:str, min_filesize: float = 0.0, verbose=True):
+        for filepath in DirUtils.list_items_scandir(path, only_files=True):
+            if os.path.getsize(filepath) <= min_filesize:
+                os.remove(filepath)
+                if verbose:
+                    StringUtils.print(f"Removed: {filepath}", color='black')
+        
 
 
 mkdir_incremental = DirUtils.mkdir_incremental
 
 if __name__ == "__main__":
-    print(DirUtils.split("/home/ai/pooya/noway/to/gl", 2, continuous=True, return_right=False, list_it=True)    )
+    print(DirUtils.split("/home/ai/pooya/noway/to/gl", 2, continuous=True, return_right=False, list_it=True))
