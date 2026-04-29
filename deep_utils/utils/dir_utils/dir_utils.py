@@ -1414,6 +1414,7 @@ class DirUtils:
                                                                        dir_start_depth=dir_start_depth,
                                                                        endswith=endswith,
                                                                        not_endswith=not_endswith,
+                                                                       startswith=startswith,
                                                                        )
                             else:
                                 if dir_start_depth <= current_dir_path < dir_end_depth:
@@ -1453,6 +1454,7 @@ class DirUtils:
                                                                            dir_start_depth=dir_start_depth,
                                                                            endswith=endswith,
                                                                            not_endswith=not_endswith,
+                                                                           startswith=startswith
                                                                            )
             except PermissionError:
                 print(f"Warning: Permission Error in: {directory_path}")
