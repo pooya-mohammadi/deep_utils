@@ -1566,6 +1566,21 @@ class DirUtils:
                 os.remove(filepath)
                 if verbose:
                     StringUtils.print(f"Removed: {filepath}", color='black')
+    
+    def find(path: str, endswith: Union[str, Tuple[str, ...]] = None,
+                           not_endswith: Union[str, Tuple[str, ...]] = None,
+                           startswith: Union[str, Tuple[str, ...]] = None,
+                           only_files=False, only_directories=False, remove=False, verbose=True):
+        for item in DirUtils.list_items_scandir(path, endswith=endswith, startswith=startswith,
+                                                not_endswith=not_endswith, only_directories=only_directories,
+                                                only_files=only_files):
+            if verbose:
+                print(item)
+            if remove and only_files:
+                os.remove(item)
+            if remove and only_directories:
+                shutil.rmtree(item)
+                
         
 
 
