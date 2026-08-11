@@ -2,7 +2,7 @@ import os
 import shutil
 from os.path import join, split, exists, isdir
 from pathlib import Path
-from typing import Dict, List, Tuple, Union, Optional
+from typing import Dict, List, Tuple, Union, Optional, Sequence
 
 from deep_utils.utils.logging_utils.logging_utils import log_print, value_error_log
 from deep_utils.utils.os_utils.os_path import split_extension
@@ -938,7 +938,7 @@ class DirUtils:
         :param ext:
         :return:
         """
-        if isinstance(ext, list):
+        if isinstance(ext, Sequence):
             for ext_ in ext:
                 if filepath.endswith(ext_):
                     return True
@@ -1495,7 +1495,7 @@ class DirUtils:
                                 yield entry.path  # return the directories as well
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
                                                                    not_endswith=not_endswith, only_files=only_files, startswith=startswith)
-            else:
+            elif not_endswith is None and endswith is None:
                 for entry in os.scandir(directory_path):
                     if not entry.name.startswith('.'):
                         if entry.is_file():
@@ -1510,7 +1510,22 @@ class DirUtils:
                                 yield entry.path  # return the directories as well
                             yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
                                                                    not_endswith=not_endswith, only_files=only_files, startswith=startswith)
-
+            elif not_endswith is not None and endswith is None:
+                            for entry in os.scandir(directory_path):
+                                if not entry.name.startswith('.'):
+                                    if entry.is_file():
+                                        entry_name = entry.name
+                                        if not entry_name.endswith(not_endswith):
+                                            if startswith is not None:
+                                                if split(entry.path)[-1].startswith(startswith):
+                                                    yield entry.path
+                                            else:
+                                                yield entry.path
+                                    else:
+                                        if not only_files:
+                                            yield entry.path  # return the directories as well
+                                        yield from DirUtils.list_items_scandir(entry.path, endswith=endswith,
+                                                                               not_endswith=not_endswith, only_files=only_files, startswith=startswith)
     @staticmethod
     def get_nvidia_users(password: str):
         command = f"echo {password}  | sudo -S fuser -v /dev/nvidia*"
