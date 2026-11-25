@@ -938,13 +938,13 @@ class DirUtils:
         :param ext:
         :return:
         """
-        if isinstance(ext, Sequence):
+        if isinstance(ext, str):
+            return filepath.endswith(ext)
+        elif isinstance(ext, Sequence):
             for ext_ in ext:
                 if filepath.endswith(ext_):
                     return True
             return False
-        elif isinstance(ext, str):
-            return filepath.endswith(ext)
         elif ext is None:
             return True
         else:
